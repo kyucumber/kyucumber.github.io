@@ -27,10 +27,10 @@ workbox.core.clientsClaim();
  */
 self.__precacheManifest = [
   {
-    "url": "webpack-runtime-1622606b18e9191c783d.js"
+    "url": "webpack-runtime-be83ff07cf4fe520b87f.js"
   },
   {
-    "url": "styles.fcb5bf205e1aa7d886cb.css"
+    "url": "styles.e361ee1ae515872c3a9e.css"
   },
   {
     "url": "styles-407fe62976dc5310c43e.js"
@@ -42,22 +42,14 @@ self.__precacheManifest = [
     "url": "532a2f07-b32c28cb7cdd6cc07e70.js"
   },
   {
-    "url": "app-d5b00f3162001b020a61.js"
+    "url": "app-0e7d33f9746fdda4600d.js"
   },
   {
     "url": "offline-plugin-app-shell-fallback/index.html",
-    "revision": "96ff19b1862c292b7e422cf5516e1f31"
+    "revision": "e26db4121685f4138892dc293a028fbf"
   },
   {
     "url": "component---cache-caches-gatsby-plugin-offline-app-shell-js-241020a1cf7d0f317bbe.js"
-  },
-  {
-    "url": "page-data/offline-plugin-app-shell-fallback/page-data.json",
-    "revision": "f6081b83111aea4128c98944b7fafccc"
-  },
-  {
-    "url": "page-data/app-data.json",
-    "revision": "4295f56e56c1148f9c6dd05bc777975a"
   },
   {
     "url": "polyfill-0675a6ac8d712cc209d4.js"
@@ -68,7 +60,7 @@ self.__precacheManifest = [
   },
   {
     "url": "manifest.webmanifest",
-    "revision": "5fd85ed4c10354b9b662f0a18264fa5b"
+    "revision": "e3307fc0b8029874dd0cc325d3c92e79"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
@@ -155,12 +147,12 @@ const navigationRoute = new NavigationRoute(async ({ event }) => {
   lastNavigationRequest = event.request.url
 
   let { pathname } = new URL(event.request.url)
-  pathname = pathname.replace(new RegExp(`^/kyucumber.github.io`), ``)
+  pathname = pathname.replace(new RegExp(`^`), ``)
 
   // Check for resources + the app bundle
   // The latter may not exist if the SW is updating to a new version
   const resources = await idbKeyval.get(`resources:${pathname}`)
-  if (!resources || !(await caches.match(`/kyucumber.github.io/app-d5b00f3162001b020a61.js`))) {
+  if (!resources || !(await caches.match(`/app-0e7d33f9746fdda4600d.js`))) {
     return await fetch(event.request)
   }
 
@@ -173,7 +165,7 @@ const navigationRoute = new NavigationRoute(async ({ event }) => {
     }
   }
 
-  const offlineShell = `/kyucumber.github.io/offline-plugin-app-shell-fallback/index.html`
+  const offlineShell = `/offline-plugin-app-shell-fallback/index.html`
   const offlineShellWithKey = workbox.precaching.getCacheKeyForURL(offlineShell)
   return await caches.match(offlineShellWithKey)
 })
