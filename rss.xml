@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[규규규규]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Tue, 16 Feb 2021 13:50:03 GMT</lastBuildDate><item><title><![CDATA[RestHighLevelClient 테스트 작성 시 SearchResponse 더미 데이터 생성하기]]></title><description><![CDATA[Spring Elasticsearch RestHighLevelClient 사용 시 단위 테스트 작성을 위한 SearchResponse 더미 데이터 생성하기]]></description><link>https://kyucumber.github.io/posts/spring/rest-high-level-client-unit-test/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/rest-high-level-client-unit-test/</guid><pubDate>Wed, 10 Feb 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Spring에서 RestHighLevelClient 관련 unit 테스트 작성시 SearchResponse의 더미 데이터 생성 예제&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[규규규규]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Tue, 16 Feb 2021 13:52:09 GMT</lastBuildDate><item><title><![CDATA[RestHighLevelClient 테스트 작성 시 SearchResponse 더미 데이터 생성하기]]></title><description><![CDATA[Spring Elasticsearch RestHighLevelClient 사용 시 단위 테스트 작성을 위한 SearchResponse 더미 데이터 생성하기]]></description><link>https://kyucumber.github.io/posts/spring/rest-high-level-client-unit-test/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/rest-high-level-client-unit-test/</guid><pubDate>Wed, 10 Feb 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Spring에서 RestHighLevelClient 관련 unit 테스트 작성시 SearchResponse의 더미 데이터 생성 예제&lt;/p&gt;
 &lt;h2 id=&quot;searchresponse-데이터-생성을-위한-util-클래스-정의&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#searchresponse-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%83%9D%EC%84%B1%EC%9D%84-%EC%9C%84%ED%95%9C-util-%ED%81%B4%EB%9E%98%EC%8A%A4-%EC%A0%95%EC%9D%98&quot; aria-label=&quot;searchresponse 데이터 생성을 위한 util 클래스 정의 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;SearchResponse 데이터 생성을 위한 Util 클래스 정의&lt;/h2&gt;
 &lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;ElasticsearchTestUtils.kt&lt;/code&gt;&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
@@ -87,9 +87,6 @@
     }
 }&lt;/code&gt;
         &lt;/deckgo-highlight-code&gt;
-&lt;blockquote&gt;
-&lt;p&gt;참고&lt;/p&gt;
-&lt;/blockquote&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https://discuss.elastic.co/t/elasticsearch-json-response-to-searchresponse-object/124394/4&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://discuss.elastic.co/t/elasticsearch-json-response-to-searchresponse-object/124394/4&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</content:encoded></item><item><title><![CDATA[Spring Cloud Function을 이용한 Kafka Client 구성하기]]></title><description><![CDATA[Spring Cloud Function을 이용해 Spring에서 Kafka Producer, Consumer, Streams 코드를 작성하는 방법을 정리합니다.]]></description><link>https://kyucumber.github.io/posts/spring/spring-cloud-function-kafka/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/spring-cloud-function-kafka/</guid><pubDate>Sat, 03 Oct 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://github.com/spring-cloud/spring-cloud-function&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Spring Cloud Function&lt;/a&gt;은 spring-cloud 하위의 프로젝트입니다.
@@ -408,9 +405,6 @@ open fun kotlinConsumer(): (String) -&amp;gt; Unit {
 }&lt;/code&gt;
         &lt;/deckgo-highlight-code&gt;
 &lt;p&gt;&lt;a href=&quot;https://github.com/spring-cloud/spring-cloud-stream-binder-kafka/issues/795&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;현재 작성된 버전 기준으로는 Kafka Streams에 대해서는 lambda support가 지원되지 않습니다.&lt;/a&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;참고&lt;/p&gt;
-&lt;/blockquote&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https://cloud.spring.io/spring-cloud-stream-binder-kafka/spring-cloud-stream-binder-kafka.html&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://cloud.spring.io/spring-cloud-stream-binder-kafka/spring-cloud-stream-binder-kafka.html&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;https://github.com/spring-cloud/spring-cloud-stream-samples/tree/master/multi-functions-samples/function-composition-kafka&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://github.com/spring-cloud/spring-cloud-stream-samples/tree/master/multi-functions-samples/function-composition-kafka&lt;/a&gt;&lt;/li&gt;
@@ -714,9 +708,6 @@ static  https://github.com/kyucumber/kyucumber.github.io.git (push)&lt;/code&gt;
       &lt;/picture&gt;
   &lt;/a&gt;
     &lt;/span&gt;&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;참고&lt;/p&gt;
-&lt;/blockquote&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https://www.gatsbyjs.com/starters/alxshelepenok/gatsby-starter-lumen&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://www.gatsbyjs.com/starters/alxshelepenok/gatsby-starter-lumen&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</content:encoded></item></channel></rss>
