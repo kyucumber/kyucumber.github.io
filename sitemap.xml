@@ -3,8 +3,8 @@
 <url> <loc>https://kyucumber.github.io/tags</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
 <url> <loc>https://kyucumber.github.io/categories</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
 <url> <loc>https://kyucumber.github.io/posts/spring/rest-high-level-client-unit-test/</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
-<url> <loc>https://kyucumber.github.io/posts/gatsby/create-gatsby-blog/</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
 <url> <loc>https://kyucumber.github.io/posts/spring/spring-cloud-function-kafka/</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
+<url> <loc>https://kyucumber.github.io/posts/gatsby/create-gatsby-blog/</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
 <url> <loc>https://kyucumber.github.io/pages/about/</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
 <url> <loc>https://kyucumber.github.io/tag/gatsby</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>
 <url> <loc>https://kyucumber.github.io/tag/kafka</loc> <changefreq>daily</changefreq> <priority>0.7</priority> </url>

@@ -99,17 +99,6 @@
   Link: </component---src-templates-post-template-js-71e1ea1d33a80a7970f2.js>; rel=preload; as=script
   Link: </page-data/app-data.json>; rel=preload; as=fetch; crossorigin
   Link: </page-data/posts/spring/rest-high-level-client-unit-test/page-data.json>; rel=preload; as=fetch; crossorigin
-/posts/gatsby/create-gatsby-blog/
-  Link: </webpack-runtime-259f40a94b5fee2f7773.js>; rel=preload; as=script
-  Link: </styles-407fe62976dc5310c43e.js>; rel=preload; as=script
-  Link: </framework-712d0c71a05a512b21eb.js>; rel=preload; as=script
-  Link: </532a2f07-a2b9837034ae8adfec32.js>; rel=preload; as=script
-  Link: </app-317dda2ebc5b72deb75c.js>; rel=preload; as=script
-  Link: </styles-407fe62976dc5310c43e.js>; rel=preload; as=script
-  Link: </cd95ea5cbd2c605f26db819f07999610c9ff4310-f14a8b78ef6c89b5ce17.js>; rel=preload; as=script
-  Link: </component---src-templates-post-template-js-71e1ea1d33a80a7970f2.js>; rel=preload; as=script
-  Link: </page-data/app-data.json>; rel=preload; as=fetch; crossorigin
-  Link: </page-data/posts/gatsby/create-gatsby-blog/page-data.json>; rel=preload; as=fetch; crossorigin
 /posts/spring/spring-cloud-function-kafka/
   Link: </webpack-runtime-259f40a94b5fee2f7773.js>; rel=preload; as=script
   Link: </styles-407fe62976dc5310c43e.js>; rel=preload; as=script
@@ -121,6 +110,17 @@
   Link: </component---src-templates-post-template-js-71e1ea1d33a80a7970f2.js>; rel=preload; as=script
   Link: </page-data/app-data.json>; rel=preload; as=fetch; crossorigin
   Link: </page-data/posts/spring/spring-cloud-function-kafka/page-data.json>; rel=preload; as=fetch; crossorigin
+/posts/gatsby/create-gatsby-blog/
+  Link: </webpack-runtime-259f40a94b5fee2f7773.js>; rel=preload; as=script
+  Link: </styles-407fe62976dc5310c43e.js>; rel=preload; as=script
+  Link: </framework-712d0c71a05a512b21eb.js>; rel=preload; as=script
+  Link: </532a2f07-a2b9837034ae8adfec32.js>; rel=preload; as=script
+  Link: </app-317dda2ebc5b72deb75c.js>; rel=preload; as=script
+  Link: </styles-407fe62976dc5310c43e.js>; rel=preload; as=script
+  Link: </cd95ea5cbd2c605f26db819f07999610c9ff4310-f14a8b78ef6c89b5ce17.js>; rel=preload; as=script
+  Link: </component---src-templates-post-template-js-71e1ea1d33a80a7970f2.js>; rel=preload; as=script
+  Link: </page-data/app-data.json>; rel=preload; as=fetch; crossorigin
+  Link: </page-data/posts/gatsby/create-gatsby-blog/page-data.json>; rel=preload; as=fetch; crossorigin
 /pages/about/
   Link: </webpack-runtime-259f40a94b5fee2f7773.js>; rel=preload; as=script
   Link: </styles-407fe62976dc5310c43e.js>; rel=preload; as=script
