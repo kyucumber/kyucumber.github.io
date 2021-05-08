@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[규규규규]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sat, 08 May 2021 11:03:11 GMT</lastBuildDate><item><title><![CDATA[파일이 존재하는데도 No such file or directory 에러가 발생하는 경우]]></title><description><![CDATA[파일이 존재하는데도 No such file or directory 에러가 발생하는 이슈 정리]]></description><link>https://kyucumber.github.io/posts/issues/no-such-file-or-directory</link><guid isPermaLink="false">https://kyucumber.github.io/posts/issues/no-such-file-or-directory</guid><pubDate>Mon, 29 Mar 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Gitlab runner 환경 구성 중 Embedded Redis를 사용해 테스트를 실행하는 모듈의 테스트가 지속적으로 실패하는 문제를 겪었다.&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[규규규규]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sat, 08 May 2021 11:11:31 GMT</lastBuildDate><item><title><![CDATA[파일이 존재하는데도 No such file or directory 에러가 발생하는 경우]]></title><description><![CDATA[파일이 존재하는데도 No such file or directory 에러가 발생하는 이슈 정리]]></description><link>https://kyucumber.github.io/posts/issues/no-such-file-or-directory</link><guid isPermaLink="false">https://kyucumber.github.io/posts/issues/no-such-file-or-directory</guid><pubDate>Mon, 29 Mar 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Gitlab runner 환경 구성 중 Embedded Redis를 사용해 테스트를 실행하는 모듈의 테스트가 지속적으로 실패하는 문제를 겪었다.&lt;/p&gt;
 &lt;p&gt;로컬 환경 및 다른 이미지의 러너에서는 정상적으로 빌드가 성공했으나 신규로 테스트하던 모듈에서는 아래와 같은 에러 메세지와 함께 테스트가 정상적으로 구동되지 않았다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;bash&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
           &lt;code slot=&quot;code&quot;&gt;2021-03-29T21:23:49.643+0900 [DEBUG] [TestEventLogger]         at java.lang.Thread.run(Thread.java:748)
@@ -247,6 +247,24 @@ org.springframework.boot.test.autoconfigure.web.servlet.MockMvcSecurityConfigura
  }&lt;/code&gt;
         &lt;/deckgo-highlight-code&gt;
 &lt;p&gt;&lt;a href=&quot;https://github.com/spring-projects/spring-framework/blob/5.2.x/spring-core/src/main/java/org/springframework/util/AntPathMatcher.java#L782&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://github.com/spring-projects/spring-framework/blob/5.2.x/spring-core/src/main/java/org/springframework/util/AntPathMatcher.java#L782&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;tomcat-메트릭-노출-이슈&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#tomcat-%EB%A9%94%ED%8A%B8%EB%A6%AD-%EB%85%B8%EC%B6%9C-%EC%9D%B4%EC%8A%88&quot; aria-label=&quot;tomcat 메트릭 노출 이슈 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Tomcat 메트릭 노출 이슈&lt;/h2&gt;
+&lt;p&gt;2.2.x로 마이그레이션을 진행한 이후 아래와 같은 톰캣 메트릭들이 노출되지 않았다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;bash&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;tomcat_threads_busy_threads&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;아래 설정을 추가해 해결할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;yaml&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;server:
+  tomcat:
+    mbeanregistry:
+      enabled: true&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;릴리즈 노트를 잘 읽자.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-2.2-Release-Notes#tomcats-mbean-registry&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Spring Boot 2.2 릴리즈 노트 Tomcat’s MBean Registry&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Tomcat’s MBean Registry is now disabled by default, saving approximately 2MB of heap.
+If you want to use Tomcat’s MBeans, for example so that they can be used to expose metrics via Micrometer, set the server.tomcat.mbeanregistry.enabled to true.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;h2 id=&quot;redis-cluster-사용-시-redisreactivehealthindicator-이슈&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#redis-cluster-%EC%82%AC%EC%9A%A9-%EC%8B%9C-redisreactivehealthindicator-%EC%9D%B4%EC%8A%88&quot; aria-label=&quot;redis cluster 사용 시 redisreactivehealthindicator 이슈 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Redis cluster 사용 시 RedisReactiveHealthIndicator 이슈&lt;/h2&gt;
 &lt;p&gt;2.2.x로 올리고 첫 배포를 진행할 때 레디스 클러스터를 사용중인 모듈의 헬스체크가 제대로 되지 않는 문제가 발생했는데 아래와 같은 이슈가 있었다.&lt;/p&gt;
 &lt;p&gt;이후에는 모든 인프라에 대해 헬스체크에 영향을 주지 않도록 변경했다.&lt;/p&gt;
