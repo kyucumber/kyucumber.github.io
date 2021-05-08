@@ -1,4 +1,34 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[규규규규]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sat, 17 Apr 2021 09:58:46 GMT</lastBuildDate><item><title><![CDATA[RestHighLevelClient 테스트 작성 시 SearchResponse 더미 데이터 생성하기]]></title><description><![CDATA[Spring Elasticsearch RestHighLevelClient 사용 시 단위 테스트 작성을 위한 SearchResponse 더미 데이터 생성하기]]></description><link>https://kyucumber.github.io/posts/spring/rest-high-level-client-unit-test/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/rest-high-level-client-unit-test/</guid><pubDate>Wed, 10 Feb 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Spring에서 RestHighLevelClient 관련 unit 테스트 작성시 SearchResponse의 더미 데이터 생성 예제&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[규규규규]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sat, 08 May 2021 11:03:11 GMT</lastBuildDate><item><title><![CDATA[파일이 존재하는데도 No such file or directory 에러가 발생하는 경우]]></title><description><![CDATA[파일이 존재하는데도 No such file or directory 에러가 발생하는 이슈 정리]]></description><link>https://kyucumber.github.io/posts/issues/no-such-file-or-directory</link><guid isPermaLink="false">https://kyucumber.github.io/posts/issues/no-such-file-or-directory</guid><pubDate>Mon, 29 Mar 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Gitlab runner 환경 구성 중 Embedded Redis를 사용해 테스트를 실행하는 모듈의 테스트가 지속적으로 실패하는 문제를 겪었다.&lt;/p&gt;
+&lt;p&gt;로컬 환경 및 다른 이미지의 러너에서는 정상적으로 빌드가 성공했으나 신규로 테스트하던 모듈에서는 아래와 같은 에러 메세지와 함께 테스트가 정상적으로 구동되지 않았다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;bash&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;2021-03-29T21:23:49.643+0900 [DEBUG] [TestEventLogger]         at java.lang.Thread.run(Thread.java:748)
+2021-03-29T21:23:49.643+0900 [DEBUG] [TestEventLogger]
+2021-03-29T21:23:49.643+0900 [DEBUG] [TestEventLogger]         Caused by:
+2021-03-29T21:23:49.643+0900 [DEBUG] [TestEventLogger]         java.io.IOException: Cannot run program &amp;quot;/tmp/1617020629467-0/redis-server-3.0.7&amp;quot; (in directory &amp;quot;/tmp/1617020629467-0&amp;quot;): error=2, No such file or directory
+2021-03-29T21:23:49.643+0900 [DEBUG] [TestEventLogger]             at java.lang.ProcessBuilder.start(ProcessBuilder.java:1048)
+2021-03-29T21:23:49.643+0900 [DEBUG] [TestEventLogger]             at redis.embedded.AbstractRedisInstance.start(AbstractRedisInstance.java:34)
+2021-03-29T21:23:49.643+0900 [DEBUG] [TestEventLogger]             ... 85 more
+2021-03-29T21:23:49.643+0900 [DEBUG] [TestEventLogger]
+2021-03-29T21:23:49.643+0900 [DEBUG] [TestEventLogger]             Caused by:
+2021-03-29T21:23:49.643+0900 [DEBUG] [TestEventLogger]             java.io.IOException: error=2, No such file or directory&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;No such file or directory&lt;/code&gt; 메세지만 보고 바이너리를 해당 경로에 복사하거나 하는 과정이 누락된 것이라고 생각했는데 실제 바이너리 파일은 정상적으로 존재했다.&lt;/p&gt;
+&lt;p&gt;해당 이미지에서 직접 바이너리를 실행시켜보니 바이너리 파일이 존재하는데도 아래와 같이 &lt;code class=&quot;language-text&quot;&gt;No such file or directory&lt;/code&gt; 에러가 노출되는것을 확인할 수 있었다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;bash&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;bash-4.4# uname -a
+Linux 490bc54ba0f4 4.14.214-160.339.amzn2.x86_64 #1 SMP Sun Jan 10 05:53:05 UTC 2021 x86_64 Linux
+
+bash-4.4# ls -al
+
+-rwxr-xr-x    1 root     root       4311368 Mar 29 20:35 redis-server-3.0.7
+-rwxr-xr-x    1 root     root        927664 Mar 29 20:35 redis-server-3.0.7-darwin
+
+bash-4.4# ./redis-server-3.0.7
+bash: ./redis-server-3.0.7: No such file or directory&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;&lt;a href=&quot;https://askubuntu.com/questions/133389/no-such-file-or-directory-but-the-file-exists&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://askubuntu.com/questions/133389/no-such-file-or-directory-but-the-file-exists&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;파일을 찾지 못하는 경우 뿐만 아니라 운영체제 별 필요한 런타임 구성 요소가 누락되는 경우도 &lt;code class=&quot;language-text&quot;&gt;No such file or directory&lt;/code&gt;라는 형태로 에러가 출력될 수 있으며
+위 케이스는 Embedded Redis 바이너리 자체가 alpine에서 구동되지 않는 문제라 빌드 이미지를 변경해 해결했다.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[RestHighLevelClient 테스트 작성 시 SearchResponse 더미 데이터 생성하기]]></title><description><![CDATA[Spring Elasticsearch RestHighLevelClient 사용 시 단위 테스트 작성을 위한 SearchResponse 더미 데이터 생성하기]]></description><link>https://kyucumber.github.io/posts/spring/rest-high-level-client-unit-test/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/rest-high-level-client-unit-test/</guid><pubDate>Wed, 10 Feb 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Spring에서 RestHighLevelClient 관련 unit 테스트 작성시 SearchResponse의 더미 데이터 생성 예제&lt;/p&gt;
 &lt;h2 id=&quot;searchresponse-데이터-생성을-위한-util-클래스-정의&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#searchresponse-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%83%9D%EC%84%B1%EC%9D%84-%EC%9C%84%ED%95%9C-util-%ED%81%B4%EB%9E%98%EC%8A%A4-%EC%A0%95%EC%9D%98&quot; aria-label=&quot;searchresponse 데이터 생성을 위한 util 클래스 정의 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;SearchResponse 데이터 생성을 위한 Util 클래스 정의&lt;/h2&gt;
 &lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;ElasticsearchTestUtils.kt&lt;/code&gt;&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
@@ -89,7 +119,138 @@
         &lt;/deckgo-highlight-code&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https://discuss.elastic.co/t/elasticsearch-json-response-to-searchresponse-object/124394/4&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://discuss.elastic.co/t/elasticsearch-json-response-to-searchresponse-object/124394/4&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[Spring Cloud Function을 이용한 Kafka Client 구성하기]]></title><description><![CDATA[Spring Cloud Function을 이용해 Spring에서 Kafka Producer, Consumer, Streams 코드를 작성하는 방법을 정리합니다.]]></description><link>https://kyucumber.github.io/posts/spring/spring-cloud-function-kafka/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/spring-cloud-function-kafka/</guid><pubDate>Sat, 03 Oct 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://github.com/spring-cloud/spring-cloud-function&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Spring Cloud Function&lt;/a&gt;은 spring-cloud 하위의 프로젝트입니다.
+&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[Kotlin 프로젝트의 Spring Boot 2.2.x 마이그레이션]]></title><description><![CDATA[Kotlin 프로젝트의 Spring Boot 2.2.x 마이그레이션 과정에서 겪은 이슈 정리]]></description><link>https://kyucumber.github.io/posts/spring/spring-boot-2.2.x-migration</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/spring-boot-2.2.x-migration</guid><pubDate>Sun, 01 Nov 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;코틀린과 스프링 부트로 구성해둔 사내 프로젝트의 스프링 부트 버전을 2.1.x -&gt; 2.2.x로 마이그레이션하면서 겪은 이슈 정리&lt;/p&gt;
+&lt;h2 id=&quot;jackson-module-kotlin-is-prefix를-제거하는-버그-픽스&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#jackson-module-kotlin-is-prefix%EB%A5%BC-%EC%A0%9C%EA%B1%B0%ED%95%98%EB%8A%94-%EB%B2%84%EA%B7%B8-%ED%94%BD%EC%8A%A4&quot; aria-label=&quot;jackson module kotlin is prefix를 제거하는 버그 픽스 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Jackson module kotlin &lt;code class=&quot;language-text&quot;&gt;is&lt;/code&gt; prefix를 제거하는 버그 픽스&lt;/h2&gt;
+&lt;p&gt;기존에 존재하던 &lt;code class=&quot;language-text&quot;&gt;is&lt;/code&gt; prefix를 제거하는 버그가 해소되었다.
+아래와 같이 사용하는 코드가 있었다면 클라이언트쪽에서 찾아 변경하거나 &lt;code class=&quot;language-text&quot;&gt;@JsonProperty&lt;/code&gt;를 추가해야 할 것 같다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;data class Data(
+    val isAdmin: Boolean = false // is가 제거된 `admin`으로 Deserialize 되던 버그가 해결되어 이제 `isAdmin` 으로 Deserialize 된다.
+)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/FasterXML/jackson-module-kotlin/issues/80&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://github.com/FasterXML/jackson-module-kotlin/issues/80&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/FasterXML/jackson-module-kotlin/issues/346&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://github.com/FasterXML/jackson-module-kotlin/issues/346&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/spinnaker/orca/commit/df71ed993f77b06b029f5e129256f1972d1d0d3b&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://github.com/spinnaker/orca/commit/df71ed993f77b06b029f5e129256f1972d1d0d3b&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;deprecated-mediatypeapplicationjsonutf8&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#deprecated-mediatypeapplicationjsonutf8&quot; aria-label=&quot;deprecated mediatypeapplicationjsonutf8 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Deprecated MediaType.APPLICATION&lt;em&gt;JSON&lt;/em&gt;UTF8&lt;/h2&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;MediaType.APPLICATION_JSON_UTF8&lt;/code&gt; 가 Deprecate 되었다.
+&lt;a href=&quot;https://github.com/spring-projects/spring-framework/issues/22788&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;제기된 이슈&lt;/a&gt;와 관련된 내용을 살펴봤을 때
+RFC 스펙이 변경되면서 JSON 인코딩이 기본적으로 UTF-8로 변경되었고 이에 따라 불필요해져 Deprecate 된 것 같다.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://tools.ietf.org/html/rfc7159#section-8.1&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;RFC-7159&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;JSON text SHALL be encoded in UTF-8, UTF-16, or UTF-32&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;a href=&quot;https://tools.ietf.org/html/rfc8259#section-8.1&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;RFC-8259&lt;/a&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;JSON text exchanged between systems that are not part of a closed ecosystem MUST be encoded using UTF-8&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Deprecate 된 코드들만 제거해주면 큰 문제는 없었는데, 기존 MockMvc로 작성된 테스트 코드에서 한글이 다 깨지는 문제가 발생했다.
+MockMvc를 사용하는 경우 아래처럼 &lt;code class=&quot;language-text&quot;&gt;DEFAULT_CHARACTER_ENCODING&lt;/code&gt; &lt;code class=&quot;language-text&quot;&gt;ISO_8859&lt;/code&gt;로 지정되어 그런 것 같다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;java&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;public class MockHttpServletResponse implements HttpServletResponse {
+
+	private static final String CHARSET_PREFIX = &amp;quot;charset=&amp;quot;;
+
+	private static final String DATE_FORMAT = &amp;quot;EEE, dd MMM yyyy HH:mm:ss zzz&amp;quot;;
+
+	private static final TimeZone GMT = TimeZone.getTimeZone(&amp;quot;GMT&amp;quot;);
+
+
+	//---------------------------------------------------------------------
+	// ServletResponse properties
+	//---------------------------------------------------------------------
+
+	private boolean outputStreamAccessAllowed = true;
+
+	private boolean writerAccessAllowed = true;
+
+	@Nullable
+	private String characterEncoding = WebUtils.DEFAULT_CHARACTER_ENCODING;
+	
+    // public static final String DEFAULT_CHARACTER_ENCODING = &amp;quot;ISO-8859-1&amp;quot;;
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;&lt;a href=&quot;https://qastack.kr/programming/58525387/mockmvc-no-longer-handles-utf-8-characters-with-spring-boot-2-2-0-release&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://qastack.kr/programming/58525387/mockmvc-no-longer-handles-utf-8-characters-with-spring-boot-2-2-0-release&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;mockmvcsecurityautoconfiguration-제거&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#mockmvcsecurityautoconfiguration-%EC%A0%9C%EA%B1%B0&quot; aria-label=&quot;mockmvcsecurityautoconfiguration 제거 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;MockMvcSecurityAutoConfiguration 제거&lt;/h2&gt;
+&lt;p&gt;아래 2.1.x에 있던 &lt;code class=&quot;language-text&quot;&gt;MockMvcSecurityAutoConfiguration&lt;/code&gt;가 제거되었음&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/spring-projects/spring-boot/blob/2.1.x/spring-boot-project/spring-boot-test-autoconfigure/src/main/java/org/springframework/boot/test/autoconfigure/web/servlet/MockMvcSecurityAutoConfiguration.java&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://github.com/spring-projects/spring-boot/blob/2.1.x/spring-boot-project/spring-boot-test-autoconfigure/src/main/java/org/springframework/boot/test/autoconfigure/web/servlet/MockMvcSecurityAutoConfiguration.java&lt;/a&gt;&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;java&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;@Configuration
+@ConditionalOnProperty(prefix=&amp;quot;spring.test.mockmvc&amp;quot;,
+                       name=&amp;quot;secure&amp;quot;,
+                       havingValue=&amp;quot;true&amp;quot;,
+                       matchIfMissing=true)
+@Import(value={SecurityAutoConfiguration.class,UserDetailsServiceAutoConfiguration.class,org.springframework.boot.test.autoconfigure.web.servlet.MockMvcSecurityConfiguration.class})
+public class MockMvcSecurityAutoConfiguration {}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위 AutoConfiguration이 제거되면서 테스트 일부가 영향을 받았다.&lt;/p&gt;
+&lt;p&gt;위 &lt;code class=&quot;language-text&quot;&gt;MockMvcSecurityAutoConfiguration&lt;/code&gt;이 제거되고 아래와 같이 변경되었다.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 960px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/16ddd6bdd7723e3cff39b3a61a88585a/7388e/spring-boot-test-autoconfigure-spring-factories.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 24.583333333333336%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAFCAYAAABFA8wzAAAACXBIWXMAAAsSAAALEgHS3X78AAAA70lEQVQY03XPyU7DMBAG4DwLFXDi1KrlQBYatXESx3uWJqmDkOD93+DHmariAodP/3gZaxydGIPsejRSgTcC2loY10IZC6kNhNIhNdXaOlqvd1f3uuIcXAgSySrDNDl8fy349G3Q4XpRmHoBP2osk8E8iEBS7UdD572t0JmS6CYPjpRRzTLULIWzEt7P8HOLvhUwioGd41+nm/Kc3BQpqjt6I6OMNrsUD9sYj/sEmXJ4Ky3iyiLlLV7iIuy/4/k1J0+HIza7BGvPf6K6zCDqHM41+FgG+PD91RImvYYcB415tFRPFxMmL9CE+2sf/8MPDZ67JmIWpy0AAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/16ddd6bdd7723e3cff39b3a61a88585a/8ac56/spring-boot-test-autoconfigure-spring-factories.webp 240w,
+/static/16ddd6bdd7723e3cff39b3a61a88585a/d3be9/spring-boot-test-autoconfigure-spring-factories.webp 480w,
+/static/16ddd6bdd7723e3cff39b3a61a88585a/e46b2/spring-boot-test-autoconfigure-spring-factories.webp 960w,
+/static/16ddd6bdd7723e3cff39b3a61a88585a/ff749/spring-boot-test-autoconfigure-spring-factories.webp 1104w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/16ddd6bdd7723e3cff39b3a61a88585a/8ff5a/spring-boot-test-autoconfigure-spring-factories.png 240w,
+/static/16ddd6bdd7723e3cff39b3a61a88585a/e85cb/spring-boot-test-autoconfigure-spring-factories.png 480w,
+/static/16ddd6bdd7723e3cff39b3a61a88585a/d9199/spring-boot-test-autoconfigure-spring-factories.png 960w,
+/static/16ddd6bdd7723e3cff39b3a61a88585a/7388e/spring-boot-test-autoconfigure-spring-factories.png 1104w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/16ddd6bdd7723e3cff39b3a61a88585a/d9199/spring-boot-test-autoconfigure-spring-factories.png&quot;
+          alt=&quot;autoconfigure&quot;
+          title=&quot;autoconfigure&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;bash&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;# AutoConfigureMockMvc auto-configuration imports
+org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc=\
+org.springframework.boot.test.autoconfigure.web.servlet.MockMvcAutoConfiguration,\
+org.springframework.boot.test.autoconfigure.web.servlet.MockMvcWebClientAutoConfiguration,\
+org.springframework.boot.test.autoconfigure.web.servlet.MockMvcWebDriverAutoConfiguration,\
+org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration,\
+org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration,\
+org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration,\
+org.springframework.boot.test.autoconfigure.web.servlet.MockMvcSecurityConfiguration&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;antpathmatcher-우선순위-변경-관련-이슈&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#antpathmatcher-%EC%9A%B0%EC%84%A0%EC%88%9C%EC%9C%84-%EB%B3%80%EA%B2%BD-%EA%B4%80%EB%A0%A8-%EC%9D%B4%EC%8A%88&quot; aria-label=&quot;antpathmatcher 우선순위 변경 관련 이슈 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;AntPathMatcher 우선순위 변경 관련 이슈&lt;/h2&gt;
+&lt;p&gt;우선순위를 정하는 &lt;code class=&quot;language-text&quot;&gt;compare&lt;/code&gt; 로직에 아래 코드가 추가되었다.&lt;/p&gt;
+&lt;p&gt;기존 &lt;code class=&quot;language-text&quot;&gt;AntPathMatcher&lt;/code&gt;를 활용하던 프로젝트라면 원하던 대로 기존 로직들이 동작하는지 체크해보아야 할 것 같다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;java&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt; if (info1.isPrefixPattern() &amp;amp;&amp;amp; info2.isPrefixPattern()) {
+        return info2.getLength() - info1.getLength();
+ }&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/spring-projects/spring-framework/blob/5.2.x/spring-core/src/main/java/org/springframework/util/AntPathMatcher.java#L782&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://github.com/spring-projects/spring-framework/blob/5.2.x/spring-core/src/main/java/org/springframework/util/AntPathMatcher.java#L782&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;redis-cluster-사용-시-redisreactivehealthindicator-이슈&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#redis-cluster-%EC%82%AC%EC%9A%A9-%EC%8B%9C-redisreactivehealthindicator-%EC%9D%B4%EC%8A%88&quot; aria-label=&quot;redis cluster 사용 시 redisreactivehealthindicator 이슈 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Redis cluster 사용 시 RedisReactiveHealthIndicator 이슈&lt;/h2&gt;
+&lt;p&gt;2.2.x로 올리고 첫 배포를 진행할 때 레디스 클러스터를 사용중인 모듈의 헬스체크가 제대로 되지 않는 문제가 발생했는데 아래와 같은 이슈가 있었다.&lt;/p&gt;
+&lt;p&gt;이후에는 모든 인프라에 대해 헬스체크에 영향을 주지 않도록 변경했다.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/spring-projects/spring-boot/issues/21514&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://github.com/spring-projects/spring-boot/issues/21514&lt;/a&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Spring Cloud Function을 이용한 Kafka Client 구성하기]]></title><description><![CDATA[Spring Cloud Function을 이용해 Spring에서 Kafka Producer, Consumer, Streams 코드를 작성하는 방법 정리]]></description><link>https://kyucumber.github.io/posts/spring/spring-cloud-function-kafka/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/spring-cloud-function-kafka/</guid><pubDate>Sat, 03 Oct 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://github.com/spring-cloud/spring-cloud-function&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Spring Cloud Function&lt;/a&gt;은 spring-cloud 하위의 프로젝트입니다.
 Spring Cloud Function을 이용하면 사용자가 정의한 &lt;code class=&quot;language-text&quot;&gt;Supplier&lt;/code&gt; &lt;code class=&quot;language-text&quot;&gt;Consumer&lt;/code&gt; &lt;code class=&quot;language-text&quot;&gt;Function&lt;/code&gt;등의 인터페이스를 &lt;strong&gt;FunctionCatalog&lt;/strong&gt;가 읽어 Consume, Produce 등을 수행하는 표준 표현으로 변환하는 기능을 사용할 수 있습니다.&lt;/p&gt;
 &lt;p&gt;Spring Cloud Function에서는 Java 8 부터 사용할 수 있는 3가지 코어 Function(&lt;code class=&quot;language-text&quot;&gt;Supplier&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;Function&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;Consumer&lt;/code&gt;) interface들을 지원합니다.
 각각의 인터페이스를 이용해 Kafka Producer, Consumer, Streams를 구성한 코드를 정리했습니다. &lt;/p&gt;
