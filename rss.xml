@@ -1,6 +1,6 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[규규규규]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Wed, 19 May 2021 13:56:48 GMT</lastBuildDate><item><title><![CDATA[logback에서 stdout 로그 출력 시 특정 Thread가 lock을 무기한 보유하는 이슈]]></title><description><![CDATA[stdout 로그 출력 시 특정 Thread가 lock을 무기한 보유하는 이슈에 대해 설명합니다.]]></description><link>https://kyucumber.github.io/posts/spring/logback-thread-lock-issue</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/logback-thread-lock-issue</guid><pubDate>Sat, 01 May 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;운영중인 개발 환경 서버에서 504 Gateway Time-out이 발생하고 일정 시간이 지나도 회복되지 않는 문제가 발생했다.&lt;/p&gt;
-&lt;p&gt;해당 어플리케이션의 경우 지속적으로 헬스체크 진행, 헬스체크를 실패하는 장비는 트래픽을 받지 않도록 구성해두었는데도 문제가 있는 장비는 제거되지 않고 계속 트래픽을 받고 있었다.
-트래픽을 받는 특정 장비 내부에서 curl을 이용해 헬스체크 path에 대해 요청을 보내보았으나 아래와 같이 정상적으로 200 응답이 내려오는 것을 확인할 수 있었다.&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[규규규규]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Wed, 19 May 2021 14:07:33 GMT</lastBuildDate><item><title><![CDATA[logback에서 stdout 로그 출력 시 특정 Thread가 lock을 무기한 보유하는 이슈]]></title><description><![CDATA[stdout 로그 출력 시 특정 Thread가 lock을 무기한 보유하는 이슈 정리]]></description><link>https://kyucumber.github.io/posts/spring/logback-thread-lock-issue</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/logback-thread-lock-issue</guid><pubDate>Sat, 01 May 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;운영중인 개발 환경 서버에서 504 Gateway Time-out이 발생하고 일정 시간이 지나도 회복되지 않는 문제가 발생했다.&lt;/p&gt;
+&lt;p&gt;해당 어플리케이션의 경우 지속적으로 헬스체크를 진행하고 실패시 트래픽을 받지 않도록 구성해두었는데도 문제가 있는 장비는 제거되지 않고 계속 트래픽을 받고 있었다.&lt;/p&gt;
+&lt;p&gt;트래픽을 받는 특정 장비 내부에서 curl을 이용해 헬스체크 path에 대해 요청을 보내보았으나 아래와 같이 정상적으로 200 응답이 내려오는 것을 확인할 수 있었다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;bash&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
           &lt;code slot=&quot;code&quot;&gt;❯ curl http://localhost/actuator/health
 {&amp;quot;status&amp;quot;:&amp;quot;UP&amp;quot;,&amp;quot;components&amp;quot;:{&amp;quot;ping&amp;quot;:{&amp;quot;status&amp;quot;:&amp;quot;UP&amp;quot;}}}&lt;/code&gt;
@@ -26,11 +26,12 @@ at ch.qos.logback.classic.Logger.callAppenders(Logger.java:257)
 at ch.qos.logback.classic.Logger.buildLoggingEventAndAppend(Logger.java:421)
 at ch.qos.logback.classic.Logger.filterAndLog_1(Logger.java:398)
 at ch.qos.logback.classic.Logger.info(Logger.java:583)
-at in.baemin.auth.interfaces.SessionController.authSession(SessionController.kt:107)&lt;/code&gt;
+at 문제가 발생한 패키지(문제가 발생한 클래스.kt:107)&lt;/code&gt;
         &lt;/deckgo-highlight-code&gt;
 &lt;p&gt;해당 스레드 덤프의 내용을 보면 특정 스레드 하나가 RUNNABLE 상태임에도 불구하고 &lt;code class=&quot;language-text&quot;&gt;java.io.PrintStream.write&lt;/code&gt;에서 locked로 lock이 발생한 것을 확인할 수 있었다.&lt;/p&gt;
+&lt;h2 id=&quot;원인&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%9B%90%EC%9D%B8&quot; aria-label=&quot;원인 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;원인&lt;/h2&gt;
 &lt;p&gt;대부분의 로그는 파일로 별도로 떨구게 구성해두었는데, 개발 환경이다보니 어플리케이션 내부에 아래와 같이 stdout 로그를 찍는 부분이 logback 설정에 포함되어 있었고 이 부분에서 문제가 발생한 것으로 보인다.&lt;/p&gt;
-&lt;deckgo-highlight-code language=&quot;xml&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+&lt;deckgo-highlight-code   terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
           &lt;code slot=&quot;code&quot;&gt;&amp;lt;?xml version=&amp;quot;1.0&amp;quot; encoding=&amp;quot;UTF-8&amp;quot;?&amp;gt;
 &amp;lt;appender name=&amp;quot;STDOUT&amp;quot; class=&amp;quot;ch.qos.logback.core.ConsoleAppender&amp;quot;&amp;gt;
     &amp;lt;encoder&amp;gt;
@@ -39,11 +40,9 @@ at in.baemin.auth.interfaces.SessionController.authSession(SessionController.kt:
     &amp;lt;/encoder&amp;gt;
 &amp;lt;/appender&amp;gt;&lt;/code&gt;
         &lt;/deckgo-highlight-code&gt;
-&lt;h2 id=&quot;원인&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%9B%90%EC%9D%B8&quot; aria-label=&quot;원인 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;원인&lt;/h2&gt;
-&lt;p&gt;stdout로 로그를 출력하더라도 기존에 잘 동작하고 특별한 설정의 변경이 없던 어플리케이션에서 갑자기 왜 위와 같은 문제가 발생한 것인지는 명확히 파악하지 못했다.&lt;/p&gt;
+&lt;p&gt;stdout으로 로그를 출력하더라도 기존에 잘 동작하고 특별한 설정의 변경이 없던 어플리케이션에서 갑자기 왜 위와 같은 문제가 발생한 것인지는 명확히 파악하지 못했다.&lt;/p&gt;
 &lt;p&gt;트래픽이나 로깅의 양이 늘어나지도 않았고, 설정도 변경되지 않았으며 Volume 설정 또한 변경한 부분이 없는 상태에서 갑자기 모든 장비에 lock이 잡히게 되었는지는 의문이다.&lt;/p&gt;
-&lt;p&gt;일단 근본적인 원인은 lock을 무기한으로 보유하고 있는 RUNNABLE 스레드로 보인다.
-아래와 같이 동일한 현상을 겪은 사람이 꽤 있는지 logback쪽에 이슈로 등록된 부분도 찾을 수 있었다.&lt;/p&gt;
+&lt;p&gt;일단 근본적인 원인은 lock을 무기한으로 보유하고 있는 RUNNABLE 스레드로 보이며 아래와 같이 유사한 현상을 겪은 케이스를 logback 이슈에서 찾을 수 있었다.&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://jira.qos.ch/browse/LOGBACK-1406?attachmentViewMode=list&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://jira.qos.ch/browse/LOGBACK-1406?attachmentViewMode=list&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://jira.qos.ch/browse/LOGBACK-1422?attachmentViewMode=list&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://jira.qos.ch/browse/LOGBACK-1422?attachmentViewMode=list&lt;/a&gt;&lt;/p&gt;
 &lt;h2 id=&quot;해결&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%ED%95%B4%EA%B2%B0&quot; aria-label=&quot;해결 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;해결&lt;/h2&gt;
@@ -52,7 +51,7 @@ at in.baemin.auth.interfaces.SessionController.authSession(SessionController.kt:
 &lt;li&gt;ConsoleAppender → AsyncAppender로 변경&lt;/li&gt;
 &lt;li&gt;neverBlock 설정 추가&lt;/li&gt;
 &lt;/ul&gt;
-&lt;deckgo-highlight-code language=&quot;xml&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+&lt;deckgo-highlight-code   terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
           &lt;code slot=&quot;code&quot;&gt;&amp;lt;appender name=&amp;quot;STDOUT-ASYNC&amp;quot; class=&amp;quot;ch.qos.logback.classic.AsyncAppender&amp;quot;&amp;gt;
     &amp;lt;neverBlock&amp;gt;true&amp;lt;/neverBlock&amp;gt;
     &amp;lt;appender-ref ref=&amp;quot;STDOUT&amp;quot;/&amp;gt;
