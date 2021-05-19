@@ -88,7 +88,7 @@ at ch.qos.logback.classic.Logger.filterAndLog_1(Logger.java:398)
 at ch.qos.logback.classic.Logger.info(Logger.java:583)
 at 문제가 발생한 패키지(문제가 발생한 클래스.kt:107)</code>
         </deckgo-highlight-code>
-<p>해당 스레드 덤프의 내용을 보면 특정 스레드 하나가 RUNNABLE 상태임에도 불구하고 <code class="language-text">java.io.PrintStream.write</code>에서 locked로 lock이 발생한 것을 확인할 수 있었다.</p>
+<p>해당 스레드 덤프의 내용을 보면 특정 스레드 하나가 RUNNABLE 상태임에도 불구하고 <code class="language-text">at java.io.PrintStream.write(PrintStream.java:480)</code>에서 locked로 lock이 발생한 것을 확인할 수 있었다.</p>
 <h2 id="원인" style="position:relative;"><a href="#%EC%9B%90%EC%9D%B8" aria-label="원인 permalink" class="anchor-header before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>원인</h2>
 <p>대부분의 로그는 파일로 별도로 떨구게 구성해두었는데, 개발 환경이다보니 어플리케이션 내부에 아래와 같이 stdout 로그를 찍는 부분이 logback 설정에 포함되어 있었고 이 부분에서 문제가 발생한 것으로 보인다.</p>
 <deckgo-highlight-code   terminal="carbon" theme="dracula" >
