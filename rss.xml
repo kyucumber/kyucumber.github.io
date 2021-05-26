@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[규규규규]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Wed, 19 May 2021 14:13:04 GMT</lastBuildDate><item><title><![CDATA[logback에서 stdout 로그 출력 시 특정 Thread가 lock을 무기한 보유하는 이슈]]></title><description><![CDATA[stdout 로그 출력 시 특정 Thread가 lock을 무기한 보유하는 이슈 정리]]></description><link>https://kyucumber.github.io/posts/spring/logback-thread-lock-issue</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/logback-thread-lock-issue</guid><pubDate>Sat, 01 May 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;운영중인 개발 환경 서버에서 504 Gateway Time-out이 발생하고 일정 시간이 지나도 회복되지 않는 문제가 발생했다.&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[규규규규]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Wed, 26 May 2021 14:35:38 GMT</lastBuildDate><item><title><![CDATA[logback에서 stdout 로그 출력 시 특정 Thread가 lock을 무기한 보유하는 이슈]]></title><description><![CDATA[stdout 로그 출력 시 특정 Thread가 lock을 무기한 보유하는 이슈 정리]]></description><link>https://kyucumber.github.io/posts/spring/logback-thread-lock-issue</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/logback-thread-lock-issue</guid><pubDate>Sat, 01 May 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;운영중인 개발 환경 서버에서 504 Gateway Time-out이 발생하고 일정 시간이 지나도 회복되지 않는 문제가 발생했다.&lt;/p&gt;
 &lt;p&gt;해당 어플리케이션의 경우 지속적으로 헬스체크를 진행하고 실패시 트래픽을 받지 않도록 구성해두었는데도 문제가 있는 장비는 제거되지 않고 계속 트래픽을 받고 있었다.&lt;/p&gt;
 &lt;p&gt;트래픽을 받는 특정 장비 내부에서 curl을 이용해 헬스체크 path에 대해 요청을 보내보았으나 아래와 같이 정상적으로 200 응답이 내려오는 것을 확인할 수 있었다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;bash&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
@@ -91,7 +91,68 @@ bash: ./redis-server-3.0.7: No such file or directory&lt;/code&gt;
         &lt;/deckgo-highlight-code&gt;
 &lt;p&gt;&lt;a href=&quot;https://askubuntu.com/questions/133389/no-such-file-or-directory-but-the-file-exists&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://askubuntu.com/questions/133389/no-such-file-or-directory-but-the-file-exists&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;파일을 찾지 못하는 경우 뿐만 아니라 운영체제 별 필요한 런타임 구성 요소가 누락되는 경우도 &lt;code class=&quot;language-text&quot;&gt;No such file or directory&lt;/code&gt;라는 형태로 에러가 출력될 수 있으며
-위 케이스는 Embedded Redis 바이너리 자체가 alpine에서 구동되지 않는 문제라 빌드 이미지를 변경해 해결했다.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[RestHighLevelClient 테스트 작성 시 SearchResponse 더미 데이터 생성하기]]></title><description><![CDATA[Spring Elasticsearch RestHighLevelClient 사용 시 단위 테스트 작성을 위한 SearchResponse 더미 데이터 생성하기]]></description><link>https://kyucumber.github.io/posts/spring/rest-high-level-client-unit-test/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/rest-high-level-client-unit-test/</guid><pubDate>Wed, 10 Feb 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Spring에서 RestHighLevelClient 관련 unit 테스트 작성시 SearchResponse의 더미 데이터 생성 예제&lt;/p&gt;
+위 케이스는 Embedded Redis 바이너리 자체가 alpine에서 구동되지 않는 문제라 빌드 이미지를 변경해 해결했다.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Gradle test fixtures 플러그인을 통해 중복 코드 줄이기]]></title><description><![CDATA[Gradle에서 test-fixtures 플러그인을 통해 테스트에서 발생하는 중복 코드를 제거하는 방법 정리]]></description><link>https://kyucumber.github.io/posts/spring/gradle-test-fixtures-plugins</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/gradle-test-fixtures-plugins</guid><pubDate>Mon, 01 Mar 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;아래와 같은 멀티모듈 구조를 가진 프로젝트에서 &lt;code class=&quot;language-text&quot;&gt;module-library&lt;/code&gt;에 포함된 &lt;code class=&quot;language-text&quot;&gt;User&lt;/code&gt;라는 클래스와 연관된 테스트를 각각의 모듈에서 작성한다고 할 때 어떤 문제점이 있을까?&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;yaml&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;├── module-one
+│   └── module-library
+│   └── test
+│       └──  OneUserTest
+├── module-two
+│   └── module-library
+│   └── test
+│       └──  TwoUserTest
+├── module-three
+│   └── module-library
+│   └── test
+│       └──  ThreeUserTest
+└── module-library
+    └── src
+        └── User&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;실제 코드를 작성할 때는 별 다른 문제가 없지만 테스트를 작성할 때 &lt;code class=&quot;language-text&quot;&gt;module-library&lt;/code&gt;에서 가지고 있는 &lt;code class=&quot;language-text&quot;&gt;User&lt;/code&gt;에 대한 Test Fixture를 중복적으로 각 모듈별로 만들어주어야 하는 귀찮은 문제가 있다.&lt;/p&gt;
+&lt;p&gt;각 모듈 &lt;code class=&quot;language-text&quot;&gt;module-one&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;module-two&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;module-three&lt;/code&gt; 테스트 패키지 하위에 필요한 Fixture를 만들어서 사용할 수 있기에 불편함을 감수하고 사용하고 있었는데
+Gradle의 &lt;code class=&quot;language-text&quot;&gt;java-test-fixtures&lt;/code&gt; plugin을 통해 Test Fixture 중복 정의를 제거할 수 있었다.&lt;/p&gt;
+&lt;h2 id=&quot;gradle-java-test-fixtures-플러그인-적용하기&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#gradle-java-test-fixtures-%ED%94%8C%EB%9F%AC%EA%B7%B8%EC%9D%B8-%EC%A0%81%EC%9A%A9%ED%95%98%EA%B8%B0&quot; aria-label=&quot;gradle java test fixtures 플러그인 적용하기 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Gradle java-test-fixtures 플러그인 적용하기&lt;/h2&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;module-library/build.gradle.kts&lt;/code&gt;&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;plugins {
+    `java-test-fixtures`
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;module-library/src/testFixtures&lt;/code&gt; 디렉토리를 생성하고 하위에 아래와 같이 Fixture 생성을 위한 클래스를 생성한다.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;module-library/src/testFixtures/kotlin/com.example/Fixtures.kt&lt;/code&gt;&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;object Fixtures {
+    fun user(cn: String): User =
+        User(
+            name = &amp;quot;김규남&amp;quot;,
+            orga = &amp;quot;무슨 조직&amp;quot;,
+        )
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;testfixtures-사용하기&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#testfixtures-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0&quot; aria-label=&quot;testfixtures 사용하기 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;testFixtures 사용하기&lt;/h2&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;module-library&lt;/code&gt;에 정의된 &lt;code class=&quot;language-text&quot;&gt;testFixtures&lt;/code&gt;를 사용하기 위해서는 Fixture의 적용이 필요한 모듈에 아래와 같이 의존성을 추가해야 한다.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;module-one/build.gradle.kts&lt;/code&gt;&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;dependencies {
+    implementation(project(&amp;quot;:module-library&amp;quot;))
+    testImplementation(testFixtures(project(&amp;quot;:module-library&amp;quot;))) // 추가
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위와 같이 의존성을 추가하고 나면 OneUserTest에서 해당 Fixtures.user 메소드를 호출할 수 있다.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;module-one/src/test/kotlin/com.example/OneUserTest.kt&lt;/code&gt;&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class OneUserTest {
+    @Test
+    fun `test`() {
+        val user = Fixtures.user()
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;다른 모듈 &lt;code class=&quot;language-text&quot;&gt;module-two&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;module-three&lt;/code&gt;도 동일하게 사용할 수 있다.&lt;/p&gt;
+&lt;p&gt;이제는 모든 모듈이 아닌 &lt;code class=&quot;language-text&quot;&gt;module-library/testFixtures&lt;/code&gt; 하위에만 Fixture 정의를 위한 코드를 추가하면 된다. &lt;/p&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://docs.gradle.org/current/userguide/java_testing.html#sec:java_test_fixtures&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Gradle Java Test Fixtures&lt;/a&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[RestHighLevelClient 테스트 작성 시 SearchResponse 더미 데이터 생성하기]]></title><description><![CDATA[Spring Elasticsearch RestHighLevelClient 사용 시 단위 테스트 작성을 위한 SearchResponse 더미 데이터 생성하기]]></description><link>https://kyucumber.github.io/posts/spring/rest-high-level-client-unit-test/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/rest-high-level-client-unit-test/</guid><pubDate>Wed, 10 Feb 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Spring에서 RestHighLevelClient 관련 unit 테스트 작성시 SearchResponse의 더미 데이터 생성 예제&lt;/p&gt;
 &lt;h2 id=&quot;searchresponse-데이터-생성을-위한-util-클래스-정의&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#searchresponse-%EB%8D%B0%EC%9D%B4%ED%84%B0-%EC%83%9D%EC%84%B1%EC%9D%84-%EC%9C%84%ED%95%9C-util-%ED%81%B4%EB%9E%98%EC%8A%A4-%EC%A0%95%EC%9D%98&quot; aria-label=&quot;searchresponse 데이터 생성을 위한 util 클래스 정의 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;SearchResponse 데이터 생성을 위한 Util 클래스 정의&lt;/h2&gt;
 &lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;ElasticsearchTestUtils.kt&lt;/code&gt;&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
