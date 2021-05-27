@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Wed, 26 May 2021 14:36:40 GMT</lastBuildDate><item><title><![CDATA[logback에서 stdout 로그 출력 시 특정 Thread가 lock을 무기한 보유하는 이슈]]></title><description><![CDATA[stdout 로그 출력 시 특정 Thread가 lock을 무기한 보유하는 이슈 정리]]></description><link>https://kyucumber.github.io/posts/spring/logback-thread-lock-issue</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/logback-thread-lock-issue</guid><pubDate>Sat, 01 May 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;운영중인 개발 환경 서버에서 504 Gateway Time-out이 발생하고 일정 시간이 지나도 회복되지 않는 문제가 발생했다.&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Thu, 27 May 2021 14:53:28 GMT</lastBuildDate><item><title><![CDATA[logback에서 stdout 로그 출력 시 특정 Thread가 lock을 무기한 보유하는 이슈]]></title><description><![CDATA[stdout 로그 출력 시 특정 Thread가 lock을 무기한 보유하는 이슈 정리]]></description><link>https://kyucumber.github.io/posts/spring/logback-thread-lock-issue</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/logback-thread-lock-issue</guid><pubDate>Sat, 01 May 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;운영중인 개발 환경 서버에서 504 Gateway Time-out이 발생하고 일정 시간이 지나도 회복되지 않는 문제가 발생했다.&lt;/p&gt;
 &lt;p&gt;해당 어플리케이션의 경우 지속적으로 헬스체크를 진행하고 실패시 트래픽을 받지 않도록 구성해두었는데도 문제가 있는 장비는 제거되지 않고 계속 트래픽을 받고 있었다.&lt;/p&gt;
 &lt;p&gt;트래픽을 받는 특정 장비 내부에서 curl을 이용해 헬스체크 path에 대해 요청을 보내보았으나 아래와 같이 정상적으로 200 응답이 내려오는 것을 확인할 수 있었다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;bash&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
@@ -243,7 +243,52 @@ Gradle의 &lt;code class=&quot;language-text&quot;&gt;java-test-fixtures&lt;/cod
         &lt;/deckgo-highlight-code&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https://discuss.elastic.co/t/elasticsearch-json-response-to-searchresponse-object/124394/4&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://discuss.elastic.co/t/elasticsearch-json-response-to-searchresponse-object/124394/4&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[Kotlin 프로젝트의 Spring Boot 2.2.x 마이그레이션]]></title><description><![CDATA[Kotlin 프로젝트의 Spring Boot 2.2.x 마이그레이션 과정에서 겪은 이슈 정리]]></description><link>https://kyucumber.github.io/posts/spring/spring-boot-2.2.x-migration</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/spring-boot-2.2.x-migration</guid><pubDate>Sun, 01 Nov 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;코틀린과 스프링 부트로 구성해둔 사내 프로젝트의 스프링 부트 버전을 2.1.x -&gt; 2.2.x로 마이그레이션하면서 겪은 이슈 정리&lt;/p&gt;
+&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[ElasticsearchSinkConnector timestamp format - week based year]]></title><description><![CDATA[ElasticsearchSinkConnector에서 timestamp 포맷이 맞지 않아 주단위 인덱스가 잘못 생성된 문제 정리]]></description><link>https://kyucumber.github.io/posts/issues/elasticsearch-sink-connector-weeke-based-index</link><guid isPermaLink="false">https://kyucumber.github.io/posts/issues/elasticsearch-sink-connector-weeke-based-index</guid><pubDate>Mon, 28 Dec 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;운영중인 시스템에서 Kafka에서 Elasticsearch로의 데이터 적재를 위해 ElasticsearchSinkConnector를 사용하던 중
+연말에 인덱스 이름이 의도하지 않은 형태로 생성되었다.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;ElasticsearchSinkConnector 설정&lt;/code&gt;&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;json&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
+transforms.TimestampRouter.timestamp.format: YYYY-&amp;#39;W&amp;#39;ww
+transforms.TimestampRouter.topic.format: index-pattern-v1-${timestamp}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;문제가-된-인덱스&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EB%AC%B8%EC%A0%9C%EA%B0%80-%EB%90%9C-%EC%9D%B8%EB%8D%B1%EC%8A%A4&quot; aria-label=&quot;문제가 된 인덱스 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;문제가 된 인덱스&lt;/h2&gt;
+&lt;p&gt;&lt;em&gt;기준일 &lt;code class=&quot;language-text&quot;&gt;2020/12/28&lt;/code&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;의도한 인덱스 패턴: &lt;code class=&quot;language-text&quot;&gt;index-pattern-v1-2020-w53&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;실제로 생성된 인덱스: &lt;code class=&quot;language-text&quot;&gt;index-pattern-v1-2020-w01&lt;/code&gt;&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;아래와 같이 코드 레벨에서 체크해봤는데, &lt;code class=&quot;language-text&quot;&gt;index-pattern-2020-w01&lt;/code&gt;이 출력된다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;DateTimeFormatter.ofPattern(&amp;quot;YYYY-MM-&amp;#39;w&amp;#39;ww&amp;quot;)
+
+requestTimeRange = localDate(&amp;quot;2020-12-28&amp;quot;) until localDate(&amp;quot;2021-01-02&amp;quot;)
+
+[index-pattern-2020-w01, index-pattern-2021-w01]&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;코드에서 &lt;code class=&quot;language-text&quot;&gt;w01&lt;/code&gt;이 나오는 것으로 보아 해당 주는 정상적으로 나온 것 같고, 2021년의 첫주라 &lt;code class=&quot;language-text&quot;&gt;index-pattern-2021-w01&lt;/code&gt;이 나오길 기대했는데
+&lt;code class=&quot;language-text&quot;&gt;index-pattern-2020-w01&lt;/code&gt;이 나오는 상황이었다.&lt;/p&gt;
+&lt;p&gt;결론은&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;주 단위 기준 년도를 사용하려면 &lt;code class=&quot;language-text&quot;&gt;YYYY&lt;/code&gt;가 아닌 &lt;code class=&quot;language-text&quot;&gt;Y&lt;/code&gt;를 사용하면 된다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://docs.oracle.com/javase/8/docs/api/java/time/format/DateTimeFormatter.html&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Java8 DateTimeFormatter Patterns for Formatting and Parsing&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code   terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;Symbol  Meaning                     Presentation      Examples
+  ------  -------                     ------------      -------
+   G       era                         text              AD; Anno Domini; A
+   u       year                        year              2004; 04
+   y       year-of-era                 year              2004; 04
+   D       day-of-year                 number            189
+   M/L     month-of-year               number/text       7; 07; Jul; July; J
+   d       day-of-month                number            10   Q/q     quarter-of-year             number/text       3; 03; Q3; 3rd quarter
+   Y       week-based-year             year              1996; 96&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;변경 후 ElasticsearchSinkConnector 설정&lt;/code&gt;&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;json&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
+transforms.TimestampRouter.timestamp.format: Y-&amp;#39;W&amp;#39;ww
+transforms.TimestampRouter.topic.format: index-pattern-v1-${timestamp}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;</content:encoded></item><item><title><![CDATA[Kotlin 프로젝트의 Spring Boot 2.2.x 마이그레이션]]></title><description><![CDATA[Kotlin 프로젝트의 Spring Boot 2.2.x 마이그레이션 과정에서 겪은 이슈 정리]]></description><link>https://kyucumber.github.io/posts/spring/spring-boot-2.2.x-migration</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/spring-boot-2.2.x-migration</guid><pubDate>Sun, 01 Nov 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;코틀린과 스프링 부트로 구성해둔 사내 프로젝트의 스프링 부트 버전을 2.1.x -&gt; 2.2.x로 마이그레이션하면서 겪은 이슈 정리&lt;/p&gt;
 &lt;h2 id=&quot;jackson-module-kotlin-is-prefix를-제거하는-버그-픽스&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#jackson-module-kotlin-is-prefix%EB%A5%BC-%EC%A0%9C%EA%B1%B0%ED%95%98%EB%8A%94-%EB%B2%84%EA%B7%B8-%ED%94%BD%EC%8A%A4&quot; aria-label=&quot;jackson module kotlin is prefix를 제거하는 버그 픽스 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Jackson module kotlin &lt;code class=&quot;language-text&quot;&gt;is&lt;/code&gt; prefix를 제거하는 버그 픽스&lt;/h2&gt;
 &lt;p&gt;기존에 존재하던 &lt;code class=&quot;language-text&quot;&gt;is&lt;/code&gt; prefix를 제거하는 버그가 해소되었다.
 아래와 같이 사용하는 코드가 있었다면 클라이언트쪽에서 찾아 변경하거나 &lt;code class=&quot;language-text&quot;&gt;@JsonProperty&lt;/code&gt;를 추가해야 할 것 같다.&lt;/p&gt;
