@@ -1,4 +1,790 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sat, 19 Jun 2021 14:32:37 GMT</lastBuildDate><item><title><![CDATA[logback에서 stdout 로그 출력 시 특정 Thread가 lock을 무기한 보유하는 이슈]]></title><description><![CDATA[stdout 로그 출력 시 특정 Thread가 lock을 무기한 보유하는 이슈 정리]]></description><link>https://kyucumber.github.io/posts/spring/logback-thread-lock-issue</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/logback-thread-lock-issue</guid><pubDate>Sat, 01 May 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;운영중인 개발 환경 서버에서 504 Gateway Time-out이 발생하고 일정 시간이 지나도 회복되지 않는 문제가 발생했습니다.
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sat, 03 Jul 2021 12:22:34 GMT</lastBuildDate><item><title><![CDATA[스프링에서 코틀린 스타일 테스트 코드 작성하기]]></title><description><![CDATA[스프링에서 코틀린 스타일 테스트 코드 작성하기]]></description><link>https://kyucumber.github.io/posts/spring/kotlin-test-with-spring</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/kotlin-test-with-spring</guid><pubDate>Sun, 06 Jun 2021 00:00:00 GMT</pubDate><content:encoded>&lt;h2 id=&quot;개요&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EA%B0%9C%EC%9A%94&quot; aria-label=&quot;개요 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;개요&lt;/h2&gt;
+&lt;p&gt;스프링 기반 프로젝트에서 코틀린을 사용하더라도 아래와 같이 기존에 사용하던 테스트 프레임워크인 &lt;code class=&quot;language-text&quot;&gt;Junit&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;Assertion&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;Mockito&lt;/code&gt; 등은 동일하게 사용할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 960px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/2691faaea6a713b79b43c8f53e0f1cdd/8b640/kotlin-with-junit-test.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 51.66666666666666%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAKCAYAAAC0VX7mAAAACXBIWXMAAAsSAAALEgHS3X78AAABTklEQVQoz41Sa3OCMBDk//+66vSDLVAdiyLPBBLyIMD2gsXaDo7NsHMHIZvduwuMtpBMQdYKLbMo2YSsoFh1GAaHaZooDjN8vgbQ40aHTOQI+r6HEgZt0UI2GjXvwZsOVc3h9/67PLF1FoG/mTOO/T5BtC+QHBKw8yd4dgFjDEJKSILqFHRvYQhKUW4NFMGf/2HFVeE4jKhygeigcTpzHD5CxGGIKIoQxzGOxyOEEDNJZzVEK6CMhjTqRrjYvxJOIzRtCsHRtA1FiaZpZniV1tqndpcYONfD6h5tSbaohk65p4dXG7MQeoU+qXOO3e6EMK6R5S3S9Iw8TTFQzSzZ8xbv7T1UuHTSv+ze3rHZvlLNEmw3L+CXFJYzyLJAVebIqwJK61WlN0JfH+fcPHMLxnH8NXf4hqNv7r6rK+UIjDEzwb2N+xv/DrBf/v9H+AL49Ax26zs09wAAAABJRU5ErkJggg==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/2691faaea6a713b79b43c8f53e0f1cdd/8ac56/kotlin-with-junit-test.webp 240w,
+/static/2691faaea6a713b79b43c8f53e0f1cdd/d3be9/kotlin-with-junit-test.webp 480w,
+/static/2691faaea6a713b79b43c8f53e0f1cdd/e46b2/kotlin-with-junit-test.webp 960w,
+/static/2691faaea6a713b79b43c8f53e0f1cdd/f992d/kotlin-with-junit-test.webp 1440w,
+/static/2691faaea6a713b79b43c8f53e0f1cdd/7017d/kotlin-with-junit-test.webp 1454w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/2691faaea6a713b79b43c8f53e0f1cdd/8ff5a/kotlin-with-junit-test.png 240w,
+/static/2691faaea6a713b79b43c8f53e0f1cdd/e85cb/kotlin-with-junit-test.png 480w,
+/static/2691faaea6a713b79b43c8f53e0f1cdd/d9199/kotlin-with-junit-test.png 960w,
+/static/2691faaea6a713b79b43c8f53e0f1cdd/07a9c/kotlin-with-junit-test.png 1440w,
+/static/2691faaea6a713b79b43c8f53e0f1cdd/8b640/kotlin-with-junit-test.png 1454w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/2691faaea6a713b79b43c8f53e0f1cdd/d9199/kotlin-with-junit-test.png&quot;
+          alt=&quot;kotlin with junit test&quot;
+          title=&quot;kotlin with junit test&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;초기 코틀린에 익숙하지 않은 상태에서 관련 지식이 없어 위와 같은 형태로 Junit, AssertJ, Mockito를 사용해 테스트를 작성했었습니다. 하지만 코틀린에 익숙해질수록 &lt;strong&gt;코틀린 스타일의 테스트를 작성할 수 없어&lt;/strong&gt; 아쉬움을 느꼈습니다.&lt;/p&gt;
+&lt;p&gt;이 글에서는 코틀린에서 Junit, AssertJ, Mockito를 사용해 테스트를 작성하는 경우의 문제점과 코틀린 진영에서 많이 사용되는 Testing 도구인 Kotest 및 Mockk 등에 대해 알아봅니다.&lt;/p&gt;
+&lt;h2 id=&quot;코틀린-dsl과-코틀린-스타일의-테스트코드&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%BD%94%ED%8B%80%EB%A6%B0-dsl%EA%B3%BC-%EC%BD%94%ED%8B%80%EB%A6%B0-%EC%8A%A4%ED%83%80%EC%9D%BC%EC%9D%98-%ED%85%8C%EC%8A%A4%ED%8A%B8%EC%BD%94%EB%93%9C&quot; aria-label=&quot;코틀린 dsl과 코틀린 스타일의 테스트코드 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;코틀린 DSL과 코틀린 스타일의 테스트코드&lt;/h2&gt;
+&lt;p&gt;코틀린에서는 아래와 형태와 같은 DSL(Domain Specific Language) 스타일의 중괄호를 활용한 코드 스타일을 제공합니다. 코틀린 내부에서 제공하는 Standard library 대부분도 DSL을 이용해 작성된 것을 볼 수 있습니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://play.kotlinlang.org/byExample/09_Kotlin_JS/06_HtmlBuilder?_gl=1*scn3we*_ga*MTExMjE5OTk1NC4xNjExNjY4NzEx*_ga_J6T75801PF*MTYyNDM2NTA0Mi4xMDguMC4xNjI0MzY1MDQyLjA.&amp;#x26;_ga=2.54260653.40338281.1624343617-1112199954.1611668711&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Type safe builders&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://kotlinlang.org/api/latest/jvm/stdlib/kotlin.collections/-list/#kotlin.collections.List&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Kotlin Standard Library&lt;/a&gt;
+&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 960px; &quot;
+    &gt;
+      &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 15.833333333333332%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAADCAYAAACTWi8uAAAACXBIWXMAAAsSAAALEgHS3X78AAAAgElEQVQI14WOuw7DIBAE/f8/mSINYMc2jwMbMBNCkaSIlJVGu1fdTGc62LeCWsBaYbUbznu0NrjgiSmNlijUWmmt/aReFeU0UwzCrAO3+4EygjG634q5t7U7QcIg58y/5JqZUjfw3uLdxvpYiCK0ctKuMvjO26abvh6UUgafXXkCeazp19XwqJYAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/e8d71d59ae84d469bcf8c845de547a9e/8ac56/kotlin-dsl-filter.webp 240w,
+/static/e8d71d59ae84d469bcf8c845de547a9e/d3be9/kotlin-dsl-filter.webp 480w,
+/static/e8d71d59ae84d469bcf8c845de547a9e/e46b2/kotlin-dsl-filter.webp 960w,
+/static/e8d71d59ae84d469bcf8c845de547a9e/f992d/kotlin-dsl-filter.webp 1440w,
+/static/e8d71d59ae84d469bcf8c845de547a9e/7017d/kotlin-dsl-filter.webp 1454w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/e8d71d59ae84d469bcf8c845de547a9e/8ff5a/kotlin-dsl-filter.png 240w,
+/static/e8d71d59ae84d469bcf8c845de547a9e/e85cb/kotlin-dsl-filter.png 480w,
+/static/e8d71d59ae84d469bcf8c845de547a9e/d9199/kotlin-dsl-filter.png 960w,
+/static/e8d71d59ae84d469bcf8c845de547a9e/07a9c/kotlin-dsl-filter.png 1440w,
+/static/e8d71d59ae84d469bcf8c845de547a9e/8b640/kotlin-dsl-filter.png 1454w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/e8d71d59ae84d469bcf8c845de547a9e/d9199/kotlin-dsl-filter.png&quot;
+          alt=&quot;kotlin dsl filter&quot;
+          title=&quot;kotlin dsl filter&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+    &lt;/span&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://kotlinlang.org/docs/scope-functions.html&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Kotlin Scope Functions (let, also, apply, run ..)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;기존에 사용하던 Junit과 AssertJ, Mockito를 사용해 테스트를 진행하게 되면 위와 같은 코틀린 스타일의 테스트 코드를 작성할 수 없습니다.
+비즈니스 로직을 코틀린 DSL을 이용해 잘 작성하더라도 테스트에서 예전 방식의 코드를 작성해야 하다 보니 코틀린에 익숙해질수록 테스트 작성이 어색해지게 됩니다.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://kotest.io/&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Kotest&lt;/a&gt;나 &lt;a href=&quot;https://mockk.io/&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Mockk&lt;/a&gt;와 같은 도구들을 사용하면 아래처럼 코틀린 DSL과 Infix를 사용해 코틀린 스타일의 테스트 코드를 작성할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 960px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/907a791ed6f8ad9865dbbe029f230f52/3115b/kotlin-style-test-code.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 37.916666666666664%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAICAYAAAD5nd/tAAAACXBIWXMAAAsSAAALEgHS3X78AAABEElEQVQoz42Ri26DMAxF8/9/ONayrkCBPCBpeIaQO5Nu0saKVEtXjiPr5thhQ6PQNxpWd+gNiWpdlZjnGcF7eOcQ1hX7CCH80Uo9wnIwnWXIkgs+kgJv7zfk1ytOSYJzmqLlFUR6gixyWF5DSgEhBKZpiib7WLwDc7aHlh01z5B6QWctlJRRYlNdEbmGH8dIvckT+Z7wgQ2wYZxQc4VKtFDKoMkz3NJzpLqVJTjn0MbgWfwY/c5svBvYto0UfavQ0VijvcMRkXMzlmWh7P4RPSOMhr024EUDntN+Pi+QRKSaFtMwRNMjsiOxgRZsiErRiE2RwRPRKzRHD7FHQ9iqqPCCZlrBSCDbB23rmL7P2/0XXgZuwef0NdYAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/907a791ed6f8ad9865dbbe029f230f52/8ac56/kotlin-style-test-code.webp 240w,
+/static/907a791ed6f8ad9865dbbe029f230f52/d3be9/kotlin-style-test-code.webp 480w,
+/static/907a791ed6f8ad9865dbbe029f230f52/e46b2/kotlin-style-test-code.webp 960w,
+/static/907a791ed6f8ad9865dbbe029f230f52/f992d/kotlin-style-test-code.webp 1440w,
+/static/907a791ed6f8ad9865dbbe029f230f52/882b9/kotlin-style-test-code.webp 1920w,
+/static/907a791ed6f8ad9865dbbe029f230f52/9eba6/kotlin-style-test-code.webp 3924w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/907a791ed6f8ad9865dbbe029f230f52/8ff5a/kotlin-style-test-code.png 240w,
+/static/907a791ed6f8ad9865dbbe029f230f52/e85cb/kotlin-style-test-code.png 480w,
+/static/907a791ed6f8ad9865dbbe029f230f52/d9199/kotlin-style-test-code.png 960w,
+/static/907a791ed6f8ad9865dbbe029f230f52/07a9c/kotlin-style-test-code.png 1440w,
+/static/907a791ed6f8ad9865dbbe029f230f52/29114/kotlin-style-test-code.png 1920w,
+/static/907a791ed6f8ad9865dbbe029f230f52/3115b/kotlin-style-test-code.png 3924w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/907a791ed6f8ad9865dbbe029f230f52/d9199/kotlin-style-test-code.png&quot;
+          alt=&quot;kotlin style test code&quot;
+          title=&quot;kotlin style test code&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;h2 id=&quot;kotest&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#kotest&quot; aria-label=&quot;kotest permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Kotest&lt;/h2&gt;
+&lt;p&gt;코틀린 진영에서 가장 많이 사용되는 테스트 프레임워크입니다. 코틀린 DSL을 통한 테스트 작성을 지원합니다.
+&lt;code class=&quot;language-text&quot;&gt;Kotest&lt;/code&gt; 에서는 String Spec, Annotation Spec, Describe Spec 등의 테스트 레이아웃을 제공하며 Assertion을 위한 라이브러리 기능도 제공하고 있습니다.&lt;/p&gt;
+&lt;p&gt;Kotest를 사용하기 위해서는 아래와 같은 설정 / 의존성 추가가 필요합니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;test {
+    useJUnitPlatform()
+}
+
+dependencies {
+    testImplementation(&amp;quot;io.kotest:kotest-runner-junit5:${Versions.KOTEST}&amp;quot;)
+    testImplementation(&amp;quot;io.kotest:kotest-assertions-core:${Versions.KOTEST}&amp;quot;)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h3 id=&quot;kotest-test-framework&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#kotest-test-framework&quot; aria-label=&quot;kotest test framework permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Kotest Test Framework&lt;/h3&gt;
+&lt;p&gt;Kotest는 테스트를 위한 10가지 가량의 레이아웃을 제공합니다&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 902px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/a82ffeca95ac2bbdc856d40742ef0da7/58213/kotest-test-frameworks.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 130.83333333333334%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAaCAYAAAC3g3x9AAAACXBIWXMAAAsSAAALEgHS3X78AAADSElEQVRIx4WUDXeiPBCF/f9/brf7vtvWr4ICKoioED6D3p07GNZae5ZzLkNCmExmHmZyvV7RXy54vC4y96jHi9/ev+d40vfDwjCKMJvN8fr2hiAIRqfuI15BGOL19Q3T6Uxt0zSjY7du4qIzpkCWpYiTBMfj6WlUp9MZ2+0WaZpit4vRdt2XKCe8lU2PshWnzf1xgLZtZZNMHeR5jmeXi26MkDdT9zjkFtGhRd32XKYLGnHIVARBiCTZjw7UfpPPie17mLJGWdWo6ga5qVUcU3XT6rwpKz3y+ZzjnBdq88Igk/RQfLa2Z1F6rOMC86DAMhIbDipMJQvPUqR3vL3P8D6dYzZfiJ3peDZfYrH0MJ0t8PPlP6zWIVhgddhJcq39Kya7kch45M5a3ZniB7R8r2vaTt93ndW19DVhNvbnHmHKHFr4cYeqHTJELFarFTzPQxRtsFgs4fsrcWqfFmjARnYddnQ7Dc8uCkaglnMShZvruq/SCHmL9gZBbLDaDTYvKi3IUYrw4a3wIVEFYYTlhwfPX2tR+J6FcipE3EgdHs8VkqxELNodSlS3CrNy+/SAzXaHZJ8KQhtsBejClCMFTnTKVAwcVhZ5aZVBMpnLmPM84uGQoSgKlTESvUTHwlwu16f/+4RAHk2P3dGqTU5WizQUpcV6vRaoE8RxjM1mK9ooFd8WhWAr1Br2ADer645B647oCsU17hsnjkewA4Id5vjt5wgSOVpZqvNUjvvy63/8+PkiAM818XQ+qPqr2/xYlK5rP4FNSOsb2Bf9R68KNcffStZbB3ZW9NhmA9zJLX8ObN/3sVwutW396+LGWmXC3LQWVdNJpTuJxt5A7m45qjQK5kihfqZ7sLepkQZhsKEVuMljKU4INoFeS/si3CfpMPcwfwLb3IGdCdh0sj9W2ArYh9NQXf4RBHkXJ2oZLU/zCPUXsCt2bBGtqaW79AOk5I0wU3Vd33phrh8+At33I9gXnAToKO2Qni2CPfN4GcGOpGOvBG4WxfN87d6u27ju/alj88j1Dea6Gax26BuwjXYYJr5XsTCuiz9qBDtMjHbp6TrXrj0LcoT7Ulv7b+nY0WanOcod1E+L4sCWMLnj92rG7v0vsJnHP4g03A9WN7OTAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/a82ffeca95ac2bbdc856d40742ef0da7/8ac56/kotest-test-frameworks.webp 240w,
+/static/a82ffeca95ac2bbdc856d40742ef0da7/d3be9/kotest-test-frameworks.webp 480w,
+/static/a82ffeca95ac2bbdc856d40742ef0da7/5cb76/kotest-test-frameworks.webp 902w&quot;
+          sizes=&quot;(max-width: 902px) 100vw, 902px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/a82ffeca95ac2bbdc856d40742ef0da7/8ff5a/kotest-test-frameworks.png 240w,
+/static/a82ffeca95ac2bbdc856d40742ef0da7/e85cb/kotest-test-frameworks.png 480w,
+/static/a82ffeca95ac2bbdc856d40742ef0da7/58213/kotest-test-frameworks.png 902w&quot;
+          sizes=&quot;(max-width: 902px) 100vw, 902px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/a82ffeca95ac2bbdc856d40742ef0da7/58213/kotest-test-frameworks.png&quot;
+          alt=&quot;kotlin test frameworks&quot;
+          title=&quot;kotlin test frameworks&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;Kotest에서 익숙하고 많이 사용하는 몇가지 스타일에 대해 살펴보겠습니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/kyucumber/kotlin-testing-with-spring-boot/blob/master/src/test/kotlin/org/kyucumber/CalculatorAnnotationSpec.kt&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Kotest Annotation Spec&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;기존 Junit 방식과 가장 유사한 방식입니다. 별 다른 장점이 없는 레이아웃이지만 Junit에서 Kotest로의 마이그레이션이 필요한 상황이라면 나쁘지 않은 선택이 될 수 있습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;internal class CalculatorAnnotationSpec: AnnotationSpec() {
+    private val sut = Calculator()
+
+    @Test
+    fun `1과 2를 더하면 3이 반환된다`() {
+        val result = sut.calculate(&amp;quot;1 + 2&amp;quot;)
+
+        result shouldBe 3
+    }
+
+    @Test
+    fun `식을 입력하면, 해당하는 결과값이 반환된다`() {
+        calculations.forAll { (expression, answer) -&amp;gt;
+            val result = sut.calculate(expression)
+
+            result shouldBe answer
+        }
+    }
+
+    @Test
+    fun `입력값이 null 이거나 빈 공백 문자일 경우 IllegalArgumentException 예외를 던진다`() {
+        blanks.forAll {
+            shouldThrow&amp;lt;IllegalArgumentException&amp;gt; {
+                sut.calculate(it)
+            }
+        }
+    }
+
+    @Test
+    fun `사칙연산 기호 이외에 다른 문자가 연산자로 들어오는 경우 IllegalArgumentException 예외를 던진다 `() {
+        invalidInputs.forAll {
+            shouldThrow&amp;lt;IllegalArgumentException&amp;gt; {
+                sut.calculate(it)
+            }
+        }
+    }
+
+    private val calculations = listOf(
+        &amp;quot;1 + 3 * 5&amp;quot; to 20.0,
+        &amp;quot;2 - 8 / 3 - 3&amp;quot; to -5.0,
+        &amp;quot;1 + 2 + 3 + 4 + 5&amp;quot; to 15.0
+    )
+    private val blanks = listOf(&amp;quot;&amp;quot;, &amp;quot; &amp;quot;, &amp;quot;    &amp;quot;)
+    private val invalidInputs = listOf(&amp;quot;1 &amp;amp; 2&amp;quot;, &amp;quot;1 + 5 % 1&amp;quot;)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/kyucumber/kotlin-testing-with-spring-boot/blob/master/src/test/kotlin/org/kyucumber/CalculatorBehaviorSpec.kt&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Kotest Behavior Spec&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;기존 스프링 기반 프로젝트에서 작성하던 Given, When, Then 패턴을 코틀린 DSL을 이용해 간결하게 정의할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 934px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/7e1a287b1faa14fe1c725c6bb8e1d4b6/078fe/kotest-behavior-spec.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 59.583333333333336%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAMCAYAAABiDJ37AAAACXBIWXMAAAsSAAALEgHS3X78AAACEUlEQVQoz11T2Y7TQBD0hyxCwEqAULIskJDDHs/l+z6TXfj/3yi6x0m04aHUdtJTU9XV9vKyRqgtZJSgbDpUbX9DUbdo+hE2yXEMFfa+IIRLDcLb+1EognQ9XpAaDNMJ59e/qJoW/TCh6QZ0/YKm7ZDlBYyNUJQVyqpyNUkzV/k/PxAIQglfCCLUGusgxbcwwQ9Z4Elk+B7meNxovH8WePcU4GF1xMPax4efEp82hqDx8ZfC49Y4cM/nnSWeDJ5NMqx3EqujwiHNoYqRMOAQ19jqAr9NSc8NgqzHPqqxsyWOSYPVXuPLRuDrNnR4DiJs5IVQkFypNHSsUXYVBrZN9qd5Jts9bBQjimOybZ11G0WuP5TKQUgJbSz1JPBCZZaBEgKpIaxC0Ta3UHqabz/OiEg9h8B9h0BezqhbIHzWxCk8QTctCdFQKSVfSZgsJsIOedWgpZQ5sIy2gQkPlC6De/nctTKhpk1xlv03CgOjkFYFJd6hJIXz+dUp7MYJ3JvmpVNyuJDdEdoYHu/e/4RxmaEmy0wyzmdnfTydaScHnF7+uAsUHX6r2FlmhUlW3Mn3acAmj1F3vSPtJ1JHIbF1nitXvogd1LSvLOjK4QjFXSjGhZI3tbPLypiMn3nZWRkT8mU8Yx4HfxTcw/OTJoJ3JbvOw6c1kPT11P2icDq9OJXDfHKVSXkMrM4R0u8lrdjV8j/ZFbLsYUnh4wAAAABJRU5ErkJggg==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/7e1a287b1faa14fe1c725c6bb8e1d4b6/8ac56/kotest-behavior-spec.webp 240w,
+/static/7e1a287b1faa14fe1c725c6bb8e1d4b6/d3be9/kotest-behavior-spec.webp 480w,
+/static/7e1a287b1faa14fe1c725c6bb8e1d4b6/7d4d8/kotest-behavior-spec.webp 934w&quot;
+          sizes=&quot;(max-width: 934px) 100vw, 934px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/7e1a287b1faa14fe1c725c6bb8e1d4b6/8ff5a/kotest-behavior-spec.png 240w,
+/static/7e1a287b1faa14fe1c725c6bb8e1d4b6/e85cb/kotest-behavior-spec.png 480w,
+/static/7e1a287b1faa14fe1c725c6bb8e1d4b6/078fe/kotest-behavior-spec.png 934w&quot;
+          sizes=&quot;(max-width: 934px) 100vw, 934px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/7e1a287b1faa14fe1c725c6bb8e1d4b6/078fe/kotest-behavior-spec.png&quot;
+          alt=&quot;kotest behavior spec&quot;
+          title=&quot;kotest behavior spec&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;internal class CalculatorBehaviorSpec : BehaviorSpec({
+    val sut = Calculator()
+    given(&amp;quot;calculate&amp;quot;) {
+        val expression = &amp;quot;1 + 2&amp;quot;
+        `when`(&amp;quot;1과 2를 더하면&amp;quot;) {
+            val result = sut.calculate(expression)
+            then(&amp;quot;3이 반환된다&amp;quot;) {
+                result shouldBe 3
+            }
+        }
+
+        val calculations = listOf(
+            &amp;quot;1 + 3 * 5&amp;quot; to 20.0,
+            &amp;quot;2 - 8 / 3 - 3&amp;quot; to -5.0,
+            &amp;quot;1 + 2 + 3 + 4 + 5&amp;quot; to 15.0
+        )
+        `when`(&amp;quot;수식을 입력하면&amp;quot;) {
+            then(&amp;quot;해당하는 결과값이 반환된다&amp;quot;) {
+                calculations.forAll { (expression, answer) -&amp;gt;
+                    val result = sut.calculate(expression)
+
+                    result shouldBe answer
+                }
+            }
+        }
+
+        val blanks = listOf(&amp;quot;&amp;quot;, &amp;quot; &amp;quot;, &amp;quot;    &amp;quot;)
+        `when`(&amp;quot;입력값이 null이거나 빈 값인 경우&amp;quot;) {
+            then(&amp;quot;IllegalArgumentException 예외를 던진다&amp;quot;){
+                blanks.forAll {
+                    shouldThrow&amp;lt;IllegalArgumentException&amp;gt; {
+                        sut.calculate(it)
+                    }
+                }
+            }
+        }
+
+        val invalidInputs = listOf(&amp;quot;1 &amp;amp; 2&amp;quot;, &amp;quot;1 + 5 % 1&amp;quot;)
+        `when`(&amp;quot;사칙연산 기호 이외에 다른 연산자가 들어오는 경우&amp;quot;) {
+            then(&amp;quot;IllegalArgumentException 예외를 던진다&amp;quot;){
+                invalidInputs.forAll {
+                    shouldThrow&amp;lt;IllegalArgumentException&amp;gt; {
+                        sut.calculate(it)
+                    }
+                }
+            }
+        }
+    }
+})&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/kyucumber/kotlin-testing-with-spring-boot/blob/master/src/test/kotlin/org/kyucumber/CalculatorDescribeSpec.kt&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Kotest Describe Spec&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Describe, Context, It 패턴으로 테스트를 작성해보셨던 분들이라면 익숙한 스타일입니다.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 938px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/ec33dc2665e4b3464bf002da57af2d43/dc333/kotest-describe-spec.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 59.166666666666664%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAMCAYAAABiDJ37AAAACXBIWXMAAAsSAAALEgHS3X78AAACNklEQVQoz12Sy3LUMBBF/UmEgiRjy7Zsj2zLb1ueNwkULCaEULAilaz5BEilMkV+9dKtMHmwuNUtyX36qmVHD6eQ1QqyfY9yuUW12qLZfKZ4ZtWdfIEyn+DpFSbTHq4aMPlPbmrgsTIDx0sjNGYGs/6ApOyQNgaqNkjrAbobkVYdZFYiSBTyQqOsKhRliSzP7FqXBTzhwRUCx56AE8QR/PlPiI93qM52aM7v0V/cw93c4mC8wevZDV6ZX5T/xpvlndXbf/FwvcPx5g8OZrfwT3fQ23s4aV7AzU7g1udIFl/RnF6hJen1JdTiB7LVJfTmCvn6Ctny0q6Ld9cIum84zLc40mdWfnOB6fgdTpJmEMJF4HsIIw9pEWPoWxjTQqkIUvoIQ+9RQeDZPY5CTCB8kjimM4EkkXDCKIEXRPDCGEIm8JOY5lagM3P04wJ52SCMFWKVQ05TxKlGEE1tjaAaruPcp72EzpxA8oakA/6AwRKxVgQcUTYdxsUS7WBQtT0qWvfjDIrGxDViX0O5T5xYZXCmmaZN+bBJ3Xx6pGmZoe56NP1ggTXBuPGRK0j+C9geyNECubP/rAsD01rDzBfohhHDbI5hnNu8qBrrbiKCR9nbPQcq6/CpC8ekSB9As4W9etMb9PSvslvO2Tk3aLoBkv7PvZmIZuwE9lHkk8Mkgipz64pnt4dxzpHX7J7hdhw0mqJuLcwCLcwPX8wkTGPUff8AJQCL3XQE5BGxazsGinxNrrGPQsC/q0DBwTPp68gAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/ec33dc2665e4b3464bf002da57af2d43/8ac56/kotest-describe-spec.webp 240w,
+/static/ec33dc2665e4b3464bf002da57af2d43/d3be9/kotest-describe-spec.webp 480w,
+/static/ec33dc2665e4b3464bf002da57af2d43/e5056/kotest-describe-spec.webp 938w&quot;
+          sizes=&quot;(max-width: 938px) 100vw, 938px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/ec33dc2665e4b3464bf002da57af2d43/8ff5a/kotest-describe-spec.png 240w,
+/static/ec33dc2665e4b3464bf002da57af2d43/e85cb/kotest-describe-spec.png 480w,
+/static/ec33dc2665e4b3464bf002da57af2d43/dc333/kotest-describe-spec.png 938w&quot;
+          sizes=&quot;(max-width: 938px) 100vw, 938px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/ec33dc2665e4b3464bf002da57af2d43/dc333/kotest-describe-spec.png&quot;
+          alt=&quot;kotest describe spec&quot;
+          title=&quot;kotest describe spec&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;internal class CalculatorDescribeSpec : DescribeSpec({
+    val sut = Calculator()
+
+    describe(&amp;quot;calculate&amp;quot;) {
+        context(&amp;quot;식이 주어지면&amp;quot;) {
+            val inputs = listOf(
+                &amp;quot;1 + 3 * 5&amp;quot; to 20.0,
+                &amp;quot;2 - 8 / 3 - 3&amp;quot; to -5.0,
+                &amp;quot;1 + 2 + 3 + 4 + 5&amp;quot; to 15.0
+            )
+
+            it(&amp;quot;해당 식에 대한 결과값이 반환된다&amp;quot;) {
+                inputs.forAll { (expression, data) -&amp;gt;
+                    val result = sut.calculate(expression)
+
+                    result shouldBe data
+                }
+            }
+        }
+
+        context(&amp;quot;0으로 나누는 경우&amp;quot;) {
+            it(&amp;quot;Infinity를 반환한다&amp;quot;) {
+                val result = sut.calculate(&amp;quot;1 / 0&amp;quot;)
+
+                result shouldBe Double.POSITIVE_INFINITY
+            }
+        }
+
+        context(&amp;quot;입력값이 null이거나 공백인 경우&amp;quot;) {
+            val blanks = listOf(&amp;quot;&amp;quot;, &amp;quot; &amp;quot;, &amp;quot;      &amp;quot;)
+            it(&amp;quot;IllegalArgumentException 예외를 던진다&amp;quot;) {
+                blanks.forAll {
+                    shouldThrow&amp;lt;IllegalArgumentException&amp;gt; {
+                        sut.calculate(it)
+                    }
+                }
+            }
+        }
+
+        context(&amp;quot;사칙연산 기호 이외에 다른 문자가 연산자로 들어오는 경우&amp;quot;) {
+            val invalidInputs = listOf(&amp;quot;1 &amp;amp; 2&amp;quot;, &amp;quot;1 + 5 % 1&amp;quot;)
+            it(&amp;quot;IllegalArgumentException 예외를 던진다&amp;quot;) {
+                invalidInputs.forAll {
+                    shouldThrow&amp;lt;IllegalArgumentException&amp;gt; {
+                        sut.calculate(it)
+                    }
+                }
+            }
+        }
+    }
+})&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h3 id=&quot;kotest-assertions&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#kotest-assertions&quot; aria-label=&quot;kotest assertions permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Kotest Assertions&lt;/h3&gt;
+&lt;p&gt;위에 작성한 예제 코드에서는 Kotest의 Assertion이 사용되었습니다. Kotest에서 제공하는 간단한 몇가지 Assertion 표현식을 살펴보겠습니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Assertions&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;shouldBe&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;name shouldBe &amp;quot;kyunam&amp;quot;
+
+// == assertThat(name).isEqualTo(&amp;quot;kyunam&amp;quot;)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Inspectors&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;forExactly&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;mylist.forExactly(3) {
+    it.city shouldBe &amp;quot;Chicago&amp;quot;
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;forAtLeast&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val xs = listOf(&amp;quot;sam&amp;quot;, &amp;quot;gareth&amp;quot;, &amp;quot;timothy&amp;quot;, &amp;quot;muhammad&amp;quot;)
+
+xs.forAtLeast(2) {
+    it.shouldHaveMinLength(7)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Exceptions&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;shouldThrow&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;shouldThrow&amp;lt;IllegalAccessException&amp;gt; {
+  // code in here that you expect to throw an IllegalAccessException
+}
+
+// == assertThrows&amp;lt;IllegalAccessException&amp;gt; { }&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;shouldThrowAny&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val exception = shouldThrowAny {
+  // test here can throw any type of Throwable!
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;kotest-with-springboottest&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#kotest-with-springboottest&quot; aria-label=&quot;kotest with springboottest permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Kotest with @SpringBootTest&lt;/h3&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;@SpringBootTest&lt;/code&gt;와 같은 통합 테스트에서도 Kotest의 테스트 레이아웃을 사용할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;사용을 위해서는 아래와 같은 spring extension 의존성의 추가가 필요합니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;dependencies {
+    testImplementation(&amp;quot;io.kotest:kotest-extensions-spring:${Versions.KOTEST}&amp;quot;)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/kyucumber/kotlin-testing-with-spring-boot/blob/master/src/test/kotlin/org/kyucumber/CalculatorSpringBootSpec.kt&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Kotest - using &lt;code class=&quot;language-text&quot;&gt;@SpringBootTest&lt;/code&gt;&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;@SpringBootTest
+internal class CalculatorSpringBootSpec : DescribeSpec() {
+    override fun extensions() = listOf(SpringExtension)
+
+    @Autowired
+    private lateinit var calculatorService: CalculatorService
+
+    init {
+        this.describe(&amp;quot;calculate&amp;quot;) {
+            context(&amp;quot;식이 주어지면&amp;quot;) {
+                val inputs = listOf(
+                    &amp;quot;1 + 3 * 5&amp;quot; to 20.0,
+                    &amp;quot;2 - 8 / 3 - 3&amp;quot; to -5.0,
+                    &amp;quot;1 + 2 + 3 + 4 + 5&amp;quot; to 15.0
+                )
+                it(&amp;quot;해당 식에 대한 결과값이 반환된다&amp;quot;) {
+                    inputs.forAll { (expression, data) -&amp;gt;
+                        val result = calculatorService.calculate(expression)
+
+                        result shouldBe data
+                    }
+                }
+            }
+        }
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h3 id=&quot;kotest-isolation-mode&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#kotest-isolation-mode&quot; aria-label=&quot;kotest isolation mode permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Kotest Isolation Mode&lt;/h3&gt;
+&lt;p&gt;Kotest는 아래와 같이 테스트 간 격리에 대한 설정을 제공하고 있습니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/kotest/kotest/blob/master/doc/isolation_mode.md&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Kotest Isolation Mode&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;SingleInstance - 기본값&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;InstancePerTest&lt;/li&gt;
+&lt;li&gt;InstancePerLeaf&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Kotest에서는 테스트 간 격리 레벨에 대해 디폴트로 SingleInstance를 설정하고 있으며 이 경우 Mocking 등 때문에 테스트 간 충돌이 발생할 수 있습니다. 따라서 테스트간 완전한 격리를 위해서는 아래와 같이 IsolationMode를 &lt;code class=&quot;language-text&quot;&gt;InstancePerLeaf&lt;/code&gt;로 지정해 사용해야 합니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;internal class CalculatorDescribeSpec : DescribeSpec({
+    isolationMode = IsolationMode.InstancePerLeaf
+    // ...
+})&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;mockk&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#mockk&quot; aria-label=&quot;mockk permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Mockk&lt;/h2&gt;
+&lt;p&gt;Mockk는 코틀린 스타일의 Mock 프레임워크입니다.
+Mockito를 사용하는 경우 아래처럼 코틀린 DSL 스타일의 테스트를 작성할 수 없습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;given(userRepository.findById(1L).willReturn(expectedUser)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;Mockk를 사용하면 아래와 같이 코틀린 DSL 스타일로 Mock 테스트를 작성할 수 있습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;every { userRepository.findById(1L) } answers { expectedUser }&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;Mockk의 사용을 위해서는 아래와 같은 의존성 추가가 필요합니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;dependencies {
+    testImplementation(&amp;quot;io.mockk:mockk:10.10.6&amp;quot;)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h3 id=&quot;mockk-features&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#mockk-features&quot; aria-label=&quot;mockk features permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Mockk features&lt;/h3&gt;
+&lt;p&gt;Mockito와 큰 차이가 없습니다. 대응되는 키워드만 잘 찾으면 러닝커브 없이 바로 사용이 가능합니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Mocking&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val permissionRepository = mockk&amp;lt;PermissionRepository&amp;gt;()&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;SpyK&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val car = spyk(Car()) // or spyk&amp;lt;Car&amp;gt;() to call default constructor&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Constructor mocks&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class MockCls {
+  fun add(a: Int, b: Int) = a + b
+}
+
+mockkConstructor(MockCls::class)
+
+every { anyConstructed&amp;lt;MockCls&amp;gt;().add(1, 2) } returns 4
+
+assertEquals(4, MockCls().add(1, 2)) // note new object is created
+
+verify { anyConstructed&amp;lt;MockCls&amp;gt;().add(1, 2) }&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Relaxed mock&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val car = mockk&amp;lt;PermissionRepository&amp;gt;(relaxed = true)
+
+// unnecessary
+// every { permissionRepository.delete(id) } just Runs&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Answers&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;answers&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;every { permissionRepository.save(permission) } answers { permission }&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;throws&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;every { permissionRepository.findByIdOrNull(id) } throws EntityNotFoundException()&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;just Runs&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;every { permissionRepository.delete(id) } just Runs&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;retrunsMany&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;every { permissionRepository.save(permission) } returnsMany listOf(firstPermission, secondPermission)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;returns&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;every { permissionRepository.save(permission) } retunrs permission
+every { permissionRepository.save(permission) } retunrs firstPermission andThen secondPermission&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Argument matching&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;any&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;every { permissionRepository.save(any()) } retunrs permission&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;varargs&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;every { obj.manyMany(5, 6, *varargAll { it == 7 }) } returns 3
+
+println(obj.manyMany(5, 6, 7)) // 3
+println(obj.manyMany(5, 6, 7, 7)) // 3
+println(obj.manyMany(5, 6, 7, 7, 7)) // 3
+
+every { obj.manyMany(5, 6, *varargAny { nArgs &amp;gt; 5 }, 7) } returns 5
+
+println(obj.manyMany(5, 6, 4, 5, 6, 7)) // 5
+println(obj.manyMany(5, 6, 4, 5, 6, 7, 7)) // 5&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;Verification&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;verify&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;verify(atLeast = 3) { car.accelerate(allAny()) }
+verify(atMost  = 2) { car.accelerate(fromSpeed = 10, toSpeed = or(20, 30)) }
+verify(exactly = 1) { car.accelerate(fromSpeed = 10, toSpeed = 20) }
+verify(exactly = 0) { car.accelerate(fromSpeed = 30, toSpeed = 10) } // means no calls were performed&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;verifyAll&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;verifyAll {
+    obj.sum(1, 3)
+    obj.sum(1, 2)
+    obj.sum(2, 2)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;verifySequnece&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;verifySequence {
+    obj.sum(1, 2)
+    obj.sum(1, 3)
+    obj.sum(2, 2)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;springmockk-spek&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#springmockk-spek&quot; aria-label=&quot;springmockk spek permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;SpringMockk, Spek&lt;/h2&gt;
+&lt;p&gt;이외에 아래와 같은 테스트 도구들도 있습니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;SpringMockk&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code class=&quot;language-text&quot;&gt;@MockkBean&lt;/code&gt; , &lt;code class=&quot;language-text&quot;&gt;@SpykBean&lt;/code&gt; 기능 제공&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;@MockkBean // @MockBean 대신 @MockkBean 사용 가능
+private lateinit var userRepository: UserRepository&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Spek&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Kotest의 Describe Spec의 기능 제공&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;internal class CalculatorDescribeSpec : Spek({
+    val sut = Calculator()
+
+    describe(&amp;quot;calculate&amp;quot;) {
+        context(&amp;quot;식이 주어지면&amp;quot;) {
+            val inputs = listOf(
+                &amp;quot;1 + 3 * 5&amp;quot; to 20.0,
+                &amp;quot;2 - 8 / 3 - 3&amp;quot; to -5.0,
+                &amp;quot;1 + 2 + 3 + 4 + 5&amp;quot; to 15.0
+            )
+
+            it(&amp;quot;해당 식에 대한 결과값이 반환된다&amp;quot;) {
+                inputs.forAll { (expression, data) -&amp;gt;
+                    val result = sut.calculate(expression)
+
+                    result shouldBe data
+                }
+            }
+        }
+
+        context(&amp;quot;0으로 나누는 경우&amp;quot;) {
+            it(&amp;quot;Infinity를 반환한다&amp;quot;) {
+                val result = sut.calculate(&amp;quot;1 / 0&amp;quot;)
+
+                result shouldBe Double.POSITIVE_INFINITY
+            }
+        }
+
+        context(&amp;quot;입력값이 null이거나 공백인 경우&amp;quot;) {
+            val blanks = listOf(&amp;quot;&amp;quot;, &amp;quot; &amp;quot;, &amp;quot;      &amp;quot;)
+            it(&amp;quot;IllegalArgumentException 예외를 던진다&amp;quot;) {
+                blanks.forAll {
+                    shouldThrow&amp;lt;IllegalArgumentException&amp;gt; {
+                        sut.calculate(it)
+                    }
+                }
+            }
+        }
+
+        context(&amp;quot;사칙연산 기호 이외에 다른 문자가 연산자로 들어오는 경우&amp;quot;) {
+            val invalidInputs = listOf(&amp;quot;1 &amp;amp; 2&amp;quot;, &amp;quot;1 + 5 % 1&amp;quot;)
+            it(&amp;quot;IllegalArgumentException 예외를 던진다&amp;quot;) {
+                invalidInputs.forAll {
+                    shouldThrow&amp;lt;IllegalArgumentException&amp;gt; {
+                        sut.calculate(it)
+                    }
+                }
+            }
+        }
+    }
+})&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://kotest.io/&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://kotest.io&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://mockk.io/&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://mockk.io/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://kotlinlang.org/docs/type-safe-builders.html&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://kotlinlang.org&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[logback에서 stdout 로그 출력 시 특정 Thread가 lock을 무기한 보유하는 이슈]]></title><description><![CDATA[stdout 로그 출력 시 특정 Thread가 lock을 무기한 보유하는 이슈 정리]]></description><link>https://kyucumber.github.io/posts/spring/logback-thread-lock-issue</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/logback-thread-lock-issue</guid><pubDate>Sat, 01 May 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;운영중인 개발 환경 서버에서 504 Gateway Time-out이 발생하고 일정 시간이 지나도 회복되지 않는 문제가 발생했습니다.
 해당 어플리케이션의 경우 지속적으로 헬스체크를 진행하고 실패시 트래픽을 받지 않도록 구성해두었는데도 문제가 있는 장비는 제거되지 않고 계속 트래픽을 받고 있었습니다.&lt;/p&gt;
 &lt;p&gt;트래픽을 받는 특정 장비 내부에서 curl을 이용해 헬스체크 path에 대해 요청을 보내보았으나 아래와 같이 정상적으로 200 응답이 내려오는 것을 확인할 수 있었습니다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;bash&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
@@ -1136,7 +1922,7 @@ Group=ec2-user
 // 이 부분을 추가해주어야 합니다.
 EnvironmentFile=/kyucumber/EnvironmentFile&lt;/code&gt;
         &lt;/deckgo-highlight-code&gt;
-&lt;p&gt;위와 같이 EnvironmentFile을 등록하면 systemd에서 &lt;code class=&quot;language-text&quot;&gt;APP_IMAGE_TAG&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;PROFILE&lt;/code&gt; 등의 환경 변수를 사용할 수 있습니다.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Elasticsearch Node, Index, Shard]]></title><description><![CDATA[Elasticsearch의 Node, Index, Shard]]></description><link>https://kyucumber.github.io/posts/elasticsearch/elasticsearch-node-index-shard</link><guid isPermaLink="false">https://kyucumber.github.io/posts/elasticsearch/elasticsearch-node-index-shard</guid><pubDate>Sat, 12 Oct 2019 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;팀 내 여러 파트에서 Elasticsearch를 활용하고 있습니다. 어플리케이션 레벨에서 데이터 조회 위한 코드를 작성하는 부분이야 계속 하다보면 늘겠지만 Elasticsearch 인프라에 관련된 부분에 대해서는 부족한 것 같아서 관련 내용을 정리하고 있습니다.&lt;/p&gt;
+&lt;p&gt;위와 같이 EnvironmentFile을 등록하면 systemd에서 &lt;code class=&quot;language-text&quot;&gt;APP_IMAGE_TAG&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;PROFILE&lt;/code&gt; 등의 환경 변수를 사용할 수 있습니다.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Elasticsearch Node, Index, Shard, Segment]]></title><description><![CDATA[Elasticsearch의 Node, Index, Shard, Segment]]></description><link>https://kyucumber.github.io/posts/elasticsearch/elasticsearch-node-index-shard-segment</link><guid isPermaLink="false">https://kyucumber.github.io/posts/elasticsearch/elasticsearch-node-index-shard-segment</guid><pubDate>Sat, 12 Oct 2019 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;팀 내 여러 파트에서 Elasticsearch를 활용하고 있습니다. 어플리케이션 레벨에서 데이터 조회 위한 코드를 작성하는 부분이야 계속 하다보면 늘겠지만 Elasticsearch 인프라에 관련된 부분에 대해서는 부족한 것 같아서 관련 내용을 정리하고 있습니다.&lt;/p&gt;
 &lt;h2 id=&quot;nodes&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#nodes&quot; aria-label=&quot;nodes permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Nodes&lt;/h2&gt;
 &lt;p&gt;Elasticsearch의 경우 여러 노드들을 모아 클러스터를 구성할 수 있습니다. 공식 문서에서는 클러스터가 커지고 변환이나 머신 러닝 등의 작업이 지속적으로 일어나는 경우 각각의 목적에 맞는 노드를 분리하는게 좋다고 설명하고 있습니다.&lt;/p&gt;
 &lt;ul&gt;
@@ -1180,7 +1966,7 @@ EnvironmentFile=/kyucumber/EnvironmentFile&lt;/code&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;&lt;a href=&quot;https://www.elastic.co/guide/en/elasticsearch/reference/current/index-templates.html&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Index Template&lt;/a&gt;&lt;/strong&gt;&lt;/li&gt;
 &lt;/ul&gt;
-&lt;p&gt;Index Template을 정의해 Elasticsearch에서 인덱스를 구성하는 방법을 미리 정의할 수 있습니다. 관련한 자세한 내용은 필요할 때 아래 문서를 참고합니다.&lt;/p&gt;
+&lt;p&gt;Index Template을 정의해 Elasticsearch에서 인덱스를 구성하는 방법을 미리 정의할 수 있습니다. 관련 자세한 내용은 위 링크를 참고합니다.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;Index Template이 설정되어 있지 않으면 자동으로 필드 생성 및 타입을 결정해 예기치 않은 문제를 야기할 수 있습니다.&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -1190,7 +1976,8 @@ EnvironmentFile=/kyucumber/EnvironmentFile&lt;/code&gt;
   &amp;quot;index_patterns&amp;quot;: [&amp;quot;te*&amp;quot;, &amp;quot;bar*&amp;quot;],
   &amp;quot;template&amp;quot;: {
     &amp;quot;settings&amp;quot;: {
-      &amp;quot;number_of_shards&amp;quot;: 1
+      &amp;quot;number_of_shards&amp;quot;: 3,
+      &amp;quot;number_of_replicas&amp;quot;: 1
     },
     &amp;quot;mappings&amp;quot;: {
       &amp;quot;_source&amp;quot;: {
@@ -1268,6 +2055,17 @@ EnvironmentFile=/kyucumber/EnvironmentFile&lt;/code&gt;
       &lt;/picture&gt;
   &lt;/a&gt;
     &lt;/span&gt;&lt;/p&gt;
+&lt;h2 id=&quot;segment&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#segment&quot; aria-label=&quot;segment permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Segment&lt;/h2&gt;
+&lt;p&gt;인덱스 내부의 문서들은 여러 샤드에 나뉘어 저장되며, 각각의 샤드들은 한개 이상의 세그먼트로 구성되어 있습니다.
+세그먼트 내부에는 실제 문서 데이터가 저장됩니다.&lt;/p&gt;
+&lt;p&gt;세그먼트는 &lt;strong&gt;불변의 특성&lt;/strong&gt;을 가집니다. 따라서 문서를 삭제하거나 동일한 아이디로
+다시 인덱싱을 하는 경우 세그먼트를 업데이트 하는게 아니라 기존 세그먼트를 비활성 상태로 두고 새로운 세그먼트를 생성합니다.&lt;/p&gt;
+&lt;p&gt;세그먼트가 쌓이면 디스크, 검색 속도와 관련된 문제가 생길 수 있습니다.
+이러한 문제를 해결하기 위해 엘라스틱서치는 내부의 Scheduler를 통해 &lt;a href=&quot;https://www.elastic.co/guide/en/elasticsearch/reference/current/index-modules-merge.html&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;세그먼트 병합&lt;/a&gt;을 수행합니다.
+상황에 따라 스케줄링을 기다리지 않고 &lt;a href=&quot;https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-forcemerge.html&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Force merge&lt;/a&gt;를 수행할 수 있습니다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;세그먼트를 병합하면 디스크가 확보되며, 검색 요청 시 접근해야하는 파일의 수가 줄어들어 검색 요청에 대한 부하가 적어지게 됩니다.&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
 &lt;p&gt;&lt;a href=&quot;https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-node.html#dedicated-master-node&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://www.elastic.co/guide/en/elasticsearch/reference/current/modules-node.html#dedicated-master-node&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;&lt;a href=&quot;https://www.elastic.co/guide/en/elasticsearch/reference/current/index-templates.html&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://www.elastic.co/guide/en/elasticsearch/reference/current/index-templates.html&lt;/a&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[ssh error unable to negotiate with IP no matching cipher found]]></title><description><![CDATA[Unbuntu EC2 ssh 접근 이슈 - ssh error: unable to negotiate with IP: no matching cipher found]]></description><link>https://kyucumber.github.io/posts/issues/unbuntu-ec2-ssh-issue/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/issues/unbuntu-ec2-ssh-issue/</guid><pubDate>Mon, 01 Jul 2019 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;아래와 같은 에러 메세지와 함께 ssh 접근이 되지 않는 이슈가 발생했습니다. 자주 사용하던 인스턴스가 아니라 접속 시 암호화 방식이 맞지 않아 발생한 것으로 보입니다.
@@ -1444,7 +2242,25 @@ CodeDeploy 사용 시 신규로 올라온 인스턴스의 프로비저닝을 위
 &lt;p&gt;어떤 이유인지는 모르겠으나 CodeDeploy agent가 위의 Lifecycle Hook을 제거해주는 작업을 정상적으로 수행해주지 못한것으로 보입니다.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;CodeDeploy가 관리하는 Auto Scaling Group의 경우 Lifecycle Hook을 제거하면 Scale out 진행 시 프로비저닝이 정상적으로 동작하지 않으니 유의해서 제거하셔야 합니다.&lt;/p&gt;
-&lt;/blockquote&gt;</content:encoded></item><item><title><![CDATA[Clustered Index와 Non Clustered Index]]></title><description><![CDATA[Clustered Index와 Non Clustered Index에 대해 정리]]></description><link>https://kyucumber.github.io/posts/database/clustered-index-and-non-clustered-index</link><guid isPermaLink="false">https://kyucumber.github.io/posts/database/clustered-index-and-non-clustered-index</guid><pubDate>Sun, 01 Oct 2017 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;개발을 진행할 때 데이터베이스의 인덱스나 조인(Nested Loop Join 등)에 대한 내용을 자주 다루지 않아서
+&lt;/blockquote&gt;</content:encoded></item><item><title><![CDATA[Java의 Long 타입과 비교 연산]]></title><description><![CDATA[Java에서 Long 타입의 비교 연산 관련된 이슈 정리]]></description><link>https://kyucumber.github.io/posts/issues/java-long-type-equals</link><guid isPermaLink="false">https://kyucumber.github.io/posts/issues/java-long-type-equals</guid><pubDate>Sat, 01 Sep 2018 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;코드리뷰 중 아래와 같이 Long 타입의 비교 연산을 &lt;code class=&quot;language-text&quot;&gt;==&lt;/code&gt; 를 이용해 수행하는 부분을 발견했습니다.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;Long&lt;/code&gt; 타입의 경우 원시 값이 아니라 &lt;code class=&quot;language-text&quot;&gt;equals&lt;/code&gt;를 사용해야 정상적으로 동작할 것이라고 생각했는데
+예상과 다르게 동작하는 부분을 확인해 관련 내용을 정리합니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;java&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;Long id = 1L
+Long anotherId = 1L
+
+if (id == anotherId) // true?&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;자바에서는 &lt;strong&gt;-128에서 127까지의 범위의 경우 상수 풀을 유지&lt;/strong&gt;합니다. 따라서 &lt;code class=&quot;language-text&quot;&gt;==&lt;/code&gt;을 통해 비교하더라도 정상적으로 동작할 수 있습니다.
+다만 더 큰 값으로 올라가는 경우 정상적으로 동작하지 않을 수 있기에 아래와 같이 &lt;code class=&quot;language-text&quot;&gt;equals&lt;/code&gt;를 사용해 비교해야 합니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;java&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;Long id = 1L
+Long anotherId = 1L
+
+if (id.equals(anotherId)) // equals를 이용해 compare&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://docs.oracle.com/javase/specs/jls/se7/html/jls-5.html#jls-5.1.7&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://docs.oracle.com/javase/specs/jls/se7/html/jls-5.html#jls-5.1.7&lt;/a&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Clustered Index와 Non Clustered Index]]></title><description><![CDATA[Clustered Index와 Non Clustered Index에 대해 정리]]></description><link>https://kyucumber.github.io/posts/database/clustered-index-and-non-clustered-index</link><guid isPermaLink="false">https://kyucumber.github.io/posts/database/clustered-index-and-non-clustered-index</guid><pubDate>Sun, 01 Oct 2017 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;개발을 진행할 때 데이터베이스의 인덱스나 조인(Nested Loop Join 등)에 대한 내용을 자주 다루지 않아서
 매번 필요할때 다시 찾아보고 있습니다. 또 까먹겠지만 다음에 조금 더 빨리 찾아볼 수 있도록 해당 내용을 정리합니다.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;아래 내용은 책이나 문서를 보며 아는 대로 정리한 부분이라 잘못된 부분이 있을 수 있습니다. 대부분의 내용은 MySQL을 기준으로 합니다.&lt;/p&gt;
