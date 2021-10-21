@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sat, 03 Jul 2021 12:22:34 GMT</lastBuildDate><item><title><![CDATA[스프링에서 코틀린 스타일 테스트 코드 작성하기]]></title><description><![CDATA[스프링에서 코틀린 스타일 테스트 코드 작성하기]]></description><link>https://kyucumber.github.io/posts/spring/kotlin-test-with-spring</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/kotlin-test-with-spring</guid><pubDate>Sun, 06 Jun 2021 00:00:00 GMT</pubDate><content:encoded>&lt;h2 id=&quot;개요&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EA%B0%9C%EC%9A%94&quot; aria-label=&quot;개요 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;개요&lt;/h2&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Thu, 21 Oct 2021 12:18:05 GMT</lastBuildDate><item><title><![CDATA[스프링에서 코틀린 스타일 테스트 코드 작성하기]]></title><description><![CDATA[스프링에서 코틀린 스타일 테스트 코드 작성하기]]></description><link>https://kyucumber.github.io/posts/spring/kotlin-test-with-spring</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/kotlin-test-with-spring</guid><pubDate>Sun, 06 Jun 2021 00:00:00 GMT</pubDate><content:encoded>&lt;h2 id=&quot;개요&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EA%B0%9C%EC%9A%94&quot; aria-label=&quot;개요 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;개요&lt;/h2&gt;
 &lt;p&gt;스프링 기반 프로젝트에서 코틀린을 사용하더라도 아래와 같이 기존에 사용하던 테스트 프레임워크인 &lt;code class=&quot;language-text&quot;&gt;Junit&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;Assertion&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;Mockito&lt;/code&gt; 등은 동일하게 사용할 수 있습니다.&lt;/p&gt;
 &lt;p&gt;&lt;span
       class=&quot;gatsby-resp-image-wrapper&quot;
@@ -847,7 +847,456 @@ at 문제가 발생한 패키지(문제가 발생한 클래스.kt:107)&lt;/code&
 &lt;p&gt;설정을 조금 잘못 넣어서 그런것일지도 모르겠으나, neverBlock 설정을 추가한 시점부터 의도한 대로 Lock이 걸려도 어플리케이션이 멈추지 않고 정상적으로 동작했습니다.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;위와 같이 설정하는 경우 Lock이 걸린 시점부터는 stdout 로그가 정상적으로 출력되지 않습니다.&lt;/p&gt;
-&lt;/blockquote&gt;</content:encoded></item><item><title><![CDATA[파일이 존재하는데도 No such file or directory 에러가 발생하는 경우]]></title><description><![CDATA[파일이 존재하는데도 No such file or directory 에러가 발생하는 이슈 정리]]></description><link>https://kyucumber.github.io/posts/issues/no-such-file-or-directory</link><guid isPermaLink="false">https://kyucumber.github.io/posts/issues/no-such-file-or-directory</guid><pubDate>Mon, 29 Mar 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;파트 내에서 사용할 CI 환경 구성 중 Embedded Redis를 사용해 테스트를 실행하는 모듈의 테스트가 지속적으로 실패하는 문제를 겪었습니다.&lt;/p&gt;
+&lt;/blockquote&gt;</content:encoded></item><item><title><![CDATA[Amazon OpenSearch Service 백업을 위한 스냅샷 관리 자동화]]></title><description><![CDATA[Amazon OpenSearch Service 백업을 위한 스냅샷 관리 자동화 방법에 대해 정리합니다.]]></description><link>https://kyucumber.github.io/posts/elasticsearch/elasticsearch-snapshot-management</link><guid isPermaLink="false">https://kyucumber.github.io/posts/elasticsearch/elasticsearch-snapshot-management</guid><pubDate>Sat, 01 May 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;&lt;br&gt;
+엘라스틱서치를 사용하면 인덱스의 도큐먼트를 백업해야 하는 경우가 자주 있습니다.&lt;/p&gt;
+&lt;p&gt;현재 Amazon OpenSearch Service 서비스를 활용하고 있습니다.
+Amazon OpenSearch Service 서비스에서 영구적인 데이터 보관을 위해 S3에 어떻게 데이터를 백업하는지 정리합니다.&lt;/p&gt;
+&lt;h2 id=&quot;opensearch에서-제공하는-스냅샷-생성-방식&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#opensearch%EC%97%90%EC%84%9C-%EC%A0%9C%EA%B3%B5%ED%95%98%EB%8A%94-%EC%8A%A4%EB%83%85%EC%83%B7-%EC%83%9D%EC%84%B1-%EB%B0%A9%EC%8B%9D&quot; aria-label=&quot;opensearch에서 제공하는 스냅샷 생성 방식 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;OpenSearch에서 제공하는 스냅샷 생성 방식&lt;/h2&gt;
+&lt;p&gt;OpenSearch에서는 아래와 같은 두가지 방식의 스냅샷 생성을 제공합니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Automated snapshots - 자동 스냅샷&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Manual snapshots - 수동 스냅샷&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;버전마다 보관 기간은 다르지만 자동 스냅샷은 14일 가량의 짧은 기간동안만 보관되므로 인덱스 데이터를 S3 등에 &lt;strong&gt;영구적으로 보관하기 위해서는 수동 스냅샷&lt;/strong&gt;을 사용해야 합니다.&lt;/p&gt;
+&lt;p&gt;수동 스냅샷 기능과 ISM(Index State Management)기능을 활용하면 인덱스의 기간, 크기, 문서 수 등의 변화에 따라 수동 스냅샷을 자동으로 생성할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;해당 문서에서는 수동 스냅샷 생성을 위한 절차와 ISM 정책 적용에 대한 내용에 대해 정리합니다.&lt;/p&gt;
+&lt;h2 id=&quot;opensearch-스냅샷-백업을-위한-s3-버킷-생성&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#opensearch-%EC%8A%A4%EB%83%85%EC%83%B7-%EB%B0%B1%EC%97%85%EC%9D%84-%EC%9C%84%ED%95%9C-s3-%EB%B2%84%ED%82%B7-%EC%83%9D%EC%84%B1&quot; aria-label=&quot;opensearch 스냅샷 백업을 위한 s3 버킷 생성 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;OpenSearch 스냅샷 백업을 위한 S3 버킷 생성&lt;/h2&gt;
+&lt;p&gt;OpenSearch가 스냅샷 저장소로 사용할 S3 버킷을 생성합니다.
+&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 960px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/8cbd92c41bcf5e45b952a9a97d88d2cb/09ede/es-snapshot-bucket.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 52.916666666666664%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAALCAYAAAB/Ca1DAAAACXBIWXMAAAsSAAALEgHS3X78AAABSUlEQVQoz5WSW3OCMBSE+f8/rbUdn7XWVuUSFKIBJECS7TlHsfrQkWbmm3AZls3uiV5mM7zP58Lr7A2HokCpNcrjkTDCyRiYqppEtFgusfpc42O1kn272wlxliPea2xUCX26CLLwMyJ2U5ArlefIMoWyLNF1Hay1RCu07TTEYZqmiOMYaZrRnpCghnMDhuH/VFWNqCBH7I4dOe/By9PuQ3ggBP/AuAK9G/eqFkGNhNztyN1mu5WHddPI3/iakfzqBoWxOJj2CkXSu6vYnSBnlikllvlh3/e3IzjnbgxE7zz6waMbHOHpROHBqQhqGo8kSakYalMfwREYams8OsdwL8z5tlQUSfxxZGqY22WXYzFK5XLPzbFj74N88AwR3O8PWH99C+yu5gzrS4bWdjJCUxdnH7GqDCUNb3M+oyNHLPI7ixZncjoFLu8H8WlRyu2YiEEAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/8cbd92c41bcf5e45b952a9a97d88d2cb/8ac56/es-snapshot-bucket.webp 240w,
+/static/8cbd92c41bcf5e45b952a9a97d88d2cb/d3be9/es-snapshot-bucket.webp 480w,
+/static/8cbd92c41bcf5e45b952a9a97d88d2cb/e46b2/es-snapshot-bucket.webp 960w,
+/static/8cbd92c41bcf5e45b952a9a97d88d2cb/f992d/es-snapshot-bucket.webp 1440w,
+/static/8cbd92c41bcf5e45b952a9a97d88d2cb/cf022/es-snapshot-bucket.webp 1710w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/8cbd92c41bcf5e45b952a9a97d88d2cb/8ff5a/es-snapshot-bucket.png 240w,
+/static/8cbd92c41bcf5e45b952a9a97d88d2cb/e85cb/es-snapshot-bucket.png 480w,
+/static/8cbd92c41bcf5e45b952a9a97d88d2cb/d9199/es-snapshot-bucket.png 960w,
+/static/8cbd92c41bcf5e45b952a9a97d88d2cb/07a9c/es-snapshot-bucket.png 1440w,
+/static/8cbd92c41bcf5e45b952a9a97d88d2cb/09ede/es-snapshot-bucket.png 1710w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/8cbd92c41bcf5e45b952a9a97d88d2cb/d9199/es-snapshot-bucket.png&quot;
+          alt=&quot;Es snapshot bucket&quot;
+          title=&quot;Es snapshot bucket&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;h2 id=&quot;스냅샷-레파지토리-및-스냅샷-생성을-위한-iam-role-생성&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%8A%A4%EB%83%85%EC%83%B7-%EB%A0%88%ED%8C%8C%EC%A7%80%ED%86%A0%EB%A6%AC-%EB%B0%8F-%EC%8A%A4%EB%83%85%EC%83%B7-%EC%83%9D%EC%84%B1%EC%9D%84-%EC%9C%84%ED%95%9C-iam-role-%EC%83%9D%EC%84%B1&quot; aria-label=&quot;스냅샷 레파지토리 및 스냅샷 생성을 위한 iam role 생성 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;스냅샷 레파지토리 및 스냅샷 생성을 위한 IAM Role 생성&lt;/h2&gt;
+&lt;p&gt;스냅샷 레파지토리 등록, 스냅샷 저장, 삭제, 조회 등을 위해 OpenSearch에서 S3에 대해 저장, 조회, 삭제 등을 할 수 있는 IAM Role이 필요합니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;IAM Role 생성하기&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 960px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/b123802d584483583d535cab73ebc69a/536c7/es-snapshot-role.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 41.66666666666667%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAICAYAAAD5nd/tAAAACXBIWXMAAAsSAAALEgHS3X78AAAA1UlEQVQoz5VRiw6DIBDj/z/TqFtUREV8oXaU7JJp2JJdUu4gcNcW1XUdsiyDcw7/xHmeSai+71EUBZqmQdu2F1hrYYwB73AwMzEMQ7LZcRxQXPZ9h/ce27ZFsJZBWusIquA+z3OUZYl5ni9v2Ccy/CVLLtEOMrTjiDGAzZipgJCaA9SdNoMT67pGVVWxkZsm6GCJfj5gwjntENkylDlKvhsteV1XLMsSm0dLaEU4829L+DgVKvV796BkgpIJ1mQocmkB91NQ8pXhJ8hQPo6QWs7JVli/AKx4cbGE8HxrAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/b123802d584483583d535cab73ebc69a/8ac56/es-snapshot-role.webp 240w,
+/static/b123802d584483583d535cab73ebc69a/d3be9/es-snapshot-role.webp 480w,
+/static/b123802d584483583d535cab73ebc69a/e46b2/es-snapshot-role.webp 960w,
+/static/b123802d584483583d535cab73ebc69a/f992d/es-snapshot-role.webp 1440w,
+/static/b123802d584483583d535cab73ebc69a/6c9e6/es-snapshot-role.webp 1480w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/b123802d584483583d535cab73ebc69a/8ff5a/es-snapshot-role.png 240w,
+/static/b123802d584483583d535cab73ebc69a/e85cb/es-snapshot-role.png 480w,
+/static/b123802d584483583d535cab73ebc69a/d9199/es-snapshot-role.png 960w,
+/static/b123802d584483583d535cab73ebc69a/07a9c/es-snapshot-role.png 1440w,
+/static/b123802d584483583d535cab73ebc69a/536c7/es-snapshot-role.png 1480w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/b123802d584483583d535cab73ebc69a/d9199/es-snapshot-role.png&quot;
+          alt=&quot;ES snapshot iam role&quot;
+          title=&quot;ES snapshot iam role&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Policy 생성하기&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;생성한 IAM Role에 바인딩 할 정책 생성합니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;json&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;{
+  &amp;quot;Version&amp;quot;: &amp;quot;2012-10-17&amp;quot;,
+  &amp;quot;Statement&amp;quot;: [{
+    &amp;quot;Action&amp;quot;: [
+      &amp;quot;s3:ListBucket&amp;quot;
+    ],
+    &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
+    &amp;quot;Resource&amp;quot;: [
+      &amp;quot;arn:aws:s3:::elasticsearch-snapshot&amp;quot;
+    ]
+  },
+    {
+      &amp;quot;Action&amp;quot;: [
+        &amp;quot;s3:GetObject&amp;quot;,
+        &amp;quot;s3:PutObject&amp;quot;,
+        &amp;quot;s3:DeleteObject&amp;quot;
+      ],
+      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
+      &amp;quot;Resource&amp;quot;: [
+        &amp;quot;arn:aws:s3:::elasticsearch-snapshot/*&amp;quot;
+      ]
+    },
+    {
+      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
+      &amp;quot;Action&amp;quot;: &amp;quot;iam:PassRole&amp;quot;,
+      &amp;quot;Resource&amp;quot;: &amp;quot;해당 IAM Role 생성 이후 생성된 IAM Role의 arn 입력&amp;quot;
+    },
+    {
+      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
+      &amp;quot;Action&amp;quot;: &amp;quot;es:ESHttpPut&amp;quot;,
+      &amp;quot;Resource&amp;quot;: &amp;quot;Elasticsearch service에 대한 arn 입력&amp;quot;
+    }
+  ]
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;IAM Role에 Policy 바인딩&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Policy를 IAM Role에 바인딩합니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;생성된 IAM Role에 Trust relationship 설정하기&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;OpenSearch가 해당 Role을 Assume할 수 있도록 아래와 같은 Trust Relationship을 생성한 Role에 추가합니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;json&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;{
+  &amp;quot;Version&amp;quot;: &amp;quot;2012-10-17&amp;quot;,
+  &amp;quot;Statement&amp;quot;: [{
+    &amp;quot;Sid&amp;quot;: &amp;quot;&amp;quot;,
+    &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
+    &amp;quot;Principal&amp;quot;: {
+      &amp;quot;Service&amp;quot;: &amp;quot;es.amazonaws.com&amp;quot;
+    },
+    &amp;quot;Action&amp;quot;: &amp;quot;sts:AssumeRole&amp;quot;
+  }]
+  
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;스냅샷-레파지토리-생성&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%8A%A4%EB%83%85%EC%83%B7-%EB%A0%88%ED%8C%8C%EC%A7%80%ED%86%A0%EB%A6%AC-%EC%83%9D%EC%84%B1&quot; aria-label=&quot;스냅샷 레파지토리 생성 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;스냅샷 레파지토리 생성&lt;/h2&gt;
+&lt;p&gt;스냅샷의 생성 및 관리를 위해서는 Snapshot Repository가 사전에 등록되어 있어야 합니다.
+일회성 작업이기 때문에 간단하게 Python 스크립트를 작성해 사용했습니다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;저는 해당 스크립트를 이전에 생성한 IAM Role을 바인딩한 EC2에서 실행했습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;deckgo-highlight-code language=&quot;python&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;import boto3
+import requests
+from requests_aws4auth import AWS4Auth
+
+bucket = &amp;quot;elasticsearch-snapshot&amp;quot;
+role_arn = &amp;quot;arn:aws:iam::00000000000:role/elasticsearchSnapshotRole&amp;quot;
+host = &amp;quot;https://{$elasticsearchDomain}/&amp;quot;
+region = &amp;quot;ap-northeast-2&amp;quot;
+service = &amp;quot;es&amp;quot;
+
+credentials = boto3.Session().get_credentials()
+awsauth = AWS4Auth(credentials.access_key, credentials.secret_key, region, service, session_token=credentials.token)
+
+# Register snapshot repository
+
+path = &amp;quot;_snapshot/&amp;quot; + bucket
+url = host + path
+
+payload = {
+    &amp;quot;type&amp;quot;: &amp;quot;s3&amp;quot;,
+    &amp;quot;settings&amp;quot;: {
+        &amp;quot;bucket&amp;quot;: bucket,
+        &amp;quot;region&amp;quot;: region,
+        &amp;quot;role_arn&amp;quot;: role_arn
+    }
+}
+
+headers = {&amp;quot;Content-Type&amp;quot;: &amp;quot;application/json&amp;quot;}
+
+r = requests.put(url, auth=awsauth, json=payload, headers=headers)
+
+print(r.status_code)
+print(r.text)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;index-state-management&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#index-state-management&quot; aria-label=&quot;index state management permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Index State Management&lt;/h2&gt;
+&lt;p&gt;OpenSearch에서는 Open Distro For Elasticsearch 기능을 제공하며
+Open Distro에는 ISM(Index State management) 플러그인이 포함되어 있습니다.
+ISM 플러그인을 활용하면 &lt;strong&gt;인덱스 기간, 인덱스 크기, 문서 수 변경을 기반으로 주기적인 인덱스 관리 작업을 자동화&lt;/strong&gt; 할 수 있습니다.&lt;/p&gt;
+&lt;h3 id=&quot;index-state-management-policy&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#index-state-management-policy&quot; aria-label=&quot;index state management policy permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Index State Management Policy&lt;/h3&gt;
+&lt;p&gt;ISM Policy는 아래와 같은 구조를 가지고 있습니다. 하위에 states 및 ism_template 등의 속성 값을 가집니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;json&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;{
+  &amp;quot;policy&amp;quot;: {
+    &amp;quot;description&amp;quot;: &amp;quot;Example policy.&amp;quot;,
+    &amp;quot;default_state&amp;quot;: &amp;quot;empty&amp;quot;,
+    &amp;quot;states&amp;quot;: [
+      {
+        &amp;quot;name&amp;quot;: &amp;quot;empty&amp;quot;,
+        &amp;quot;actions&amp;quot;: [],
+        &amp;quot;transitions&amp;quot;: []
+      }
+    ],
+    &amp;quot;ism_template&amp;quot;: {
+      &amp;quot;index_patterns&amp;quot;: [&amp;quot;test-index-v1*&amp;quot;],
+      &amp;quot;priority&amp;quot;: 100
+    }
+  }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;states&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;정책이 가지는 여러 상태들에 대해 정의할 수 있습니다. 각각의 상태에는 상태 진입 시 순차적으로 실행되는 action과 모든 action들이 완료된 후 상태 변경을 수행하는 transition이 존재합니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;action&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;action은 상태 변경에 따라 순차적으로 실행되는 작업입니다. 스냅샷을 생성하거나, 인덱스를 삭제하는 등 다양한 작업을 수행할 수 있습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;json&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;// occupied 상태로 전환되는 시점에 스냅샷 생성 action 수행
+&amp;quot;states&amp;quot;: [
+  {
+    &amp;quot;name&amp;quot;: &amp;quot;occupied&amp;quot;,
+    &amp;quot;actions&amp;quot;: [
+        {
+          &amp;quot;snapshot&amp;quot;: {
+            &amp;quot;repository&amp;quot;: &amp;quot;elasticsearch-snapshot&amp;quot;
+          }
+        }
+      ],
+    // ...
+  }
+]&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;transition&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;상태가 변경되기 위해 충족되어야 하는 조건을 정의합니다. 현재 상태의 모든 action의 수행이 완료된 후 transition을 체크하고 상태 변경을 수행합니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;json&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;// empty 상태의 모든 action을 수행하고 조건이 충족되면 occupied 상태로 변경
+&amp;quot;states&amp;quot;: [
+	{
+	  &amp;quot;name&amp;quot;: &amp;quot;empty&amp;quot;,
+	  &amp;quot;actions&amp;quot;: [],
+	  &amp;quot;transitions&amp;quot;: [
+	    {
+	      &amp;quot;state_name&amp;quot;: &amp;quot;occupied&amp;quot;,
+	      &amp;quot;conditions&amp;quot;: {
+	        &amp;quot;min_index_age&amp;quot;: &amp;quot;10d&amp;quot;
+	      }
+	    }
+	  ]
+	},
+  // ...
+]&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;ism_template&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;템플릿 패턴을 정의해 해당 패턴이 일치하는 인덱스에 자동으로 정책을 적용합니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;json&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;// test-index-v1-* 패턴과 일치하는 인덱스 생성 시 해당 정책 적용
+&amp;quot;ism_template&amp;quot;: {
+  &amp;quot;index_patterns&amp;quot;: [&amp;quot;test-index-v1-*&amp;quot;],
+  &amp;quot;priority&amp;quot;: 100
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;index-state-management-policy를-이용한-수동-스냅샷-생성-자동화&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#index-state-management-policy%EB%A5%BC-%EC%9D%B4%EC%9A%A9%ED%95%9C-%EC%88%98%EB%8F%99-%EC%8A%A4%EB%83%85%EC%83%B7-%EC%83%9D%EC%84%B1-%EC%9E%90%EB%8F%99%ED%99%94&quot; aria-label=&quot;index state management policy를 이용한 수동 스냅샷 생성 자동화 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Index State Management Policy를 이용한 수동 스냅샷 생성 자동화&lt;/h2&gt;
+&lt;p&gt;위에서 등록한 레파지토리를 기반으로 수동 스냅샷을 생성할 수 있습니다.
+레파지토리 등록과 동일하게 Python 코드로 수동 스냅샷 생성을 진행할 수 있지만 여기서는 Index State Management 기능을 이용해 스냅샷을 생성합니다.&lt;/p&gt;
+&lt;p&gt;일회성 작업이 아니라 지속적으로 스냅샷을 생성해야 한다면 Index State Management 기능을 활용하는게 좋습니다.&lt;/p&gt;
+&lt;h3 id=&quot;index-state-management-policy-생성하기&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#index-state-management-policy-%EC%83%9D%EC%84%B1%ED%95%98%EA%B8%B0&quot; aria-label=&quot;index state management policy 생성하기 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Index State Management Policy 생성하기&lt;/h3&gt;
+&lt;p&gt;키바나의 아래 화면 혹은 api 호출을 통해 Policy를 생성할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 960px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/7f2e88b1355962dbceacafd4eb951ced/79538/es-snapshot-ism-policy-create.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 39.583333333333336%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAICAYAAAD5nd/tAAAACXBIWXMAABYlAAAWJQFJUiTwAAABRklEQVQoz5VRy24CMQzMh7YFIVBRT+2t/VBQLyBV4imRBbJ5bV5TOyxQjo1kWbbjmbEtPj6/MH17x8twgufBBE+DMfkxBqNXDP9po/EU4ticcDhIaG1grYdqDQz5gsdXyt0/GHD7y17Ml2t8/+ywkho+ZPguQKmWgDWaI5HJppLFlOG6iBAT4tUoF0OEVwqO/gdjIVZ7CakcTrpDFzNO5zNmszkWiyU2my0kATpna21/djCeQEMgwB6casf1FrudhG8aCOc7tNrWMUPsFRKbUro28Eu5IJMVmjGxqt54ZK4lUpmIgFULBompVLAupPrBOtqlcaSKx+IcK1dEbEhdrDF73n1L5ImJ8oVMMMjVKjgxaetoDRYupNtRLOV4l865GmcCVW17jytovij8C8gjG1LnaRV1vP4AVUFVUW4Hof6a4/jSn/ALFLNNw41otLwAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/7f2e88b1355962dbceacafd4eb951ced/8ac56/es-snapshot-ism-policy-create.webp 240w,
+/static/7f2e88b1355962dbceacafd4eb951ced/d3be9/es-snapshot-ism-policy-create.webp 480w,
+/static/7f2e88b1355962dbceacafd4eb951ced/e46b2/es-snapshot-ism-policy-create.webp 960w,
+/static/7f2e88b1355962dbceacafd4eb951ced/f992d/es-snapshot-ism-policy-create.webp 1440w,
+/static/7f2e88b1355962dbceacafd4eb951ced/882b9/es-snapshot-ism-policy-create.webp 1920w,
+/static/7f2e88b1355962dbceacafd4eb951ced/ac702/es-snapshot-ism-policy-create.webp 2530w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/7f2e88b1355962dbceacafd4eb951ced/8ff5a/es-snapshot-ism-policy-create.png 240w,
+/static/7f2e88b1355962dbceacafd4eb951ced/e85cb/es-snapshot-ism-policy-create.png 480w,
+/static/7f2e88b1355962dbceacafd4eb951ced/d9199/es-snapshot-ism-policy-create.png 960w,
+/static/7f2e88b1355962dbceacafd4eb951ced/07a9c/es-snapshot-ism-policy-create.png 1440w,
+/static/7f2e88b1355962dbceacafd4eb951ced/29114/es-snapshot-ism-policy-create.png 1920w,
+/static/7f2e88b1355962dbceacafd4eb951ced/79538/es-snapshot-ism-policy-create.png 2530w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/7f2e88b1355962dbceacafd4eb951ced/d9199/es-snapshot-ism-policy-create.png&quot;
+          alt=&quot;es-snapshot-ism-policy-create&quot;
+          title=&quot;es-snapshot-ism-policy-create&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;json&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;PUT _opendistro/_ism/policies/auto-snapshot-policy
+{
+  &amp;quot;policy&amp;quot;: {
+    &amp;quot;description&amp;quot;: &amp;quot;Takes an index snapshot.&amp;quot;,
+    &amp;quot;default_state&amp;quot;: &amp;quot;empty&amp;quot;,
+    &amp;quot;states&amp;quot;: [
+      {
+        &amp;quot;name&amp;quot;: &amp;quot;empty&amp;quot;,
+        &amp;quot;actions&amp;quot;: [],
+        &amp;quot;transitions&amp;quot;: [
+          {
+            &amp;quot;state_name&amp;quot;: &amp;quot;occupied&amp;quot;,
+            &amp;quot;conditions&amp;quot;: {
+              &amp;quot;min_index_age&amp;quot;: &amp;quot;10d&amp;quot;
+            }
+          }
+        ]
+      },
+      {
+        &amp;quot;name&amp;quot;: &amp;quot;occupied&amp;quot;,
+        &amp;quot;actions&amp;quot;: [
+          {
+            &amp;quot;snapshot&amp;quot;: {
+              &amp;quot;repository&amp;quot;: &amp;quot;elasticsearch-snapshot&amp;quot;,
+            }
+          }
+        ],
+        &amp;quot;transitions&amp;quot;: []
+      }
+    ],
+    &amp;quot;ism_template&amp;quot;: {
+      &amp;quot;index_patterns&amp;quot;: [
+        &amp;quot;test-index-v1*&amp;quot;
+      ],
+      &amp;quot;priority&amp;quot;: 100
+    }
+  }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;정책을 생성하면 신규 생성되는 &lt;code class=&quot;language-text&quot;&gt;test-index-v1-*&lt;/code&gt; 패턴의 인덱스에 대해 생성 10일 뒤 인덱스 스냅샷을 자동으로 생성하게 됩니다.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 960px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/255d96fff579bfbd97d7d99918d2066a/b43c0/es-snapshot-ism-policy.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 27.916666666666668%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAGCAYAAADDl76dAAAACXBIWXMAABYlAAAWJQFJUiTwAAAA5ElEQVQY02WQ4XKEIAyEff/n7I9T7zgqCISA2w1qZ3p15psgJJtsptYBox9nvNF2QGr7R9X+h2cQPHzGshV8uYRpXZ9w7o3HPGNZVszkxf+4JxzHgd4/6ShFBrUqY4GqQkSgtWJyb08BD4sx7kPIyCxQjtouod/IO5GKQsQEr1gpag2mnAuT6ZGfiQSK7imxawO4hpQyvrcwmoUQx0Q2+SettVFHwcyiNMZ+OQfvPXY2CUWxS0PKpyXLizxvuSKKjvc7x7AJTWeynZi6dbEpzE7nWWnvtNyvXfZh+b6/sfd2vVnOD9U+1WtjcnVYAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/255d96fff579bfbd97d7d99918d2066a/8ac56/es-snapshot-ism-policy.webp 240w,
+/static/255d96fff579bfbd97d7d99918d2066a/d3be9/es-snapshot-ism-policy.webp 480w,
+/static/255d96fff579bfbd97d7d99918d2066a/e46b2/es-snapshot-ism-policy.webp 960w,
+/static/255d96fff579bfbd97d7d99918d2066a/f992d/es-snapshot-ism-policy.webp 1440w,
+/static/255d96fff579bfbd97d7d99918d2066a/882b9/es-snapshot-ism-policy.webp 1920w,
+/static/255d96fff579bfbd97d7d99918d2066a/a2101/es-snapshot-ism-policy.webp 2826w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/255d96fff579bfbd97d7d99918d2066a/8ff5a/es-snapshot-ism-policy.png 240w,
+/static/255d96fff579bfbd97d7d99918d2066a/e85cb/es-snapshot-ism-policy.png 480w,
+/static/255d96fff579bfbd97d7d99918d2066a/d9199/es-snapshot-ism-policy.png 960w,
+/static/255d96fff579bfbd97d7d99918d2066a/07a9c/es-snapshot-ism-policy.png 1440w,
+/static/255d96fff579bfbd97d7d99918d2066a/29114/es-snapshot-ism-policy.png 1920w,
+/static/255d96fff579bfbd97d7d99918d2066a/b43c0/es-snapshot-ism-policy.png 2826w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/255d96fff579bfbd97d7d99918d2066a/d9199/es-snapshot-ism-policy.png&quot;
+          alt=&quot;es-snapshot-ism-policy&quot;
+          title=&quot;es-snapshot-ism-policy&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;snapshot action은 OpenSearch 7.8 버전부터 제공됩니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;기존에 존재하던 Index들은 패턴이 일치하더라도 자동으로 정책이 적용되지 않습니다.&lt;/p&gt;
+&lt;p&gt;Index Management &gt; Policy managed indices 메뉴에서 수동으로 정책을 적용해야 합니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://opendistro.github.io/for-elasticsearch/&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Open Distro for Elasticsearch&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/opensearch-service/latest/developerguide/managedomains-snapshots.html&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Creating index snapshots in Amazon Elasticsearch Service&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/opensearch-service/latest/developerguide/ism.html&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Index State Management in Amazon Elasticsearch Service&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://opendistro.github.io/for-elasticsearch-docs/docs/im/ism/policies/#sample-policy-with-ism-template&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Policy with ISM&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[파일이 존재하는데도 No such file or directory 에러가 발생하는 경우]]></title><description><![CDATA[파일이 존재하는데도 No such file or directory 에러가 발생하는 이슈 정리]]></description><link>https://kyucumber.github.io/posts/issues/no-such-file-or-directory</link><guid isPermaLink="false">https://kyucumber.github.io/posts/issues/no-such-file-or-directory</guid><pubDate>Mon, 29 Mar 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;파트 내에서 사용할 CI 환경 구성 중 Embedded Redis를 사용해 테스트를 실행하는 모듈의 테스트가 지속적으로 실패하는 문제를 겪었습니다.&lt;/p&gt;
 &lt;p&gt;로컬이나 다른 이미지에서는 빌드가 성공했기 때문에 관련 내용을 별도 찾아볼 필요 없이 이미지 변경으로 해결은 가능했지만
 왜 해당 이미지에서만 테스트가 구동되지 않는지 관련 내용을 찾아보고 정리했습니다.&lt;/p&gt;
 &lt;p&gt;실패한 이미지에서 발생한 에러 메세지는 아래와 같습니다.&lt;/p&gt;
@@ -1922,7 +2371,23 @@ Group=ec2-user
 // 이 부분을 추가해주어야 합니다.
 EnvironmentFile=/kyucumber/EnvironmentFile&lt;/code&gt;
         &lt;/deckgo-highlight-code&gt;
-&lt;p&gt;위와 같이 EnvironmentFile을 등록하면 systemd에서 &lt;code class=&quot;language-text&quot;&gt;APP_IMAGE_TAG&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;PROFILE&lt;/code&gt; 등의 환경 변수를 사용할 수 있습니다.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Elasticsearch Node, Index, Shard, Segment]]></title><description><![CDATA[Elasticsearch의 Node, Index, Shard, Segment]]></description><link>https://kyucumber.github.io/posts/elasticsearch/elasticsearch-node-index-shard-segment</link><guid isPermaLink="false">https://kyucumber.github.io/posts/elasticsearch/elasticsearch-node-index-shard-segment</guid><pubDate>Sat, 12 Oct 2019 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;팀 내 여러 파트에서 Elasticsearch를 활용하고 있습니다. 어플리케이션 레벨에서 데이터 조회 위한 코드를 작성하는 부분이야 계속 하다보면 늘겠지만 Elasticsearch 인프라에 관련된 부분에 대해서는 부족한 것 같아서 관련 내용을 정리하고 있습니다.&lt;/p&gt;
+&lt;p&gt;위와 같이 EnvironmentFile을 등록하면 systemd에서 &lt;code class=&quot;language-text&quot;&gt;APP_IMAGE_TAG&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;PROFILE&lt;/code&gt; 등의 환경 변수를 사용할 수 있습니다.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[globally_quoted_identifiers 옵션과 SchemaManagementException]]></title><description><![CDATA[globally_quoted_identifiers 옵션 적용 후 SchemaManagementException가 발생하는 경우]]></description><link>https://kyucumber.github.io/posts/issues/globally-quoted-identifiers-option-error</link><guid isPermaLink="false">https://kyucumber.github.io/posts/issues/globally-quoted-identifiers-option-error</guid><pubDate>Tue, 01 Sep 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;globally_quoted_identifiers&lt;/code&gt;옵션을 true로 지정하면 컬럼이나 테이블의 이름이 예약어와 충돌하는 것을 방지할 수 있습니다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;해당 옵션을 추가하면 컬럼, 테이블 이름을 Back Quote(`)로 감싸주게 됩니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;충돌 방지를 위해 해당 옵션을 추가했는데 이후 아래와 같은 예외가 발생하는 경우가 있습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code   terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;Caused by: org.hibernate.tool.schema.spi.SchemaManagementException: Schema-validation: wrong column type encountered in column&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이는 &lt;code class=&quot;language-text&quot;&gt;globally_quoted_identifiers&lt;/code&gt; 옵션 사용 시 columnDefinition에 있는 단어들도 함께 escape 되면서 발생하는 에러입니다.&lt;/p&gt;
+&lt;p&gt;위와 같은 에러를 방지하기 위해 아래와 같은 옵션을 추가로 더 설정해주어야 합니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;yaml&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;hibernate:
+  globally_quoted_identifiers: true
+  globally_quoted_identifiers_skip_column_definitions: true&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;p&gt;&lt;a href=&quot;https://kwonnam.pe.kr/wiki/java/hibernate/configuration&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://kwonnam.pe.kr/wiki/java/hibernate/configuration&lt;/a&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Elasticsearch Node, Index, Shard, Segment]]></title><description><![CDATA[Elasticsearch의 Node, Index, Shard, Segment]]></description><link>https://kyucumber.github.io/posts/elasticsearch/elasticsearch-node-index-shard-segment</link><guid isPermaLink="false">https://kyucumber.github.io/posts/elasticsearch/elasticsearch-node-index-shard-segment</guid><pubDate>Sat, 12 Oct 2019 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;팀 내 여러 파트에서 Elasticsearch를 활용하고 있습니다. 어플리케이션 레벨에서 데이터 조회 위한 코드를 작성하는 부분이야 계속 하다보면 늘겠지만 Elasticsearch 인프라에 관련된 부분에 대해서는 부족한 것 같아서 관련 내용을 정리하고 있습니다.&lt;/p&gt;
 &lt;h2 id=&quot;nodes&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#nodes&quot; aria-label=&quot;nodes permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Nodes&lt;/h2&gt;
 &lt;p&gt;Elasticsearch의 경우 여러 노드들을 모아 클러스터를 구성할 수 있습니다. 공식 문서에서는 클러스터가 커지고 변환이나 머신 러닝 등의 작업이 지속적으로 일어나는 경우 각각의 목적에 맞는 노드를 분리하는게 좋다고 설명하고 있습니다.&lt;/p&gt;
 &lt;ul&gt;
@@ -2260,7 +2725,19 @@ Long anotherId = 1L
 if (id.equals(anotherId)) // equals를 이용해 compare&lt;/code&gt;
         &lt;/deckgo-highlight-code&gt;
 &lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&quot;https://docs.oracle.com/javase/specs/jls/se7/html/jls-5.html#jls-5.1.7&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://docs.oracle.com/javase/specs/jls/se7/html/jls-5.html#jls-5.1.7&lt;/a&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Clustered Index와 Non Clustered Index]]></title><description><![CDATA[Clustered Index와 Non Clustered Index에 대해 정리]]></description><link>https://kyucumber.github.io/posts/database/clustered-index-and-non-clustered-index</link><guid isPermaLink="false">https://kyucumber.github.io/posts/database/clustered-index-and-non-clustered-index</guid><pubDate>Sun, 01 Oct 2017 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;개발을 진행할 때 데이터베이스의 인덱스나 조인(Nested Loop Join 등)에 대한 내용을 자주 다루지 않아서
+&lt;p&gt;&lt;a href=&quot;https://docs.oracle.com/javase/specs/jls/se7/html/jls-5.html#jls-5.1.7&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://docs.oracle.com/javase/specs/jls/se7/html/jls-5.html#jls-5.1.7&lt;/a&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[HTTP 301 응답과 302 응답의 차이]]></title><description><![CDATA[HTTP 301과 302 응답의 차이]]></description><link>https://kyucumber.github.io/posts/network/http-301-and-302</link><guid isPermaLink="false">https://kyucumber.github.io/posts/network/http-301-and-302</guid><pubDate>Thu, 01 Feb 2018 00:00:00 GMT</pubDate><content:encoded>&lt;h2 id=&quot;301-permanently-moved&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#301-permanently-moved&quot; aria-label=&quot;301 permanently moved permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;301 Permanently Moved&lt;/h2&gt;
+&lt;p&gt;HTTP 301 Moved Permanently 응답 코드는 요청한 리소스가 Location 헤더가 지정하는 URL로 완전히 옮겨졌다는 것을 나타냅니다.&lt;/p&gt;
+&lt;p&gt;영구적으로 리소스가 옮겨졌기 때문에 브라우저는 &lt;strong&gt;해당 결과를 캐싱해&lt;/strong&gt; 서버를 거치지 않고 Location 헤더가 지정하는 URL로 요청을 보내게 됩니다.&lt;/p&gt;
+&lt;p&gt;사용자의 응답을 수집, 기록할 필요가 없다면 불필요한 부하를 서버가 받기 때문에 302 응답을 활용합니다.&lt;/p&gt;
+&lt;h2 id=&quot;302-found&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#302-found&quot; aria-label=&quot;302 found permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;302 Found&lt;/h2&gt;
+&lt;p&gt;HTTP 302 Found 응답 코드는 요청한 리소스가 Location 헤더가 지정하는 URL로 일시적으로 이동되었음을 나타냅니다.&lt;/p&gt;
+&lt;p&gt;일시적으로 이동되었음을 나타내기 때문에 클라이언트의 요청은 &lt;strong&gt;캐싱되지 않고 서버를 거친 뒤&lt;/strong&gt; Location 헤더가 지정하는 URL로 요청을 보내게 됩니다.&lt;/p&gt;
+&lt;p&gt;사용자의 데이터 수집 목적이 아니라면 서버의 부하를 줄이기 위해서 301 응답을 활용합니다.&lt;/p&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://developer.mozilla.org/ko/docs/Web/HTTP/Status/301&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://developer.mozilla.org/ko/docs/Web/HTTP/Status/301&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://developer.mozilla.org/ko/docs/Web/HTTP/Status/302&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://developer.mozilla.org/ko/docs/Web/HTTP/Status/302&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[Clustered Index와 Non Clustered Index]]></title><description><![CDATA[Clustered Index와 Non Clustered Index에 대해 정리]]></description><link>https://kyucumber.github.io/posts/database/clustered-index-and-non-clustered-index</link><guid isPermaLink="false">https://kyucumber.github.io/posts/database/clustered-index-and-non-clustered-index</guid><pubDate>Sun, 01 Oct 2017 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;개발을 진행할 때 데이터베이스의 인덱스나 조인(Nested Loop Join 등)에 대한 내용을 자주 다루지 않아서
 매번 필요할때 다시 찾아보고 있습니다. 또 까먹겠지만 다음에 조금 더 빨리 찾아볼 수 있도록 해당 내용을 정리합니다.&lt;/p&gt;
 &lt;blockquote&gt;
 &lt;p&gt;아래 내용은 책이나 문서를 보며 아는 대로 정리한 부분이라 잘못된 부분이 있을 수 있습니다. 대부분의 내용은 MySQL을 기준으로 합니다.&lt;/p&gt;
