@@ -1,1 +1,1 @@
-{"data":{"allMarkdownRemark":{"group":[{"fieldValue":"Database","totalCount":1},{"fieldValue":"Elasticsearch","totalCount":2},{"fieldValue":"Issues","totalCount":10},{"fieldValue":"Network","totalCount":1},{"fieldValue":"Spring","totalCount":6},{"fieldValue":"etc","totalCount":3}]}}}
+{"data":{"allMarkdownRemark":{"group":[{"fieldValue":"기타","totalCount":3},{"fieldValue":"네트워크","totalCount":1},{"fieldValue":"데이터","totalCount":3},{"fieldValue":"스프링","totalCount":6},{"fieldValue":"이슈 / 장애 대응","totalCount":12}]}}}

@@ -65,7 +65,7 @@
     // ...
 }</code>
         </deckgo-highlight-code>
-<p>equals 메소드를 IDE의 자동 완성 기능을 통해 구현했는데, getClass가 아니라 아래와 같이 instanceOf를 이용해 비교해야 정상적으로 동작합니다.</p>
+<p>위의 equals 메소드는 IDE의 자동 완성 기능을 통해 구현했는데, getClass가 아니라 아래와 같이 instanceOf를 이용해 비교해야 정상적으로 동작합니다.</p>
 <deckgo-highlight-code language="java"  terminal="carbon" theme="dracula" >
           <code slot="code">public boolean equals(Object o) {
     if (!(o instanceof B)) {
