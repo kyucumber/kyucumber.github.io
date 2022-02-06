@@ -1,4 +1,87 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 14 Nov 2021 11:13:18 GMT</lastBuildDate><item><title><![CDATA[스프링에서 코틀린 스타일 테스트 코드 작성하기]]></title><description><![CDATA[스프링에서 코틀린 스타일 테스트 코드 작성하기]]></description><link>https://kyucumber.github.io/posts/spring/kotlin-test-with-spring</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/kotlin-test-with-spring</guid><pubDate>Sun, 06 Jun 2021 00:00:00 GMT</pubDate><content:encoded>&lt;h2 id=&quot;개요&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EA%B0%9C%EC%9A%94&quot; aria-label=&quot;개요 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;개요&lt;/h2&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 06 Feb 2022 06:17:45 GMT</lastBuildDate><item><title><![CDATA[spring data redis에서 atomic operation 보장을 위해 Lua script 활용하기]]></title><description><![CDATA[spring data redis에서 atomic operation 보장을 위해 Lua script를 사용하는 법을 정리합니다]]></description><link>https://kyucumber.github.io/posts/spring/spring-data-redis-atomic-operations/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/spring-data-redis-atomic-operations/</guid><pubDate>Fri, 10 Dec 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;팀 내에서 서비스 운영을 위해 Redis Clutser를 사용하고 있으며
+내부 코드에 아래와 같이 PartialUpdate를 사용해 구현된 부분이 존재합니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;redisKVTemplate.update(
+    PartialUpdate(id, Data::class.java)
+        .set(&amp;quot;timeout&amp;quot;, timeout)
+        .set(&amp;quot;accessedAt&amp;quot;, accessedAt)
+)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;내부적으로 Data의 만료 여부를 체크하고 만료된 데이터를 삭제하는 로직이 존재하는데
+멀티 인스턴스에서 여러 operation이 들어오다 보니 &lt;strong&gt;삭제된 이후에 Data에 대한 PartialUpdate가 수행&lt;/strong&gt;되는 경우가 빈번하게 발생했습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code   terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;org.springframework.data.mapping.model.MappingInstantiationException: Failed to instantiate data.Data using constructor fun &amp;lt;init&amp;gt;(kotlin.String, kotlin.String, kotlin.String, kotlin.String, kotlin.String, java.time.Instant, java.time.Instant, kotlin.Long):&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;삭제된 이후 PartialUpdate를 수행하면 timeout, accessedAt 값 이외의 값들이 존재하지 않게 되며
+해당 값들은 Kotlin에서 non null 타입으로 정의되어 있어 위와 같은 예외가 발생하게 됩니다.&lt;/p&gt;
+&lt;p&gt;서비스에 큰 이슈는 없는 상황이라 방치하고 있었지만 atomic operation을 보장해 위와 같은 케이스가 발생하지 않도록 수정이 필요했습니다.&lt;/p&gt;
+&lt;h2 id=&quot;redis와-transaction&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#redis%EC%99%80-transaction&quot; aria-label=&quot;redis와 transaction permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Redis와 Transaction&lt;/h2&gt;
+&lt;p&gt;Cluster 모드가 아닌 경우라면 MULTI, EXEC, DISCARD, WATCH 등의 키워드를 이용해 spring-data-redis 내에서 트랜잭션을 보장할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;하지만 &lt;a href=&quot;https://stackoverflow.com/questions/43124168/is-transaction-multi-exec-supported-in-spring-data-redis-in-a-cluster-mode&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;클러스터 모드를 사용하는 경우 spring-data-redis 내부에서는 트랜잭션 보장을 지원하지 않습니다&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;따라서 spring-data-redis의 트랜잭션 서포트를 기대할 수 없는 상황이며 atomic operation 보장을 위해서 다른 방법을 사용해야 합니다.&lt;/p&gt;
+&lt;p&gt;Redis는 서버 내부의 Lua 인터프리터를 이용해 Lua script로 작성된 코드를 해석하고 실행할 수 있습니다.
+Lua script를 활용해 여러 명령어를 조합할 수 있으며, 스크립트 자체가 하나의 명령어와 같이 동작하기 때문에 atomic operation을 보장할 수 있습니다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Lua script를 사용하더라도 여러 샤드에 있는 키를 조작하거나 하는 행동은 불가능하므로 스크립트에 관련된 키가 단일 샤드에서 실행되도록 보장해야 합니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;spring-data-redis와-lua-script&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#spring-data-redis%EC%99%80-lua-script&quot; aria-label=&quot;spring data redis와 lua script permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;spring data redis와 Lua script&lt;/h2&gt;
+&lt;p&gt;spring-data-redis에서는 &lt;a href=&quot;https://github.com/spring-projects/spring-data-redis/blob/main/src/main/asciidoc/reference/redis-scripting.adoc&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Lua script의 사용을 지원&lt;/a&gt;합니다.&lt;/p&gt;
+&lt;p&gt;atomic을 보장하고 싶은 operation의 내용은 아래와 같습니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Hash의 특정 field가 존재하는 경우에만 PartialUpdate를 수행한다.&lt;/li&gt;
+&lt;li&gt;Hash의 특정 field가 존재하지 않는 경우 해당 키의 데이터를 제거한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;해당 operation의 수행을 위해
+아래와 같은 Lua script 작성 및 설정을 통해 atomic operation을 보장할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;resources/scripts/update_data_if_exist.lua&lt;/code&gt;&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;lua&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;-- update_data_if_exist.lua
+if redis.call(&amp;#39;HEXISTS&amp;#39;, KEYS[1], &amp;#39;username&amp;#39;)==1 then
+  redis.call(&amp;#39;HSET&amp;#39;, KEYS[1], &amp;#39;timeout&amp;#39;, ARGV[1])
+  redis.call(&amp;#39;HSET&amp;#39;, KEYS[1], &amp;#39;accessedAt&amp;#39;, ARGV[2])
+else
+  redis.call(&amp;#39;DEL&amp;#39;, KEYS[1])
+end&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;RedisLuaScriptConfig&lt;/code&gt;&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;@Configuration
+class RedisLuaScriptConfig {
+    @Bean
+    fun updateIfExistScript(): RedisScript&amp;lt;Unit&amp;gt; =
+        RedisScript.of(ResourceScriptSource(ClassPathResource(&amp;quot;scripts/update_data_if_exist.lua&amp;quot;)).scriptAsString)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;DataRepository&lt;/code&gt;&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;interface DataRepository : CrudRepository&amp;lt;Data, String&amp;gt;, DataCustomRepository
+
+interface DataCustomRepository {
+    fun updateTimeoutAndAccessedAt(data: Data, accessedAt: Instant = Instant.now())
+}
+
+@Repository
+class DataCustomRepositoryImpl(
+    private val updateIfExistScript: RedisScript&amp;lt;Unit&amp;gt;,
+    private val stringRedisTemplate: RedisTemplate&amp;lt;String, String&amp;gt;
+) : DataCustomRepository {
+    override fun updateTimeoutAndAccessedAt(data: Data, accessedAt: Instant) {
+        stringRedisTemplate.execute(
+            updateIfExistScript,
+            listOf(&amp;quot;data:${session.id}&amp;quot;),
+            data.timeout.toString(),
+            accessedAt.toString()
+        )
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/spring-projects/spring-data-redis/blob/main/src/main/asciidoc/reference/redis-scripting.adoc&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Spring Data - Redis Redis Scripting&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://engineering.linecorp.com/ko/blog/atomic-cache-stampede-redis-lua-script/&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Atomic 처리와 cache stampede 대책을 위해 Redis Lua script를 활용한 이야기&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[스프링에서 코틀린 스타일 테스트 코드 작성하기]]></title><description><![CDATA[스프링에서 코틀린 스타일 테스트 코드 작성하기]]></description><link>https://kyucumber.github.io/posts/spring/kotlin-test-with-spring</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/kotlin-test-with-spring</guid><pubDate>Sun, 06 Jun 2021 00:00:00 GMT</pubDate><content:encoded>&lt;h2 id=&quot;개요&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EA%B0%9C%EC%9A%94&quot; aria-label=&quot;개요 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;개요&lt;/h2&gt;
 &lt;p&gt;스프링 기반 프로젝트에서 코틀린을 사용하더라도 아래와 같이 기존에 사용하던 테스트 프레임워크인 &lt;code class=&quot;language-text&quot;&gt;Junit&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;Assertion&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;Mockito&lt;/code&gt; 등은 동일하게 사용할 수 있습니다.&lt;/p&gt;
 &lt;p&gt;&lt;span
       class=&quot;gatsby-resp-image-wrapper&quot;
@@ -2387,7 +2470,103 @@ EnvironmentFile=/kyucumber/EnvironmentFile&lt;/code&gt;
   globally_quoted_identifiers_skip_column_definitions: true&lt;/code&gt;
         &lt;/deckgo-highlight-code&gt;
 &lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
-&lt;p&gt;&lt;a href=&quot;https://kwonnam.pe.kr/wiki/java/hibernate/configuration&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://kwonnam.pe.kr/wiki/java/hibernate/configuration&lt;/a&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Failed to validate connection 이슈]]></title><description><![CDATA[Failed to validate connection (No operations allowed after connection closed.) WARN 로그]]></description><link>https://kyucumber.github.io/posts/issues/failed-to-validate-connection</link><guid isPermaLink="false">https://kyucumber.github.io/posts/issues/failed-to-validate-connection</guid><pubDate>Tue, 03 Mar 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;아래와 같은 WARN 로그가 지속적으로 발생하는 문제를 겪었습니다.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://kwonnam.pe.kr/wiki/java/hibernate/configuration&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://kwonnam.pe.kr/wiki/java/hibernate/configuration&lt;/a&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Spring Boot Dependency Management Plugin]]></title><description><![CDATA[Spring Boot Dependency Management Plugin의 특정 버전 customizing 등의 내용을 다룹니다.]]></description><link>https://kyucumber.github.io/posts/spring/spring-boot-dependency-management-plugin/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/spring-boot-dependency-management-plugin/</guid><pubDate>Wed, 03 Jun 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Spring에서 제공해주는 여러 starter들을 사용하면 별도 의존성 버전을 명시해주지 않아도
+여러 라이브러리들이 각각의 버전으로 추가되는 것을 확인할 수 있습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;dependencies {
+    testImplementation(&amp;quot;org.springframework.boot:spring-boot-starter-test&amp;quot;)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;./gradlew dependencies
+
++--- org.springframework.boot:spring-boot-starter-test -&amp;gt; 2.3.12.RELEASE
+|    +--- org.springframework.boot:spring-boot-starter:2.3.12.RELEASE (*)
+|    +--- org.springframework.boot:spring-boot-test:2.3.12.RELEASE
+|    |    \--- org.springframework.boot:spring-boot:2.3.12.RELEASE (*)
+|    +--- org.springframework.boot:spring-boot-test-autoconfigure:2.3.12.RELEASE
+|    |    +--- org.springframework.boot:spring-boot:2.3.12.RELEASE (*)
+|    |    +--- org.springframework.boot:spring-boot-test:2.3.12.RELEASE (*)
+|    |    \--- org.springframework.boot:spring-boot-autoconfigure:2.3.12.RELEASE (*)
+|    +--- com.jayway.jsonpath:json-path:2.4.0
+|    |    +--- net.minidev:json-smart:2.3 -&amp;gt; 2.3.1
+|    |    |    \--- net.minidev:accessors-smart:2.3.1
+|    |    |         \--- org.ow2.asm:asm:5.0.4
+|    |    \--- org.slf4j:slf4j-api:1.7.25 -&amp;gt; 1.7.30
+|    +--- jakarta.xml.bind:jakarta.xml.bind-api:2.3.3 (*)
+|    +--- org.assertj:assertj-core:3.16.1
+|    +--- org.hamcrest:hamcrest:2.2
+|    +--- org.junit.jupiter:junit-jupiter:5.6.3&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;별도 버전 없이도 위와 같은 의존성들을 사용할 수 있는 것은 &lt;code class=&quot;language-text&quot;&gt;io.spring.dependency-management&lt;/code&gt; 플러그인이 의존성들의 버전을 관리해주기 때문입니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;apply(plugin = &amp;quot;io.spring.dependency-management&amp;quot;)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;&lt;a href=&quot;https://github.com/spring-projects/spring-boot/tree/main/spring-boot-project/spring-boot-dependencies&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Spring Boot Dependencies&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;customizing-managed-versions&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#customizing-managed-versions&quot; aria-label=&quot;customizing managed versions permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Customizing Managed Versions&lt;/h2&gt;
+&lt;p&gt;특정 버전의 버그나 이슈로 인해 플러그인이 관리하는 버전을 변경하려면 아래와 같은 두가지 방법을 사용할 수 있습니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;version property override&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;ext[&amp;quot;logback.version&amp;quot;] = &amp;quot;1.2.9&amp;quot;&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;dependency management의 bomProperty&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;dependencyManagement {
+    imports {
+        mavenBom(&amp;#39;io.spring.platform:platform-bom:1.0.1.RELEASE&amp;#39;) {
+            bomProperty &amp;#39;spring.version&amp;#39;, &amp;#39;4.0.4.RELEASE&amp;#39;
+        }
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Spring Boot는 여러 의존성들에 대해 설계 및 테스트 되었으므로, 버전을 임의로 변경하는 경우 호환성 관련 이슈가 발생할 수 있습니다.
+가급적 변경하지 않는 것이 좋습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;dependency-sets&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#dependency-sets&quot; aria-label=&quot;dependency sets permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Dependency Sets&lt;/h2&gt;
+&lt;p&gt;그룹이나 버전이 동일한 경우 dependencySet을 활용해 아래처럼 사용할 수 있습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;dependencyManagement {
+    dependencies {
+        dependencySet(&amp;quot;org.slf4j:1.7.7&amp;quot;) {
+            entry(&amp;quot;slf4j-api&amp;quot;)
+            entry(&amp;quot;slf4j-simple&amp;quot;)
+        }
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;importing-a-maven-bom&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#importing-a-maven-bom&quot; aria-label=&quot;importing a maven bom permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Importing a Maven Bom&lt;/h2&gt;
+&lt;p&gt;프로젝트 내에서 직접 의존성의 버전을 명시하지 않고 maven bom을 가져와서 의존성 관리를 할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;여러 이상의 bom을 가져오는 경우에 bom은 순서대로 처리되며,
+동일한 dependency에 대한 bom이 있는 경우 나중에 추가된 bom의 의존성 버전이 사용됩니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;dependencyManagement {
+    imports {
+        mavenBom(&amp;quot;io.spring.platform:platform-bom:1.0.1.RELEASE&amp;quot;)
+    }
+}
+
+dependencies {
+    implementation(&amp;quot;org.springframework.integration:spring-integration-core&amp;quot;)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;spring-managed-dependency-versions&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#spring-managed-dependency-versions&quot; aria-label=&quot;spring managed dependency versions permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Spring Managed Dependency Versions&lt;/h2&gt;
+&lt;p&gt;스프링에서 관리되는 의존성 버전 및 버전 프로퍼티 정보는 아래 링크에서 확인할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;스프링 버전별로 관리되는 버전이 다르기 때문에 버전 별 아래 링크의 주소를 변경해주셔야 합니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://docs.spring.io/spring-boot/docs/2.6.1/reference/htmlsingle/#dependency-versions.coordinates&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Managed Dependency Coordinates&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://docs.spring.io/spring-boot/docs/2.6.1/reference/htmlsingle/#dependency-versions.properties&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Version Properties&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://docs.spring.io/spring-boot/docs/current/gradle-plugin/reference/htmlsingle/&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Spring Boot Gradle Plugin Reference Guide&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Failed to validate connection 이슈]]></title><description><![CDATA[Failed to validate connection (No operations allowed after connection closed.) WARN 로그]]></description><link>https://kyucumber.github.io/posts/issues/failed-to-validate-connection</link><guid isPermaLink="false">https://kyucumber.github.io/posts/issues/failed-to-validate-connection</guid><pubDate>Tue, 03 Mar 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;아래와 같은 WARN 로그가 지속적으로 발생하는 문제를 겪었습니다.&lt;/p&gt;
 &lt;deckgo-highlight-code   terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
           &lt;code slot=&quot;code&quot;&gt;Failed to validate connection (No operations allowed after connection closed.)&lt;/code&gt;
         &lt;/deckgo-highlight-code&gt;
