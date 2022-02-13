@@ -1,4 +1,627 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 06 Feb 2022 06:17:45 GMT</lastBuildDate><item><title><![CDATA[spring data redis에서 atomic operation 보장을 위해 Lua script 활용하기]]></title><description><![CDATA[spring data redis에서 atomic operation 보장을 위해 Lua script를 사용하는 법을 정리합니다]]></description><link>https://kyucumber.github.io/posts/spring/spring-data-redis-atomic-operations/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/spring-data-redis-atomic-operations/</guid><pubDate>Fri, 10 Dec 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;팀 내에서 서비스 운영을 위해 Redis Clutser를 사용하고 있으며
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 13 Feb 2022 05:58:56 GMT</lastBuildDate><item><title><![CDATA[Effective Kotlin Item 07. 결과 부족이 발생할 경우 null과 Failure를 사용하라]]></title><description><![CDATA[Effective Kotlin Item 07. 결과 부족이 발생할 경우 null과 Failure를 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-07</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-07</guid><pubDate>Tue, 08 Feb 2022 01:50:00 GMT</pubDate><content:encoded>&lt;p&gt;아래와 같이 함수가 원하는 결과를 만들어 낼 수 없을 때가 존재한다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;서버로부터 데이터를 읽어 들이려고 했는데, 인터넷 연결 문제로 읽어들이지 못한 경우&lt;/li&gt;
+&lt;li&gt;조건에 맞는 첫 번째 요소를 찾으려 했는데, 조건에 맞는 요소가 없는 경우&lt;/li&gt;
+&lt;li&gt;텍스트를 파싱해서 객체를 만들려고 했는데, 텍스트의 형식이 맞지 않는 경우&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;위와 같은 상황을 처리하는 메커니즘은 크게 두가지가 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;null 또는 실패를 나타내는 sealed 클래스(일반적으로 Failure라는 이름 사용)&lt;/li&gt;
+&lt;li&gt;예외 throw&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;예외를 throw 하는 경우 예외를 정보를 전달하는 방법으로 사용하면 안된다.
+예외는 &lt;strong&gt;예외적인 상황이 발생했을 때 사용하는 것&lt;/strong&gt;이 좋다. 이유는 아래와 같다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;많은 개발자가 예외가 전파되는 과정을 제대로 추적하지 못한다.&lt;/li&gt;
+&lt;li&gt;코틀린의 모든 예외는 unchecked 예외이며 따라서 사용자가 예외를 처리하지 않을수도 있다. 이와 관련된 내용은 문서에도 제대로 제대로 드러나지 않는다.&lt;/li&gt;
+&lt;li&gt;예외는 예외적인 상황을 처리하기 위해 만들어졌으므로 명시적인 테스트 만큼 빠르게 동작하지 않는다.&lt;/li&gt;
+&lt;li&gt;try-catch 블록 내부에 코드를 배치하면, 컴파일러가 할 수 있는 &lt;strong&gt;최적화가 제한&lt;/strong&gt;된다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;null-또는-sealed-클래스를-활용한-오류-처리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#null-%EB%98%90%EB%8A%94-sealed-%ED%81%B4%EB%9E%98%EC%8A%A4%EB%A5%BC-%ED%99%9C%EC%9A%A9%ED%95%9C-%EC%98%A4%EB%A5%98-%EC%B2%98%EB%A6%AC&quot; aria-label=&quot;null 또는 sealed 클래스를 활용한 오류 처리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;null 또는 sealed 클래스를 활용한 오류 처리&lt;/h2&gt;
+&lt;p&gt;위에서 다룬 첫번째 방법인 null 또는 실패를 나타내는 sealed 클래스를 사용하는 방법은 오류를 표현할 때 굉장히 좋다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;예측할 수 있는 범위의 오류는 null과 Failure를 사용하고 예측하기 어려운 범위의 오류는 예외를 throw 해서 처리하자.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;AS-IS&lt;/strong&gt;&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;inline fun &amp;lt;reified T&amp;gt;.readObjectOrNull(): T? {
+    // ...
+    if (incorrectSign) {
+        return null
+    }
+    // ..
+    return result
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;&lt;strong&gt;TO-BE&lt;/strong&gt;&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;inline fun &amp;lt;reified T&amp;gt;.readObjectOrNull(): T? {
+    // ...
+    if (incorrectSign) {
+        return Failure(JsonParsingException()
+    }
+    // ..
+    return Success(result)
+}
+
+sealed class Result&amp;lt;out T&amp;gt;
+class Success&amp;lt;out T&amp;gt;(val result: T): Result&amp;lt;T&amp;gt;()
+class Failure(val throwable: Throwable): Result&amp;lt;Nothing&amp;gt;()
+
+class JsonParsingException: Exception&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위와 같이 표시되는 오류는 다루기 쉬우며 놓치기 어렵다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val age = userText.readObjectOrNull&amp;lt;Person&amp;gt;()?.age ?: -1&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;null을 처리해야 하면 위의 safe call(?) 또는 elvis operator(?:)와 같은 다양한 null-safety 기능을 활용하자.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val person = userText.readObjectOrNull&amp;lt;Person&amp;gt;()
+val age = when(person) {
+    is Success -&amp;gt; person.age
+    is Failure -&amp;gt; -1
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;Result와 같은 Union type을 리턴하기로 했다면 위의 when 표현식을 사용해 이를 처리할 수 있다.&lt;/p&gt;
+&lt;p&gt;위에서 설명한 오류 처리 방식은 try-catch 블록보다 효율적이며, 사용하기 쉽고 명확하다.
+예외는 놓칠 수 있고, 전체 애플리케이션을 중지시킬 수 있지만 null 값과 seald result 클래스는 명시적으로 처리해야 하며 애플리케이션을 중지시키지도 않는다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;null과 sealed class 차이점
+추가적인 정보 전달이 필요하면 sealed result를 사용하고, 그렇지 않으면 null을 사용하는게 일반적이다.
+Failure는 처리할 때 필요한 정보를 가질 수 있다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;List에서는 아래와 같은 형태의 함수를 사용한다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;get&lt;/p&gt;
+&lt;p&gt;해당 요소가 없다면 IndexOutOfBoundsException(List 기준)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;getOrNull&lt;/p&gt;
+&lt;p&gt;해당 요소가 없다면 null&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;위 두가지 함수 이외에 일부 유용한 getOrDefault도 존재.&lt;/p&gt;
+&lt;p&gt;일반적으로 getOrNull 또는 Elvis operator(?:)를 사용하는 것이 처리하기 쉽다.&lt;/p&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;예측하기 어려운 범위가 아닌 경우라면 null 또는 sealed 클래스를 활용하자&lt;/li&gt;
+&lt;li&gt;개발자에게 null이 발생할 수 있다고 경고를 주려면 getOrNull 등을 사용해 무엇이 리턴되는지 예측할 수 있게 하는 것이 좋다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 06. 사용자 정의 오류보다는 표준 오류를 사용하라]]></title><description><![CDATA[Effective Kotlin Item 06. 사용자 정의 오류보다는 표준 오류를 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-06</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-06</guid><pubDate>Tue, 08 Feb 2022 01:30:00 GMT</pubDate><content:encoded>&lt;p&gt;require, check, assert 등을 사용하면 대부분 코틀린 오류를 처리할 수 있지만
+이외의 예측하지 못한 상황을 나타내야 하는 경우가 존재한다.&lt;/p&gt;
+&lt;p&gt;JSON 형식을 파싱하는 라이브러리 구현 시 JSON 파일 형식에 문제가 있다면 JSONPArsingException을 발생시키는 것이 좋다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;inline fun &amp;lt;reified T&amp;gt; String.readObject(): T {
+    //...
+    if (incorrectSign) {
+        throw JsonParsingException()
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위에서는 표준 라이브러리에 이를 나타내는 적절한 오류가 없어서 사용자 정의 오류를 사용했다.&lt;/p&gt;
+&lt;p&gt;하지만 가급적 직접 정의하기 보다는 최대한 표준 라이브러리에 존재하는 오류를 사용하는 것이 좋다.&lt;/p&gt;
+&lt;p&gt;표준 라이브러리의 예외는 많은 개발자가 알고 있으므로 널리 알려진 요소를 재사용하면 다른 사람들이 API를 더 쉽게 배우고 이해할 수 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;IllegalArgumentException, IllegalStateException&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;IndexOutOfBoundsException&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;컬렉션 또는 배열에서 인덱스 파라미터 값이 범위를 벗어난 경우&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;ConcurrentModificationException&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;동시 수정을 금지하는데 발생한 경우&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;UnsupportedOperationException&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;사용하려던 메소드는 현재 객체에서 사용할 수 없다는 것을 나타냄&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;기본적으로 사용할 수 없는 메소드는 클래스에 없는 것이 좋다.&lt;/p&gt;
+&lt;p&gt;사용할 수 없는 메소드를 일부러 두는 경우도 있음 → listOf로 만든 컬렉션은 Immutable임을 알려주기 위한 목적으로 add를 호출 시 무조건 오류가 발생한다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;NoSuchElementException&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;사용자가 사용하려던 요소가 존재하지 않음을 나타냄&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;책 내용에서 가급적 표준 오류를 다루라고 했지만 아래와 같은 사례도 존재하므로 무조건적으로 표준 오류를 사용하기 보다는 팀 구성원들의 의견을 종합해 처리하는게 좋을 것 같습니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;컨트롤러 레이어에서 JPA의 &lt;code class=&quot;language-text&quot;&gt;Dataintegrityviolationexception&lt;/code&gt; 과 같은 저수준 예외를 활용하는 경우&lt;/li&gt;
+&lt;li&gt;require나 check에서 발생시키는 예외가 이미 구현된 예외 처리 구문과 겹쳐 예외를 구분해야 하거나 하는 경우&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 05. 예외를 활용해 코드에 제한을 걸어라]]></title><description><![CDATA[Effective Kotlin Item 05. 예외를 활용해 코드에 제한을 걸어라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-05</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-05</guid><pubDate>Tue, 08 Feb 2022 01:00:00 GMT</pubDate><content:encoded>&lt;p&gt;확실하게 어떤 형태로 동작해야 하는 코드가 있다면, 예외를 활용해 제한을 걸어주는 것이 좋다.&lt;/p&gt;
+&lt;p&gt;코틀린에서는 코드의 동작에 제한을 걸때 다음과 같은 방법을 사용할 수 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;require&lt;/li&gt;
+&lt;li&gt;check&lt;/li&gt;
+&lt;li&gt;assert(테스트 에서만 작동)&lt;/li&gt;
+&lt;li&gt;return 또는 throw와 함께 사용하는 Evlis operator&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;fun pop(num: Int = 1): List&amp;lt;T&amp;gt; {
+    require(num &amp;lt;= size) {
+        &amp;quot;Cannot remove more elements than current size&amp;quot;
+    }
+    // 생략
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위와 같이 제한을 걸어주면 아래와 같은 장점이 존재한다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;제한을 걸면 문서를 읽지 않은 개발자도 문제를 확인할 수 있다.&lt;/li&gt;
+&lt;li&gt;문제가 있을 경우 함수가 예상하지 못한 동작을 하지 않고 예외를 throw 한다. throw를 하지 않고 예상하지 못한 동작을 하는 것은 예외를 throw 하는 것 보다 위험하며, 상태를 관리하기 어렵다.&lt;/li&gt;
+&lt;li&gt;코드가 어느정도 자체적으로 검사되어 위와 관련된 테스트를 줄일 수 있다.&lt;/li&gt;
+&lt;li&gt;스마트 캐스트를 활용할 수 있게 되어, 캐스트를 적게 할 수 있다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;아규먼트&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%95%84%EA%B7%9C%EB%A8%BC%ED%8A%B8&quot; aria-label=&quot;아규먼트 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;아규먼트&lt;/h2&gt;
+&lt;p&gt;함수를 정의할 때 타입 시스템을 활용해 아래와 같이 argument에 제한을 거는 코드를 많이 사용한다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;숫자를 아규먼트로 받아 팩토리얼을 계산한다면 숫자는 양의 정수여야 한다.&lt;/li&gt;
+&lt;li&gt;좌표들을 아규먼트로 받아서 클러스터를 찾을 때는 비어있지 않은 좌표 목록이 필요하다.&lt;/li&gt;
+&lt;li&gt;사용자로부터 이메일 주소를 받을 때 값이 입력되어 있는지, 형식이 올바른지 체크해야 한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;일반적으로 이러한 제한을 걸 때 require 함수를 사용한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;fun factorial(n: Int): Long {
+    require(n &amp;gt;= 0)
+    //
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;상태&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%83%81%ED%83%9C&quot; aria-label=&quot;상태 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;상태&lt;/h2&gt;
+&lt;p&gt;아래와 같은 경우, 어떤 구체적인 조건을 만족할 때만 함수를 사용할 수 있게 해야 한다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;어떤 객체가 미리 초기화되어 있어야만 처리를 하게 하고 싶은 함수&lt;/li&gt;
+&lt;li&gt;사용자가 로그인했을 때만 처리를 하게 하고 싶은 함수&lt;/li&gt;
+&lt;li&gt;객체를 사용할 수 있는 시점에 사용하고 싶은 함수&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;위와 같이 상태와 관련된제한을 할 때는 일반적으로 check를 사용한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;fun speak(text: String) {
+    check(isInitialized)
+    // ..
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이러한 확인은 사용자가 규약을 어기고 사용하면 안되는 곳에서 함수를 호출하고 있다고 의심될 때 한다.&lt;/p&gt;
+&lt;p&gt;사용자가 코드를 제대로 사용할거라고 믿기 보다는 문제 상황을 예측하고, 문제 상황에 예외를 throw 하는 것이 좋다.&lt;/p&gt;
+&lt;h2 id=&quot;assert--계열-함수-사용&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#assert--%EA%B3%84%EC%97%B4-%ED%95%A8%EC%88%98-%EC%82%AC%EC%9A%A9&quot; aria-label=&quot;assert  계열 함수 사용 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Assert  계열 함수 사용&lt;/h2&gt;
+&lt;p&gt;단위 테스트에서의 Assert 계열 함수 사용에 대해 다룬다.&lt;/p&gt;
+&lt;p&gt;자세한 내용은 생략&lt;/p&gt;
+&lt;h2 id=&quot;nullability와-스마트-캐스팅&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#nullability%EC%99%80-%EC%8A%A4%EB%A7%88%ED%8A%B8-%EC%BA%90%EC%8A%A4%ED%8C%85&quot; aria-label=&quot;nullability와 스마트 캐스팅 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;nullability와 스마트 캐스팅&lt;/h2&gt;
+&lt;p&gt;코틀린에서 require와 check로 조건을 확인해 true가 나오면 해당 조건은 이후로도 true일 거라고 가정한다.&lt;/p&gt;
+&lt;p&gt;따라서 이를 활용해 타입 비교를 한다면 스마트 캐스트가 작동한다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Smart cast&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;fun changeDress(person: Person) {
+    require(person.outfit is Dress)
+    val dress: Dress = person.outfit // person.outfit은 스마트 캐스트로 인해 Dress 타입 보장
+    // ..
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;requireNotNull, checkNotNull을 활용한 unpack&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;위와 같은 특징은 대상이 null인지 체크하는데 유용하며, 이 경우 requireNotNull, checkNotNull이라는 특수한 함수를 사용해도 좋다.&lt;/p&gt;
+&lt;p&gt;둘 다 스마트 캐스트를 지원하므로 변수를 언팩(unpack)하는 용도로 활용할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class Person(val email: String?)
+fun validateEmail(email: String) { }
+
+fun sendEmail(person: Person, text: String) {
+    val email = requireNotNull(person.email)
+    validateEmail(email)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;Elvis operator 활용&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;nullability를 목적으로 오른쪽에 throw 혹은 return을 두고 Elvis operator를 활용하는 경우가 많다.&lt;/p&gt;
+&lt;p&gt;이러한 코드는 굉장히 읽기 쉽고, 유연하게 사용할 수 있다.&lt;/p&gt;
+&lt;p&gt;첫번째로 오른쪽에 return을 넣으면 오류 없이 단순히 함수를 중지할 수도 있음&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;fun sendEmail(person: Person, text: String) {
+    val email: String = person.email ?: return
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;return / throw와 run 활용&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;프로퍼티에 문제가 있어서 null 일 때 여러 처리가 필요한 경우 return / throw와 run을 조합해 사용할 수 있다.&lt;/p&gt;
+&lt;p&gt;이는 함수가 중지된 이유를 로그에 출력해야 할 때 사용할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;fun sendEmail(person: Person, text: String) {
+    val email: String = person.email ?: run {
+        log(&amp;quot;Email not sent, no email adress&amp;quot;)
+        return
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;p&gt;이번 절에서 활용한 내용을 기반으로 아래와 같은 이득을 얻을 수 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;제한을 훨씬 더 쉽게 확인할 수 있다.&lt;/li&gt;
+&lt;li&gt;애플리케이션을 더 안정적으로 지킬 수 있다.&lt;/li&gt;
+&lt;li&gt;코드를 잘못 쓰는 상황을 막을 수 있다.&lt;/li&gt;
+&lt;li&gt;스마트 캐스팅을 활용할 수 있다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;활용한 메커니즘&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;require block&lt;/li&gt;
+&lt;li&gt;check block&lt;/li&gt;
+&lt;li&gt;assert block&lt;/li&gt;
+&lt;li&gt;return, throw, elvis operator&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 04. inferred 타입으로 리턴하지 말라]]></title><description><![CDATA[Effective Kotlin Item 04. inferred 타입으로 리턴하지 말라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-04</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-04</guid><pubDate>Tue, 08 Feb 2022 00:50:00 GMT</pubDate><content:encoded>&lt;p&gt;코틀린의 타입 추론(type inference)을 사용할 때 몇가지 위험한 부분들이 존재한다.&lt;/p&gt;
+&lt;p&gt;inferred 타입을 사용하면 슈퍼클래스나 인터페이스로 설정되지 않으며, 정확하게 오른쪽에 있는 피연산자에 맞게 설정되는 문제가 존재한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;open class Animal
+class Zebra: Animal()
+
+fun main() {
+    var animal = Zebra()
+    animal = Animal() // Type mismatch
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;일반적으로는 위와 같은 상황이 문제가 되지 않으며 타입을 명시적으로 지정해 해결할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;open class Animal
+class Zebra: Animal()
+
+fun main() {
+    // 타입 명시적 지정
+    var animal: Animal = Zebra()
+    animal = Animal()
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;하지만 직접 라이브러리 또는 모듈을 조작할 수 없는 경우 이러한 문제를 간단하게 해결할 수 없다.&lt;/p&gt;
+&lt;p&gt;inferred 타입을 노출하면 아래와 같이 위험한 일이 발생할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;interface CarFactory {
+    fun produce(): Car
+}
+
+val DEFAULT_CAR: Car = Fiat126P()&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위 코드를 아래와 같이 Default를 지정해 inferred 타입을 사용하고 리턴 타입을 제거하면 CarFactory 인터페이스에서는 Fiat126P 이외의 자동차를 생산할 수 없게 된다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;interface CarFactory {
+    fun produce() = DEFAULT_CAR
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;타입을 확실하게 지정해야 하는 경우 명시적으로 타입을 지정해야 한다는 원칙을 가져야 한다.&lt;/li&gt;
+&lt;li&gt;안전을 위해 외부 API를 만들때는 반드시 타입을 지정하고 이렇게 지정한 타입을 특별한 이유와 확실한 확인 없이 제거하지 말자&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 03. 최대한 플랫폼 타입을 사용하지 말라]]></title><description><![CDATA[Effective Kotlin Item 03. 최대한 플랫폼 타입을 사용하지 말라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-03</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-03</guid><pubDate>Tue, 08 Feb 2022 00:40:00 GMT</pubDate><content:encoded>&lt;p&gt;자바에서 자주 볼 수 있었던 NPE는 코틀린의 null-safety 메커니즘으로 인해 거의 찾아보기 힘들지만 자바와 코틀린을 연결해서 사용할 때는 이러한 예외가 발생할 수 있다.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;@NotNull&lt;/code&gt; 혹은 &lt;code class=&quot;language-text&quot;&gt;@Nullable&lt;/code&gt; 이 붙은 경우라면 String, String?으로 추정 및 변경이 가능하지만 &lt;strong&gt;어노테이션이 없다면 모든 것을 nullable로 가정&lt;/strong&gt;하고 다루어야 한다.&lt;/p&gt;
+&lt;p&gt;nullable과 가장 많은 문제가 되는 부분은 자바의 제네릭 타입이다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;public class UserRepo {
+    public List&amp;lt;User&amp;gt; getUsers() {
+        // **
+    }
+}
+
+val users: List&amp;lt;User&amp;gt; = UserRepo().users!!.filterNotNull()&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위와 같이 리스트 자체가 null인지, 내부 데이터가 널인지 등을 체크해야 하며 리스트가 아닌 map, filterNotNull 등의 메소드를 제공하지 않는 다른 제네릭 타입이라면 null 확인 자체가 복잡한 일이 된다.&lt;/p&gt;
+&lt;h3 id=&quot;플랫폼-타입&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%ED%94%8C%EB%9E%AB%ED%8F%BC-%ED%83%80%EC%9E%85&quot; aria-label=&quot;플랫폼 타입 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;&lt;strong&gt;플랫폼 타입&lt;/strong&gt;&lt;/h3&gt;
+&lt;p&gt;위와 같은 문제 때문에 코틀린은 자바 등 다른 프로그래밍 언어에서 넘어온 타입을 특수하게 다루며 이를 &lt;strong&gt;플랫폼 타입(platform type)&lt;/strong&gt;이라고 부른다.
+플랫폼 타입은 String! 처럼 뒤에 ! 기호를 붙여서 표기한다. (직접적으로 코드에 나타나지는 않음)&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val repo = UserRepo()
+val user1 = repo.user // user1: User!
+val user2: User = repo.user // user2: User
+val user1: User? = repo.user // user3: User?&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위와 같이 사용이 가능하기 때문에 null 체크 등의 복잡한 문제는 사라진다.&lt;/p&gt;
+&lt;p&gt;하지만 여전히 null일 가능성이 존재하므로 플랫폼 타입을 사용할 때는 항상 주의를 기울여야 한다.&lt;/p&gt;
+&lt;p&gt;가급적 자바를 코틀린과 함께 사용할 때 자바 코드에 아래와 같이 어노테이션(NotNull, Nullable)을 붙여 사용하자.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;public @NotNull User getUser() {
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;현재 다음과 같은 어노테이션이 지원되고 있음&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;org.jetbrains.annotations &lt;code class=&quot;language-text&quot;&gt;@Nullable&lt;/code&gt; &lt;code class=&quot;language-text&quot;&gt;@NotNull&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;JSR-305, javax.annotation &lt;code class=&quot;language-text&quot;&gt;@Nullable&lt;/code&gt; &lt;code class=&quot;language-text&quot;&gt;@Nonnull&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;@CheckForNull&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;JavaX, javax.annotation &lt;code class=&quot;language-text&quot;&gt;@Nullable&lt;/code&gt; &lt;code class=&quot;language-text&quot;&gt;@Nonnull&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;@CheckForNull&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;기타 등등&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;JSR-305의 &lt;code class=&quot;language-text&quot;&gt;@ParametersAreNonnullbyDefault&lt;/code&gt; 를 사용하면 자바에서도 디폴트로 파라미터가 널이 아님을 보장할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;public class JavaClass {
+    public String getValue() {
+        return null;
+    }
+}
+
+fun statedType() {
+    // NPE
+    val value: String = JavaClass().value
+
+    println(value.length)
+}
+
+fun platformType() {
+    val value = JavaClass().value
+
+    // NPE
+    println(value.length)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위 케이스에서 statedType은 값을 가져오는 경우에 즉시 NPE가 발생하지만 platformType은 length를 호출할 때 NPE가 발생한다.&lt;/p&gt;
+&lt;p&gt;이러한 변수를 한 두번 안전하게 사용하더라도 이후에 다른 사람이 사용할 때 NPE가 발생하지 않은거란 보장이 없음 때문에 이와 같은 &lt;strong&gt;플랫폼 타입은 최대한 빨리 제거&lt;/strong&gt;하는 것이 좋다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;interface UserRepo {
+    fun getUserName() = JavaClass().value
+}
+
+class RepoImpl: UserRepo {
+    override fun getUserName(): String? {
+        return null
+    }
+}
+
+fun main() {
+    val repo: UserRepo = RepoImpl()
+    val text: String = repo.getUserName() // Runtime에 NPE
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위의 예제에서도 디폴트 메소드가 inferred type(추론된 타입)이며 플랫폼 타입으로 지정되기 때문에 사용하는 사람이 nullable이 아닐거라고 받아들이면 런타임에 NPE가 발생할 수 있다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;위와 같은 문제를 IDE에서 친절하게 알려주긴 합니다.
+&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 960px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/2567854fee0a640b5bb1145faa9019f8/75d3b/inferred-type-ide.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 10.833333333333334%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAACCAYAAABYBvyLAAAACXBIWXMAAAsSAAALEgHS3X78AAAAgElEQVQI10XIyQrCMABF0X6JoChCh5gmndJZoTZFV2JL/f8PudZsXBy473lZ/kZ2M/K6IPsF1czE+omuV1T9Iam2v3wR9CtCTYh4JHLs1n+/7YsBb7dXnM45dfugqCymmiiM3YzkxZ00GzClJdE3/LAhunQEUUMoWteO6Nw+HFO+SOlCrE+wVE8AAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/2567854fee0a640b5bb1145faa9019f8/8ac56/inferred-type-ide.webp 240w,
+/static/2567854fee0a640b5bb1145faa9019f8/d3be9/inferred-type-ide.webp 480w,
+/static/2567854fee0a640b5bb1145faa9019f8/e46b2/inferred-type-ide.webp 960w,
+/static/2567854fee0a640b5bb1145faa9019f8/f992d/inferred-type-ide.webp 1440w,
+/static/2567854fee0a640b5bb1145faa9019f8/882b9/inferred-type-ide.webp 1920w,
+/static/2567854fee0a640b5bb1145faa9019f8/ee81e/inferred-type-ide.webp 1966w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/2567854fee0a640b5bb1145faa9019f8/8ff5a/inferred-type-ide.png 240w,
+/static/2567854fee0a640b5bb1145faa9019f8/e85cb/inferred-type-ide.png 480w,
+/static/2567854fee0a640b5bb1145faa9019f8/d9199/inferred-type-ide.png 960w,
+/static/2567854fee0a640b5bb1145faa9019f8/07a9c/inferred-type-ide.png 1440w,
+/static/2567854fee0a640b5bb1145faa9019f8/29114/inferred-type-ide.png 1920w,
+/static/2567854fee0a640b5bb1145faa9019f8/75d3b/inferred-type-ide.png 1966w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/2567854fee0a640b5bb1145faa9019f8/d9199/inferred-type-ide.png&quot;
+          alt=&quot;inferred-type-ide&quot;
+          title=&quot;inferred-type-ide&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;다른 프로그래밍 언어에서 와서 nullable 여부를 알 수 없는 값을 플랫폼 타입이라고 한다.&lt;/li&gt;
+&lt;li&gt;사용하는 부분 뿐만 아니라 활용하는 곳 까지 영향을 줄 수 있는 위험한 코드이며 빨리 해당 코드를 제거하는게 좋다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 02. 변수의 스코프를 최소화하라]]></title><description><![CDATA[Effective Kotlin Item 02. 변수의 스코프를 최소화하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-02</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-02</guid><pubDate>Tue, 08 Feb 2022 00:10:00 GMT</pubDate><content:encoded>&lt;p&gt;상태 정의 시 변수와 프로퍼티의 스코프를 최소화 하는 것이 좋다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;프로퍼티 보다는 지역 변수를 사용한다.&lt;/li&gt;
+&lt;li&gt;최대한 좁은 스코프를 갖게 변수를 사용한다. 예를 들어 반복문 내부에서만 사용되면 변수를 반복문 내부에 작성하는것이 좋다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;변수는 읽기 전용 전용 여부와 상관 없이 if, when, try-catch, elvis operator 등을 활용해 변수를 정의할 때 초기화되는 것이 좋다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;fun updateWeather(degrees: Int) {
+    val (description, color) = when {
+        degrees &amp;lt; 5 -&amp;gt; &amp;quot;cold to Color.BLUE
+        else -&amp;gt; &amp;quot;hot&amp;quot; to Colodr.RED
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;여러 프로퍼티를 한꺼번에 설정해야 하는 경우 위처럼 destructuring declaration을 활용한다.&lt;/p&gt;
+&lt;h2 id=&quot;캡처링&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%BA%A1%EC%B2%98%EB%A7%81&quot; aria-label=&quot;캡처링 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;캡처링&lt;/h2&gt;
+&lt;p&gt;에라토스테네스의 체 구현 시 아래와 같은 코드를 작성할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val primes: Sequence&amp;lt;Int&amp;gt; = sequence {
+    var numbers = generateSequence(2) { it + 1 }
+
+    while (true) {
+        val prime = numbers.first()
+        yield(prime)
+        numbers = numbers.drop(1)
+            .filter { it % prime != 0 }
+    }
+}
+
+println(primes.take(10).toList())
+// [2, 3, 5, 7, 11, 13, 17, 19, 23, 29]&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위 코드를 아래와 같이 최적화하려고 시도하는 경우 문제가 발생한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val primes: Sequence&amp;lt;Int&amp;gt; = sequence {
+    var numbers = generateSequence(2) { it + 1 }
+
+    // while 스코프 바깥에 var로 정의
+    var prime: Int
+    while (true) {
+        prime = numbers.first()
+        yield(prime)
+        numbers = numbers.drop(1)
+            .filter { it % prime != 0 }
+    }
+}
+
+println(primes.take(10).toList())
+// [2, 3, 5, 6, 7, 8, 9, 10, 11, 12]&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위와 같은 문제가 발생할 수 있으므로 &lt;strong&gt;가변성을 피하고 스코프 범위를 좁게&lt;/strong&gt; 만들어 이런 문제를 간단하게 피해갈 수 있다.&lt;/p&gt;
+&lt;p&gt;Sequence를 많이 사용해보지 않아 조금 헷갈렸는데, var를 사용할 때 prime 값이 ObjectRef로 캡처링되면서 지연 필터링이 우리가 의도한 대로 동작하지 않는 것 같습니다.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&quot;https://medium.com/@yangweigbh/how-kotlin-lambda-capture-variable-ef90e11e531d&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Kotlin Lambda Capture Variable&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;변수의 스코프는 좁게 만들어서 활용하자.&lt;/li&gt;
+&lt;li&gt;var 보다는 val을 사용하는 것이 좋다.&lt;/li&gt;
+&lt;li&gt;람다에서 변수를 캡처한다는 것을 기억하자.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 01. 가변성을 제한하라]]></title><description><![CDATA[Effective Kotlin Item 01. 가변성을 제한하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-01</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-01</guid><pubDate>Tue, 08 Feb 2022 00:00:00 GMT</pubDate><content:encoded>&lt;h2 id=&quot;코틀린에서-가변성-제한하기&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%BD%94%ED%8B%80%EB%A6%B0%EC%97%90%EC%84%9C-%EA%B0%80%EB%B3%80%EC%84%B1-%EC%A0%9C%ED%95%9C%ED%95%98%EA%B8%B0&quot; aria-label=&quot;코틀린에서 가변성 제한하기 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;코틀린에서 가변성 제한하기&lt;/h2&gt;
+&lt;p&gt;코틀린에서 가변성을 제한하기 위해 굉장히 많은 방법을 활용할 수 있지만
+많이 사용되고 중요한 방법은 아래와 같다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;읽기 전용 프로퍼티(val)&lt;/li&gt;
+&lt;li&gt;가변 컬렉션과 읽기 전용 컬렉션 구분&lt;/li&gt;
+&lt;li&gt;데이터 클래스의 copy&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;읽기-전용-프로퍼티val&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%9D%BD%EA%B8%B0-%EC%A0%84%EC%9A%A9-%ED%94%84%EB%A1%9C%ED%8D%BC%ED%8B%B0val&quot; aria-label=&quot;읽기 전용 프로퍼티val permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;읽기 전용 프로퍼티(val)&lt;/h3&gt;
+&lt;p&gt;코틀린에서는 val 키워드로 읽기 전용 프로퍼티를 만들 수 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;읽기 전용 프로퍼티로 정의해도 Mutable한 데이터를 담고 있다면 내부적으로 변경이 가능하다&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&quot;가변-컬렉션과-읽기-전용-컬렉션-구분하기&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EA%B0%80%EB%B3%80-%EC%BB%AC%EB%A0%89%EC%85%98%EA%B3%BC-%EC%9D%BD%EA%B8%B0-%EC%A0%84%EC%9A%A9-%EC%BB%AC%EB%A0%89%EC%85%98-%EA%B5%AC%EB%B6%84%ED%95%98%EA%B8%B0&quot; aria-label=&quot;가변 컬렉션과 읽기 전용 컬렉션 구분하기 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;가변 컬렉션과 읽기 전용 컬렉션 구분하기&lt;/h3&gt;
+&lt;p&gt;아래와 같은 컬렉션 다운 캐스팅 금지&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val list = listOf(1,2,3)
+
+if (list is MutableList) {
+    list.add(4)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;JVM 기준 Arrays.ArrayList에는 add가 구현되어 있지 않아 UnsupportedOperationException이 발생한다.&lt;/p&gt;
+&lt;p&gt;읽기 전용에서 가변으로 변경하려면 아래와 같은 toMutableList를 활용한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val list = listOf(1,2,3)
+
+val mutable = list.toMutableList()&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h3 id=&quot;데이터-클래스의-copy&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%81%B4%EB%9E%98%EC%8A%A4%EC%9D%98-copy&quot; aria-label=&quot;데이터 클래스의 copy permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;데이터 클래스의 copy&lt;/h3&gt;
+&lt;p&gt;Immutable 객체를 사용하면 아래와 같은 장점이 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;한번 정의된 상태가 유지되므로 코드를 이해하기 쉽다.&lt;/li&gt;
+&lt;li&gt;Immutable 객체는 공유시에도 충돌이 발생하지 않아 병렬 처리를 안전하게 할 수 있다.&lt;/li&gt;
+&lt;li&gt;Immutable 객체에 대한 참조는 변경되지 않으므로, 쉽게 캐시할 수 있다.&lt;/li&gt;
+&lt;li&gt;Immutable 객체의 방어적 복사본을 만들 필요가 없다. 또한 깊은 복사를 따로 할 필요가 없다.&lt;/li&gt;
+&lt;li&gt;Immutable 객체는 다른 객체를 만들때 활용하기 좋으며 실행을 더 쉽게 예측할 수 있다.&lt;/li&gt;
+&lt;li&gt;Imuutable 객체는 Set 혹은 Map의 키로 활용할 수 있다. (Mutable은 요소에 수정이 일어나면 해시 테이블 내부에서 요소를 찾을 수 없어 활용할 수 없음)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Int와 같이 내부적으로 plus, minus와 같이 불변한 Int를 리턴하는 메소드를 만들어 불변을 유지할 수 있다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;매번 모든 프로퍼티 대상으로 plus, minus와 같은 함수를 만드는 것은 번거로우니 data class 및 copy 메소드를 활용하자&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;다른-종류의-변경-가능-지점mutating-point&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EB%8B%A4%EB%A5%B8-%EC%A2%85%EB%A5%98%EC%9D%98-%EB%B3%80%EA%B2%BD-%EA%B0%80%EB%8A%A5-%EC%A7%80%EC%A0%90mutating-point&quot; aria-label=&quot;다른 종류의 변경 가능 지점mutating point permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;다른 종류의 변경 가능 지점(mutating point)&lt;/h2&gt;
+&lt;p&gt;변경 가능한 리스트를 만들 때 아래와 같은 두가지 선택지가 존재한다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;val + MutableList&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val list1: MutableList&amp;lt;Int&amp;gt; = mutableListOf()&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;var + ImmutableList&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;var list2: List&amp;lt;Int&amp;gt; = listOf()&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;두 가지 모두 변경은 가능하지만 내부적인 동작이 다르다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;list1 += 1 // list1.plusAssign(1)
+list2 += 1 // list2.plus(1)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;첫번째 코드는 멀티스레드 처리 시 내부의 동기화 여부를 알 수 없어 위험하며 두번째 코드가 멀티스레드 안정성이 더 좋다. (하지만 잘못 만들면 일부 요소의 손실 가능)&lt;/p&gt;
+&lt;p&gt;mutable 프로퍼티를 사용하면 사용자 정의 setter(또는 이를 사용하는 델리게이트)를 활용해 변경을 추적할 수 있음&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;var names by Delegates.observable(listOf&amp;lt;String&amp;gt;()) { _, old, new -&amp;gt; 
+    println(&amp;quot;Names chanaged from $old to $new&amp;quot;)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;MutableCollection 대신 mutable 프로퍼티인 var를 활용하는게 객체 변경을 더 제어하기가 쉽다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;최악의 방법은 프로퍼티와 컬렉션 모두 Mutable로 만드는 것&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;var list = mutableListOf&amp;lt;Int&amp;gt;()
+
+list += 1 // 모호성이 발생해 해당 연산자 사용 불가능&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&quot;변경-가능-지점-노출하지-말기&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EB%B3%80%EA%B2%BD-%EA%B0%80%EB%8A%A5-%EC%A7%80%EC%A0%90-%EB%85%B8%EC%B6%9C%ED%95%98%EC%A7%80-%EB%A7%90%EA%B8%B0&quot; aria-label=&quot;변경 가능 지점 노출하지 말기 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;변경 가능 지점 노출하지 말기&lt;/h2&gt;
+&lt;p&gt;Mutable 객체가 외부에 노출되는 경우 수정이 발생할 수 있으니 위험하다.&lt;/p&gt;
+&lt;p&gt;리턴되는 mutable 객체 복제해 반환하는 &lt;strong&gt;방어적 복제(defensive copying)&lt;/strong&gt; 사용&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class UserHolder {
+   private val user: MutableUser()
+
+   fun get(): MutableUser {
+       return user.copy()
+   }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;var 보다는 val 사용&lt;/li&gt;
+&lt;li&gt;mutable 프로퍼티보다는 immutable 프로퍼티 사용&lt;/li&gt;
+&lt;li&gt;mutable 객체와 클래스 보다는 immutable 객체와 클래스 사용&lt;/li&gt;
+&lt;li&gt;변경이 필요한 대상이 있다면 immutable data class로 만들고 copy 활용&lt;/li&gt;
+&lt;li&gt;컬렉션에 상태를 저장해야 한다면, mutable 보다는 immutable 컬렉션 사용&lt;/li&gt;
+&lt;li&gt;변이 지점을 적절하게 설게하고 불필요한 변이 지점을 만들지 않는게 좋다.&lt;/li&gt;
+&lt;li&gt;mutable 객체의 외부 노출은 피하자.&lt;/li&gt;
+&lt;li&gt;효율성 때문에 immutable 보다 mutable을 다루는게 좋은 경우도 있다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[spring data redis에서 atomic operation 보장을 위해 Lua script 활용하기]]></title><description><![CDATA[spring data redis에서 atomic operation 보장을 위해 Lua script를 사용하는 법을 정리합니다]]></description><link>https://kyucumber.github.io/posts/spring/spring-data-redis-atomic-operations/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/spring-data-redis-atomic-operations/</guid><pubDate>Fri, 10 Dec 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;팀 내에서 서비스 운영을 위해 Redis Clutser를 사용하고 있으며
 내부 코드에 아래와 같이 PartialUpdate를 사용해 구현된 부분이 존재합니다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
           &lt;code slot=&quot;code&quot;&gt;redisKVTemplate.update(
@@ -2854,8 +3477,8 @@ CodeDeploy 사용 시 신규로 올라온 인스턴스의 프로비저닝을 위
         &lt;img
           class=&quot;gatsby-resp-image-image&quot;
           src=&quot;/static/e0ac669e8c8fb4f23b26ebf89d7c38d6/d9199/aws-auto-scaling-group-pending-history.png&quot;
-          alt=&quot;gatsby carbon&quot;
-          title=&quot;gatsby carbon&quot;
+          alt=&quot;asg pending&quot;
+          title=&quot;asg pending&quot;
           loading=&quot;lazy&quot;
           style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
         /&gt;
@@ -2903,8 +3526,8 @@ CodeDeploy 사용 시 신규로 올라온 인스턴스의 프로비저닝을 위
         &lt;img
           class=&quot;gatsby-resp-image-image&quot;
           src=&quot;/static/691611b16d87e79feea60a2d2ea88789/d9199/auto-scaling-group-lifecycle-hook.png&quot;
-          alt=&quot;gatsby carbon&quot;
-          title=&quot;gatsby carbon&quot;
+          alt=&quot;auto-scaling-group-lifecycle-hook&quot;
+          title=&quot;auto-scaling-group-lifecycle-hook&quot;
           loading=&quot;lazy&quot;
           style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
         /&gt;
