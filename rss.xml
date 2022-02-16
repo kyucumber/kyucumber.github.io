@@ -1,4 +1,302 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 13 Feb 2022 11:34:49 GMT</lastBuildDate><item><title><![CDATA[Effective Kotlin Item 12. 연산자 오버로드를 할 때는 의미에 맞게 사용하라]]></title><description><![CDATA[Effective Kotlin Item 12. 연산자 오버로드를 할 때는 의미에 맞게 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-12</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-12</guid><pubDate>Sat, 12 Feb 2022 00:10:00 GMT</pubDate><content:encoded>&lt;p&gt;연산자 오버로딩은 굉장히 강력한 기능이지만 위험할 수 있다.&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Wed, 16 Feb 2022 14:42:43 GMT</lastBuildDate><item><title><![CDATA[Effective Kotlin Item 18. 코딩 컨벤션을 지켜라]]></title><description><![CDATA[Effective Kotlin Item 18. 코딩 컨벤션을 지켜라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-18</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-18</guid><pubDate>Wed, 16 Feb 2022 00:58:00 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://kotlinlang.org/docs/coding-conventions.html&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;코틀린 문서의 Coding Convensions&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;코틀린 커뮤니티에 속한 사람이라면 이러한 컨벤션을 최대한 지켜주는 것이 좋다. 이를 지키면 아래와 같은 장점이 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;어떤 프로젝트를 접해도 쉽게 이해할 수 있다.&lt;/li&gt;
+&lt;li&gt;외부 개발자도 프로젝트의 코드를 쉽게 이해할 수 있다.&lt;/li&gt;
+&lt;li&gt;다른 개발자도 코드의 작동 방식을 쉽게 추측할 수 있다.&lt;/li&gt;
+&lt;li&gt;코드를 병합하고, 프로젝트의 코드 일부를 다른 프로젝트로 이동하는것이 쉽다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;컨벤션을 지킬 때 도움이 되는 도구들&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Intellij Formatter(Predefined style/Kotlin style guide)&lt;/li&gt;
+&lt;li&gt;ktlint&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;자주 위반되는 규칙 중 하나는 클래스와 함수의 형식이다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;// BAD
+class FullName(val name: String, val surname: String)
+
+// GOOD
+class Person(
+    val id: Int = 0,
+    val name: String = &amp;quot;&amp;quot;,
+    val surname: String = &amp;quot;&amp;quot;
+)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;함수도 파라미터를 많이 갖고 있고 길다면 아래와 같이 작성한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;public fun &amp;lt;T&amp;gt; Iterable&amp;lt;T&amp;gt;.joinToString(
+    separator: CharSequence = &amp;quot;, &amp;quot;,
+    prefix: CharSequence = &amp;quot;&amp;quot;,
+    // ...
+)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;아래와 같이 작성하는 것은 두가지 측면에서 문제가 될 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;Class Person(val id: Int = 0,
+    val name: String = &amp;quot;&amp;quot;,
+    val surname: String = &amp;quot;&amp;quot;)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;모든 클래스의 아규먼트가 클래스 이름에 따라 다른 크기의 들여쓰기를 갖는다. 이 경우 클래스 이름 변경 시 모든 기본 생성자 파라미터의 들여쓰기가 변경된다.&lt;/li&gt;
+&lt;li&gt;클래스가 차지하는 공간의 너비가 너무 크다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;일부 팀이 다른 규칙을 사용하기로 결정할 수 있지만 프로젝트의 컨벤션은 반드시 지켜주는 것이 좋다.&lt;/p&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 17. 이름 있는 아규먼트를 사용하라]]></title><description><![CDATA[Effective Kotlin Item 17. 이름 있는 아규먼트를 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-17</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-17</guid><pubDate>Wed, 16 Feb 2022 00:56:00 GMT</pubDate><content:encoded>&lt;p&gt;코드에서 아규먼트의 의미가 명확하지 않은 경우가 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val text = (1..10).joinToString(&amp;quot;|&amp;quot;)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;“|”가 prefixd인지 separator를 의미하는건지 코드만 보아서는 알기 어렵다.&lt;/p&gt;
+&lt;p&gt;파라미터가 명확하지 않은 경우 named argument를 사용해 명확하게 만들어줄 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val text = (1..10).joinToString(separator = &amp;quot;|&amp;quot;)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;함수 호출 시 잘못된 위치에 파라미터를 배치하는 경우도 방지할 수 있다.&lt;/p&gt;
+&lt;p&gt;자바 함수를 호출할 때에는 named argument를 사용할 수 없다.&lt;/p&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;named argument는 가독성 향상에 도움이 된다.&lt;/li&gt;
+&lt;li&gt;같은 타입의 파라미터가 여러개 있는 경우 named argument를 사용하자.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 16. 프로퍼티는 동작이 아니라 상태를 나타내야 한다.]]></title><description><![CDATA[Effective Kotlin Item 16. 프로퍼티는 동작이 아니라 상태를 나타내야 한다.]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-16</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-16</guid><pubDate>Wed, 16 Feb 2022 00:55:00 GMT</pubDate><content:encoded>&lt;p&gt;코틀린의 프로퍼티와 자바의 필드는 비슷해 보이지만 완전히 다른 개념이다.
+코틀린의 프로퍼티는 아래처럼 &lt;strong&gt;사용자 정의 setter, getter&lt;/strong&gt;를 가질 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;var name: String? = null
+    get() = field?.toUpperCase()
+    set(value) {
+        if (!value.isNullOrBlank()
+    }&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위 코드의 field라는 식별자는 프로퍼티의 데이터를 저장해두는 backing field에 대한 레퍼런스이다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val fullName: String
+    get() = &amp;quot;$name $username&amp;quot;&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;val을 사용해 읽기 전용 프로퍼티를 만들때는 field가 만들어지지 않는다.&lt;/p&gt;
+&lt;p&gt;var을 사용해 만든 읽고 쓸수 있는 프로퍼티는 getter, setter를 정의할 수 있다. 이러한 프로퍼티를 &lt;strong&gt;파생 프로퍼티(derived property)&lt;/strong&gt;라고 부르며 자주 사용한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;var date: Date
+    get() = Date(mills)
+    set(value) {
+        millis = value.time
+    }&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;직렬화 문제 등으로 더이상 해당 타입을 사용할 수 없을 때 위와 같이 사용할 수 있다.&lt;/p&gt;
+&lt;p&gt;프로퍼티는 필드가 필요 없고 개념적으로 접근자(val은 getter, var은 getter, setter)를 나타낸다.  따라서 코틀린은 인터페이스에도 프로퍼티를 정의할 수 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;인터페이스에 프로퍼티 정의&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;interface Person {
+  val name: String
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;프로퍼티 위임&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val db: Database by lazy { connectToDb() }&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;확장 프로퍼티&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val Context.preferences: SharedPreferences
+  get() = PreferenceManager.getDefaultSharedPreferences(this)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;프로퍼티는 필드가 아니라 접근자를 나타낸다. 프로퍼티를 함수 대신 사용할 수도 있지만 완전히 대체해서 사용하는 것은 좋지 않다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;// BAD
+val Tree&amp;lt;Int&amp;gt;.sum: Int
+    get() = when (this) {
+        is Leaf -&amp;gt; value
+        is Node -&amp;gt; left.sum + right.sum
+    }
+
+// GOOD
+fun Tree&amp;lt;Int&amp;gt;.sum(): Int = when (this) {
+    is Leaf -&amp;gt; value
+    is Node -&amp;gt; left.sum() + right.sum()
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이런 게터에 재귀 형태의 &lt;strong&gt;많은 계산이 들어갈 것이라고 예상하지 않기 때문에 이러한 처리는 프로퍼티가 아닌 함수로 구현&lt;/strong&gt;해야 한다.&lt;/p&gt;
+&lt;p&gt;원칙적으로 프로퍼티는 상태를 나타내거나 설정하기 위한 목적으로만 사용하는 것이 좋고 다른 로직 등을 포함하지 않아야 한다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;프로퍼티 사용 판단을 위한 간단한 질문&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;이 프로퍼티를 함수로 정의할 경우, 접두사로 get 또는 set을 붙일 것인가? 아니라면 프로퍼티로 만드는 것은 좋지 않다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&quot;프로퍼티-대신-함수를-사용해야-하는-경우&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%ED%94%84%EB%A1%9C%ED%8D%BC%ED%8B%B0-%EB%8C%80%EC%8B%A0-%ED%95%A8%EC%88%98%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%B4%EC%95%BC-%ED%95%98%EB%8A%94-%EA%B2%BD%EC%9A%B0&quot; aria-label=&quot;프로퍼티 대신 함수를 사용해야 하는 경우 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;프로퍼티 대신 함수를 사용해야 하는 경우&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;연산 비용이 높거나 복잡도가 O(1)보다 큰 경우&lt;/li&gt;
+&lt;li&gt;비즈니스 로직을 포함하는 경우: 로깅 리스너 통지, 바인드된 요소 변경 등&lt;/li&gt;
+&lt;li&gt;결정적이지 않은 경우: 같은 동작을 연속적으로 두번 했을 때 다른 값이 나올 수 있다면 함수 사용&lt;/li&gt;
+&lt;li&gt;변환의 경우: 변환은 관습적으로 Int.toDouble()과 같은 변환 함수로 이루어지기 때문에 이런 변환을 프로퍼티로 만들면 오해를 불러 일으킬 수 있다.&lt;/li&gt;
+&lt;li&gt;게터에서 프로퍼티의 상태 변경이 일어나야 하는 경우: 관습적으로 게터에서 프로퍼티의 상태 변화를 일으킨다고 생각하지 않는다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 15. 리시버를 명시적으로 참조하라]]></title><description><![CDATA[Effective Kotlin Item 15. 리시버를 명시적으로 참조하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-15</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-15</guid><pubDate>Wed, 16 Feb 2022 00:15:00 GMT</pubDate><content:encoded>&lt;p&gt;무언가를 자세히 설명하기 위해 명시적으로 더 긴 코드를 사용할 때가 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;클래스의 메소드임을 나타내기 위해 this를 사용하는 경우&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class Test {
+    private var num: Int = 0
+    
+    fun test() {
+        this.num += 1
+    }&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;확장 리시버를 명시적으로 참조하게 하는 경우&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;fun &amp;lt;T: comparable&amp;lt;T&amp;gt;&amp;gt; List&amp;lt;T&amp;gt;.quickSort(): List&amp;lt;T&amp;gt; {
+    // ...
+    val pivot = this.first() // this를 붙인 부분
+    
+    // ...
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;여러-개의-리시버&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%97%AC%EB%9F%AC-%EA%B0%9C%EC%9D%98-%EB%A6%AC%EC%8B%9C%EB%B2%84&quot; aria-label=&quot;여러 개의 리시버 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;여러 개의 리시버&lt;/h2&gt;
+&lt;p&gt;스코프 내부에 둘 이상의 리시버가 있는 경우 리시버를 명시적으로 나타내는게 좋다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;AS-IS&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class Node(val name: String) {
+    fun makeChild(childName: String) =
+        create(&amp;quot;$name.$childName&amp;quot;).apply {
+            println(&amp;quot;Created $name&amp;quot;)
+        }
+
+    private fun create(name: String): Node? = Node(name)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위의 예는 name이 Node의 name을 참조하는 것이 아니라 생성자로 전달된 name을 참조하게 된다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;TO-BE&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class Node(val name: String) {
+    fun makeChild(childName: String) =
+        create(&amp;quot;$name.$childName&amp;quot;).apply {
+            println(&amp;quot;Created ${this?.name}&amp;quot;)
+        }
+
+    private fun create(name: String): Node? = Node(name)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;수정된 코드에서 문제는 해결되었지만 apply가 아닌 also를 사용했다면 이런 문제 자체가 일어나지 않는다.&lt;/p&gt;
+&lt;p&gt;일반적으로 also, let을 사용하는 것이 nullable 값을 처리할 때 훨씬 좋은 선택지이다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;create(&amp;quot;$name.$childName&amp;quot;).also {
+    println(&amp;quot;Created $it?.name&amp;quot;)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;리시버가 명확하지 않으면 아래와 같이 명시적으로 리서버를 적어서 명확하게 하자.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class Node(val name: String) {
+    fun makeChild(childName: String) =
+        create(&amp;quot;$name.$childName&amp;quot;).apply {
+            println(&amp;quot;Created ${this?.name} ${this@Node.name}&amp;quot;)
+        }
+
+    private fun create(name: String): Node? = Node(name)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;dsl-마커&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#dsl-%EB%A7%88%EC%BB%A4&quot; aria-label=&quot;dsl 마커 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;DSL 마커&lt;/h2&gt;
+&lt;p&gt;DSL을 사용할 때는 리시버를 가진 요소가 중첩되더라도 명시적으로 리시버를 붙이지 않는다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;table {
+    tr {
+        td { +&amp;quot;Column 1&amp;quot; }
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;기본적으로 모든 스코프에서 외부 스코프 리시버의 메소드를 사용할 수 있지만 아래와 같은 경우 코드에 문제가 발생한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;table {
+    tr {
+        td { +&amp;quot;Column 1&amp;quot; }
+        tr {
+            td { +&amp;quot;Value 1&amp;quot; }
+        }
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이러한 잘못된 사용을 막으려면 암묵적으로 외부 리시버를 사용하는것을 막는 DslMarker라는 메타 어노테이션을 사용해야 한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;@DslMarker
+annotation class HtmlDsl
+
+@DslMarker
+annotation class TableDsl&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이렇게 하면 외부 리시버 사용이 금지되며, 원한다면 명시적으로 지정해 사용할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;table {
+    tr {
+        td { +&amp;quot;Column 1&amp;quot; }
+        tr { // 컴파일 오류
+            td { +&amp;quot;Value 1&amp;quot; }
+        }
+    }
+}
+
+table {
+    tr {
+        td { +&amp;quot;Column 1&amp;quot; }
+        this@table.tr {
+            td { +&amp;quot;Value 1&amp;quot; }
+        }
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;짧게 적을 수 있다는 이유만으로 리시버를 제거하지 말자.&lt;/li&gt;
+&lt;li&gt;여러개의 리시버가 있는 상황 등에는 리시버를 명시적으로 적어주는 것이 좋다.&lt;/li&gt;
+&lt;li&gt;DSL에서 외부 스코프의 리시버를 적게 강제하고 싶다면 DslMarker 메타 어노테이션을 사용하자&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 14. 변수 타입이 명확하지 않은 경우 확실하게 지정하라]]></title><description><![CDATA[Effective Kotlin Item 14. 변수 타입이 명확하지 않은 경우 확실하게 지정하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-14</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-14</guid><pubDate>Wed, 16 Feb 2022 00:10:00 GMT</pubDate><content:encoded>&lt;p&gt;코틀린은 수준 높은 타입 추론 시스템을 갖추고 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val num = 10
+val name = &amp;quot;Mkk&amp;quot;
+val ids = listOf(12, 112, 554, 997)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이는 유형이 명확할 때 코드가 짧아지므로 코드의 가독성이 향상되지만 유형이 명확하지 않을때는 남용하면 좋지 않다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val data = getSomeData()&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;함수 정의를 따라가면 타입을 확인할 수 있지만 이는 가독성이 떨어진다는 의미이다.&lt;/p&gt;
+&lt;p&gt;가독성 향상 이외에도 안전을 위해서 타입을 지정하는 것이 좋다.&lt;/p&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 12. 연산자 오버로드를 할 때는 의미에 맞게 사용하라]]></title><description><![CDATA[Effective Kotlin Item 12. 연산자 오버로드를 할 때는 의미에 맞게 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-12</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-12</guid><pubDate>Sat, 12 Feb 2022 00:10:00 GMT</pubDate><content:encoded>&lt;p&gt;연산자 오버로딩은 굉장히 강력한 기능이지만 위험할 수 있다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
           &lt;code slot=&quot;code&quot;&gt;fun Int.factorial(): Int = (1..this).product()
 // 생략
