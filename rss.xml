@@ -1,4 +1,695 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Thu, 17 Feb 2022 00:47:48 GMT</lastBuildDate><item><title><![CDATA[Effective Kotlin Item 18. 코딩 컨벤션을 지켜라]]></title><description><![CDATA[Effective Kotlin Item 18. 코딩 컨벤션을 지켜라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-18</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-18</guid><pubDate>Wed, 16 Feb 2022 00:58:00 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://kotlinlang.org/docs/coding-conventions.html&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;코틀린 문서의 Coding Convensions&lt;/a&gt;&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 27 Feb 2022 06:15:45 GMT</lastBuildDate><item><title><![CDATA[이펙티브 코틀린 아이템 24. 제네릭 타입과 variance 한정자를 활용하라]]></title><description><![CDATA[Effective Kotlin Item24. 제네릭 타입과 variance 한정자를 활용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-24</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-24</guid><pubDate>Sun, 27 Feb 2022 00:05:00 GMT</pubDate><content:encoded>&lt;h2 id=&quot;invariant&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#invariant&quot; aria-label=&quot;invariant permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;invariant&lt;/h2&gt;
+&lt;p&gt;variacne 한정자(out 또는 in)이 없는 경우 invariant(불공변성)는 제네릭 타입으로 만들어지는 타입들이 서로 관련성이 없다는 의미이다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class Cup&amp;lt;T&amp;gt;
+
+// 아래 세가지 다 독립적이며 어떠한 관련성도 없다.
+val intCup: Cup&amp;lt;Int&amp;gt;
+val intCup: Cup&amp;lt;Any&amp;gt;
+val intCup: Cup&amp;lt;Nothing&amp;gt;&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;variance&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#variance&quot; aria-label=&quot;variance permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;variance&lt;/h2&gt;
+&lt;p&gt;제네릭 타입 간 관련성을 가지길 원한다면 out 또는 in이라는 variance 한정자를 붙일 수 있다.&lt;/p&gt;
+&lt;h3 id=&quot;covariant공변성과-out-한정자&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#covariant%EA%B3%B5%EB%B3%80%EC%84%B1%EA%B3%BC-out-%ED%95%9C%EC%A0%95%EC%9E%90&quot; aria-label=&quot;covariant공변성과 out 한정자 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;covariant(공변성)과 out 한정자&lt;/h3&gt;
+&lt;p&gt;out은 타입 파라미터를 covariant(공변성)으로 만든다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class Cup&amp;lt;out T&amp;gt;
+
+open class Dog
+class Puppy: Dog()
+
+val b: Cup&amp;lt;Dog&amp;gt; = Cup&amp;lt;Puppy&amp;gt;() // OK
+val a: Cup&amp;lt;Puppy&amp;gt; = Cup&amp;lt;Dog&amp;gt;() // 오류&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;A가 B의 서브타입일 때 &lt;code class=&quot;language-text&quot;&gt;Cup&amp;lt;A&amp;gt;&lt;/code&gt;가 &lt;code class=&quot;language-text&quot;&gt;Cup&amp;lt;B&amp;gt;&lt;/code&gt;의 서브타입이라는 의미, 위에서는 &lt;code class=&quot;language-text&quot;&gt;Cup&amp;lt;Dog&amp;gt;&lt;/code&gt;에 서브타입인 &lt;code class=&quot;language-text&quot;&gt;Cup&amp;lt;Puppy&amp;gt;&lt;/code&gt;가 할당될 수 있다.&lt;/p&gt;
+&lt;h3 id=&quot;contravariant반변성과-in-한정자&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#contravariant%EB%B0%98%EB%B3%80%EC%84%B1%EA%B3%BC-in-%ED%95%9C%EC%A0%95%EC%9E%90&quot; aria-label=&quot;contravariant반변성과 in 한정자 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;contravariant(반변성)과 in 한정자&lt;/h3&gt;
+&lt;p&gt;in은 out과 반대 의미이다. in 한정자는 타입 파라미터를 contravariant(반변성)으로 만든다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class Cup&amp;lt;in T&amp;gt;
+
+open class Dog
+class Puppy: Dog()
+
+val b: Cup&amp;lt;Dog&amp;gt; = Cup&amp;lt;Puppy&amp;gt;() // 오류
+val a: Cup&amp;lt;Puppy&amp;gt; = Cup&amp;lt;Dog&amp;gt;() // OK&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;A가 B의 서브타입일 때 &lt;code class=&quot;language-text&quot;&gt;Cup&amp;lt;A&amp;gt;&lt;/code&gt;가 &lt;code class=&quot;language-text&quot;&gt;Cup&amp;lt;B&amp;gt;&lt;/code&gt;의 슈퍼타입이라는 의미, 위에서는 &lt;code class=&quot;language-text&quot;&gt;Cup&amp;lt;Puppy&amp;gt;&lt;/code&gt;에 슈퍼타입인 &lt;code class=&quot;language-text&quot;&gt;Cup&amp;lt;Dog&amp;gt;&lt;/code&gt;가 할당될 수 있다.&lt;/p&gt;
+&lt;p&gt;variance 한정자를 그림으로 나타내면 다음과 같다.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 960px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/85d7a3ed02198d80267995ad134e40cf/1790f/item-24-variance.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 34.583333333333336%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAHCAYAAAAIy204AAAACXBIWXMAAAsSAAALEgHS3X78AAABY0lEQVQoz3VRyU4CQRD1+4xRQNknYXFN9AM8oCRy4CuM6NXwEwYBJYRlBhBBOMhAIJFlDjODDDy7KsLEg5VUuqte9auqflur1Qr/mWVZWC6Xm5hqF4vFH5zitRO+RcB8PoemzYRrfCdT1R4ymSfUajKT0uOaoiCXy6LZfOOa6WSCbPYZ+XwO7XaLc0z4cH8HKeiF33eAdPqRgcTNNcKhoPAA6nWFm52eRHEYDeHi/Ay6rkOWKwj43QiJmmQyYRNOpxNUKiWeRpvNGBiNhlDEg1brHaZp8pRq7xPF4qs4exybpiHwJhqNGkbDoU04Hn9BUaoCqDM5Wb+volQqco4IaeVO5wPlcgndbmdDKMtVFAovGAwGNmEqdQuncweOve3NylexS/ENHnjcDtFM5pUjYQmS5MPxUYSbELnLtQufdx/xeMwmJIUMw+CO1q+K30IcypHTNKQgCUZEdFJMecPQuWYt5g/TSOy7tFqnAgAAAABJRU5ErkJggg==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/85d7a3ed02198d80267995ad134e40cf/8ac56/item-24-variance.webp 240w,
+/static/85d7a3ed02198d80267995ad134e40cf/d3be9/item-24-variance.webp 480w,
+/static/85d7a3ed02198d80267995ad134e40cf/e46b2/item-24-variance.webp 960w,
+/static/85d7a3ed02198d80267995ad134e40cf/1671b/item-24-variance.webp 1189w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/85d7a3ed02198d80267995ad134e40cf/8ff5a/item-24-variance.png 240w,
+/static/85d7a3ed02198d80267995ad134e40cf/e85cb/item-24-variance.png 480w,
+/static/85d7a3ed02198d80267995ad134e40cf/d9199/item-24-variance.png 960w,
+/static/85d7a3ed02198d80267995ad134e40cf/1790f/item-24-variance.png 1189w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/85d7a3ed02198d80267995ad134e40cf/d9199/item-24-variance.png&quot;
+          alt=&quot;item-24-variance.png&quot;
+          title=&quot;item-24-variance.png&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;h2 id=&quot;함수-타입&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%ED%95%A8%EC%88%98-%ED%83%80%EC%9E%85&quot; aria-label=&quot;함수 타입 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;함수 타입&lt;/h2&gt;
+&lt;p&gt;함수 타입은 파라미터 유형과 리턴 타입에 따라 서로 관계를 갖는다.&lt;/p&gt;
+&lt;p&gt;(Int) → Any 타입의 함수는 다음과 같은 타입 등으로도 동작한다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;(Int) → Number&lt;/li&gt;
+&lt;li&gt;(Number) → Any&lt;/li&gt;
+&lt;li&gt;(Number) → Number&lt;/li&gt;
+&lt;li&gt;(Number) → Int&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;이는 아래와 같은 관계에 의해서 가능하다.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 960px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/7a3a6858329f824f22e3efff55cdc19c/3096d/item-24-function-type.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 50%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAKCAYAAAC0VX7mAAAACXBIWXMAAAsSAAALEgHS3X78AAAA/UlEQVQoz3VSia6DIBD0/3+zNnnaVuUQBdTpLn3bgscmhoXIMMdW27aBi9f8kxrHEdPk4NwI7/3lv9JXstnXuq5YlgXWWmilaDUEPKXzfeX3K9nw5XmeE4thGFLPZ3tGIQao9IBFjPHA+gvIAEoN0Frjfq8RQsAV+6Zp0LZtYszgueyDZJEUgv8HFXZsQaSHp8y7rXi0YLg3mMs5h67r0spMDLE/C+LXJw+RsSgBjTEk7Y887fF6Pgn8lZj+PF2/+0vJ3LNslswSy+QXCuETlgAKmYNk9qbve5o7i7q+nc5cHsrj0cJTkMbogsxhbHhlzyScM7940OVfDi4P6Q3WEhRznF2WqgAAAABJRU5ErkJggg==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/7a3a6858329f824f22e3efff55cdc19c/8ac56/item-24-function-type.webp 240w,
+/static/7a3a6858329f824f22e3efff55cdc19c/d3be9/item-24-function-type.webp 480w,
+/static/7a3a6858329f824f22e3efff55cdc19c/e46b2/item-24-function-type.webp 960w,
+/static/7a3a6858329f824f22e3efff55cdc19c/b2f3f/item-24-function-type.webp 1319w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/7a3a6858329f824f22e3efff55cdc19c/8ff5a/item-24-function-type.png 240w,
+/static/7a3a6858329f824f22e3efff55cdc19c/e85cb/item-24-function-type.png 480w,
+/static/7a3a6858329f824f22e3efff55cdc19c/d9199/item-24-function-type.png 960w,
+/static/7a3a6858329f824f22e3efff55cdc19c/3096d/item-24-function-type.png 1319w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/7a3a6858329f824f22e3efff55cdc19c/d9199/item-24-function-type.png&quot;
+          alt=&quot;item-24-variance.png&quot;
+          title=&quot;item-24-variance.png&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;파라미터 타입은 Int → Number → Any로 높은 타입으로 이동하며, 리턴 타입은 Any → Number → Int로 낮은 타입으로 이동한다.&lt;/p&gt;
+&lt;p&gt;코틀린의 &lt;strong&gt;함수 타입의 모든 파라미터 타입은 contravariant(in 한정자)이며 모든 리턴 타입은 covariant(out 한정자)&lt;/strong&gt;이다.&lt;/p&gt;
+&lt;p&gt;함수 타입을 사용할때는 이처럼 자동으로 variance 한정자가 사용되며, 코틀린에서 자주 사용되는 것으로는 covariant(out 한정자)를 가진 List가 존재한다.&lt;/p&gt;
+&lt;h2 id=&quot;variance-한정자의-안정성&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#variance-%ED%95%9C%EC%A0%95%EC%9E%90%EC%9D%98-%EC%95%88%EC%A0%95%EC%84%B1&quot; aria-label=&quot;variance 한정자의 안정성 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;variance 한정자의 안정성&lt;/h2&gt;
+&lt;p&gt;자바의 배열은 covariant이며 이로 인해 아래와 같은 문제가 발생할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;java&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;Integer[] numbers = {1, 4, 2, 1};
+Object[] objects = numbers;
+objects[2] = &amp;quot;B&amp;quot; // 오류&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위는 컴파일 타임 중에는 아무 문제가 없지만 런타임 오류가 발생한다.&lt;/p&gt;
+&lt;p&gt;코틀린은 이러한 결함을 해결하기 위해 Array를 invariant(IntArray, CharArray, ByteArray 등) 만들었으며, &lt;code class=&quot;language-text&quot;&gt;Array&amp;lt;Int&amp;gt;&lt;/code&gt;를 &lt;code class=&quot;language-text&quot;&gt;Array&amp;lt;Any&amp;gt;&lt;/code&gt; 등으로 바꿀 수 없다.&lt;/p&gt;
+&lt;h3 id=&quot;covariant-타입-파라미터와-함수-타입의-파라미터&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#covariant-%ED%83%80%EC%9E%85-%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0%EC%99%80-%ED%95%A8%EC%88%98-%ED%83%80%EC%9E%85%EC%9D%98-%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0&quot; aria-label=&quot;covariant 타입 파라미터와 함수 타입의 파라미터 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;covariant 타입 파라미터와 함수 타입의 파라미터&lt;/h3&gt;
+&lt;p&gt;아래 코드는 covariant하지 않다.  &lt;strong&gt;covariant 타입 파라미터(out)가 in 한정자 위치(함수의 타입 파라미터)에 있다면 covariant(out)와 업캐스팅을 연결해서 우리가 원하는 타입을 아무것이나 전달&lt;/strong&gt;할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;open class Dog
+class Puppy: Dog()
+class Hound: Dog()
+
+fun takeDog(dog: Dog) {}
+
+fun main() {
+    takeDog(Dog())
+    takeDog(Puppy())
+    takeDog(Hound())
+}
+
+class Box&amp;lt;out T&amp;gt; {
+    private var value: T? = null
+
+    // Type parameter T is declared as &amp;#39;out&amp;#39; but occurs in &amp;#39;in&amp;#39; position in type T
+    fun set(value: T) {
+        this.value = value
+    }
+
+    fun get(): T = value ?: error(&amp;quot;Value not set&amp;quot;)
+}
+
+fun main() {
+    val puppyBox = Box&amp;lt;Puppy&amp;gt;()
+    val dogBox: Box&amp;lt;Dog&amp;gt; = puppyBox
+
+    dogBox.set(Hound()) // Puppy를 위한 Box지만 Hound를 set 함수에 전달할 수 있다.
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위와 같은 행위가 가능하다면 오류가 발생할 것이므로 코틀린은 &lt;strong&gt;public in 한정자 위치(함수의 타입 파라미터)에 covariant 타입 파라미터(out)가 오는 것을 금지해 이런 오류를 사전에 방지&lt;/strong&gt;한다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;주석에도 표시해 뒀지만, 위와 같이 클래스를 정의하면 아래와 같은 에러 메시지가 노출된다.&lt;/p&gt;
+&lt;p&gt;Type parameter T is declared as ‘out’ but occurs in ‘in’ position in type T&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class Box&amp;lt;out T&amp;gt; {
+    private var value: T? = null
+
+    private fun set(value: T) {
+        this.value = value
+    }
+
+    fun get(): T = value ?: error(&amp;quot;Value not set&amp;quot;)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;private으로 제한하면 오류가 발생하지 않는다. get 메소드의 리턴 타입에 T가 사용되는데 covariant(out 한정자)는 public out 한정자 위치에도 안전하므로 이는 따로 제한되지 않는다.&lt;/p&gt;
+&lt;p&gt;위와 같은 covariant는 Producer나 Immutable 데이터 홀더에 많이 사용되며 아래 &lt;code class=&quot;language-text&quot;&gt;List&amp;lt;T&amp;gt;&lt;/code&gt;도 covariant의 형태를 띄고 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;public interface List&amp;lt;out E&amp;gt; : Collection&amp;lt;E&amp;gt; {&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;MutableList&amp;lt;T&amp;gt;&lt;/code&gt;의 T는 in 한정자 위치(함수의 타입 파라미터)에서 사용되며 안전하지 않으므로 invariant로 제공된다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;public interface MutableList&amp;lt;E&amp;gt; : List&amp;lt;E&amp;gt;, MutableCollection&amp;lt;E&amp;gt; {&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이외에 좋은 예로는 Response가 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;sealed class Response&amp;lt;out R, out E&amp;gt;
+class Failure&amp;lt;out E&amp;gt;(val error: E): Response&amp;lt;Nothing, E&amp;gt;()
+class Success&amp;lt;out R&amp;gt;(val value: R): Response&amp;lt;R, Nothing&amp;gt;()&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;covariant와 Nothing 타입으로 인해 Failure는 오류 타입을 지정하지 않아도 되고, Success는 잠재적인 값을 지정하지 않아도 된다.&lt;/p&gt;
+&lt;h3 id=&quot;contravariant-타입-파라미터와-함수-리턴-타입-클래스의-프로퍼티-타입&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#contravariant-%ED%83%80%EC%9E%85-%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0%EC%99%80-%ED%95%A8%EC%88%98-%EB%A6%AC%ED%84%B4-%ED%83%80%EC%9E%85-%ED%81%B4%EB%9E%98%EC%8A%A4%EC%9D%98-%ED%94%84%EB%A1%9C%ED%8D%BC%ED%8B%B0-%ED%83%80%EC%9E%85&quot; aria-label=&quot;contravariant 타입 파라미터와 함수 리턴 타입 클래스의 프로퍼티 타입 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;contravariant 타입 파라미터와 함수 리턴 타입, 클래스의 프로퍼티 타입&lt;/h3&gt;
+&lt;p&gt;contravariant 타입 파라미터(in)와 public out 위치(함수 리턴 타입 또는 클래스의 프로퍼티 타입)에서도 문제가 발생할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;open class Car
+interface Boat
+class Amphibious: Car(), Boat
+
+fun getAmphibious(): Amphibious = Amphibious()
+
+class Box&amp;lt;in T&amp;gt;(
+    // Type parameter T is declared as &amp;#39;in&amp;#39; but occurs in &amp;#39;out&amp;#39; position in type T
+    val value: T
+)
+
+fun main() {
+    val garage: Box&amp;lt;Car&amp;gt; = Box(Car())
+    val amphibious: Box&amp;lt;Amphibious&amp;gt; = garage
+    val boat: Boat = amphibious.value // 실제로는 Car를 위한 Box이다.
+
+    // 책에는 garage.value로 되어있는데 조금 이상해서 수정했습니다.
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;Box에 어떤 타입이 들어있는지 확실하게 알수가 없다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;value에 T 타입을 지정하면 아래와 같은 에러 메시지가 노출된다.&lt;/p&gt;
+&lt;p&gt;Type parameter T is declared as ‘in’ but occurs in ‘out’ position in type T&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;이러한 상황을 막기 위해 코틀린은 &lt;strong&gt;contravariant 타입 파라미터(in)을 public out 한정자 위치(함수 리턴 타입, 클래스의 프로퍼티 타입)위치에 사용하는것을 금지&lt;/strong&gt;하고 있다.&lt;/p&gt;
+&lt;p&gt;물론 이번에도 아래처럼 private로 지정하면 아무런 문제가 없다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class Box&amp;lt;in T&amp;gt;(
+    private val value: T
+)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;contravariant를 사용하는 예로는 &lt;code class=&quot;language-text&quot;&gt;kotlin.coroutine.Continuation&lt;/code&gt; 이 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;public interface Continuation&amp;lt;in T&amp;gt; {
+    /**
+     * The context of the coroutine that corresponds to this continuation.
+     */
+    public val context: CoroutineContext
+
+    /**
+     * Resumes the execution of the corresponding coroutine passing a successful or failed [result] as the
+     * return value of the last suspension point.
+     */
+    public fun resumeWith(result: Result&amp;lt;T&amp;gt;)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;variance-한정자의-위치&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#variance-%ED%95%9C%EC%A0%95%EC%9E%90%EC%9D%98-%EC%9C%84%EC%B9%98&quot; aria-label=&quot;variance 한정자의 위치 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;variance 한정자의 위치&lt;/h2&gt;
+&lt;p&gt;variance 한정자는 선언 부분과 클래스 인터페이스를 활용하는 위치에 사용할 수 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;선언 부분&lt;/p&gt;
+&lt;p&gt;일반적으로 이 위치에 사용하며, 클래스와 인터페이스가 사용되는 모든 곳에 영향을 준다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;// 선언 쪽의 variance 한정자
+class Box&amp;lt;out T&amp;gt;(val value: T)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;클래스와 인터페이스를 활용하는 위치&lt;/p&gt;
+&lt;p&gt;이 위치에  variance를 적용하면 특정 변수에만 variance 한정자가 적용된다. 특정 인스턴스에만 적용해야 하는 경우 사용한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class Box&amp;lt;T&amp;gt;(val value: T)
+
+// 사용하는 쪽의 variance 한정자
+val boxAny: Box&amp;lt;out Any&amp;gt; = boxStr&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;MutableList에 in 한정자를 포함하면 요소의 리턴이 불가능하므로 붙이지 않는다.&lt;/p&gt;
+&lt;p&gt;하지만 여러 타입을 받아들이게 하기 위해 아래와 같이 단일 파라미터 타입에 in을 붙여 활용할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;interface Dog
+interface Cutie
+
+data class Puppy(val name: String): Dog, Cutie
+data class Hound(val name: String): Dog
+data class Cat(val name: String): Cutie
+
+fun fillWithPuppies(list: MutableList&amp;lt;in Puppy&amp;gt;) {
+    list.add(Puppy(&amp;quot;One&amp;quot;))
+    list.add(Puppy(&amp;quot;Two&amp;quot;))
+}
+
+fun main() {
+    val dogs = mutableListOf&amp;lt;Dog&amp;gt;(Hound(&amp;quot;Pluto&amp;quot;))
+    fillWithPuppies(dogs)
+
+    val cats = mutableListOf&amp;lt;Cutie&amp;gt;(Cat(&amp;quot;Pluto&amp;quot;))
+    fillWithPuppies(cats)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;variance 한정자를 사용하면 아래처럼 제한이 있을 수 있다.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;MutableList&amp;lt;out T&amp;gt;&lt;/code&gt; get() 요소 추출 시 T 타입이 리턴되지만 set은 Nothing 타입의 아규먼트가 전달될 수도 있을것으로 예상되므로 사용할 수 없다.&lt;/p&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;MutableList&amp;lt;in T&amp;gt;&lt;/code&gt; 사용 시 get과 set을 모두 사용할 수 있지만 get()을 사용할 경우 Any?가 리턴된다. 이는 슈퍼타입을 가진 리스트가 존재할 가능성이 있기 때문이다.&lt;/p&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;p&gt;코틀린은 강력한 제네릭 기능을 제공하며 아래와 같은 타입 한정자가 존재한다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;기본적인 variance의 동작은 invariant이다. &lt;code class=&quot;language-text&quot;&gt;Cup&amp;lt;A&amp;gt;&lt;/code&gt;와 &lt;code class=&quot;language-text&quot;&gt;Cup&amp;lt;B&amp;gt;&lt;/code&gt;는 기본적으로는 아무런 관계를 갖지 않는다.&lt;/li&gt;
+&lt;li&gt;out 한정자는 타입 파라미터를 covariant하게 만든다. covariant 타입은 out 위치에 사용할 수 있다.&lt;/li&gt;
+&lt;li&gt;in 한정자는 타입 파라미터를 contravariant하게 만든다. contravariant 타입은 in 위치에 사용할 수 있다.&lt;/li&gt;
+&lt;li&gt;List, Set의 타입 파라미터는 covariant(out) 이다.&lt;/li&gt;
+&lt;li&gt;Array, MutableList, MutableSet의 타입 파라미터는 invaraint이다.&lt;/li&gt;
+&lt;li&gt;함수 타입의 파라미터 타입은 contravariant(in)이다.&lt;/li&gt;
+&lt;li&gt;리턴 타입의 파라미터 타입은 covariant(out) 이다. &lt;strong&gt;&lt;em&gt;책에는 contravariant로 되어 있음 임의로 수정&lt;/em&gt;&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;리턴만 되는 타입에는 covariant(out)을 사용한다.&lt;/li&gt;
+&lt;li&gt;허용만 되는 타입에는 contravariant(in)을 사용한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 23. 타입 파라미터의 섀도잉을 피하라]]></title><description><![CDATA[Effective Kotlin Item23. 타입 파라미터의 섀도잉을 피하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-23</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-23</guid><pubDate>Sun, 27 Feb 2022 00:04:00 GMT</pubDate><content:encoded>&lt;p&gt;프로퍼티와 파라미터가 같은 이름을 가지는 경우 지역 파라미터가 외부 스코프에 있는 프로퍼티를 가리며 이를 섀도잉(shadowing)이라고 부른다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class Forest(val name: String) {
+    fun addTree(name: String) {
+        // ...
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이러한 섀도잉 현상은 클래스 타입 파라미터와 함수 타입 파라미터 사이에서도 발생한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;interface Tree
+class Birch: Tree
+class Spruce: Tree
+
+// Type parameter &amp;quot;T&amp;quot; is never used
+class Forest&amp;lt;T: Tree&amp;gt; {
+    // Forest와 addTree의 타입 파라미터가 독립적으로 동작하는 문제
+    fun &amp;lt;T: Tree&amp;gt; addTree(tree: T) {
+        // ..
+    }
+}
+
+val forest = Forest&amp;lt;Birch&amp;gt;()
+
+forest.addTree(Birch())
+forest.addTree(Spruce())&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위에 주석에도 적었지만, Forest 클래스의 타입 파라미터와 addTree 함수의 타입 파라미터가 독립적으로 동작하게 되어 addTree 메소드에 의도하지 않은 타입이 전달될 수 있다.&lt;/p&gt;
+&lt;p&gt;독립적인 타입 파라미터를 의도했다면 이름을 아예 다르게 하는것이 좋다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class Forest&amp;lt;T: Tree&amp;gt; {
+    fun &amp;lt;ST: Tree&amp;gt; addTree(tree: ST) {
+        // ..
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;p&gt;타입 파라미터 섀도잉을 피하자.&lt;/p&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 22. 일반적인 알고리즘을 구현할 때 제네릭을 사용하라]]></title><description><![CDATA[Effective Kotlin Item22. 일반적인 알고리즘을 구현할 때 제네릭을 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-22</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-22</guid><pubDate>Sun, 27 Feb 2022 00:03:00 GMT</pubDate><content:encoded>&lt;p&gt;아규먼트로 함수에 값을 전달할 수 있는 것 처럼, 타입 아규먼트를 사용해 함수에 타입을 전달할 수 있다.&lt;/p&gt;
+&lt;p&gt;타입 아규먼트를 사용하는 함수를 &lt;strong&gt;제네릭 함수&lt;/strong&gt;라고 부른다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;inline fun &amp;lt;T&amp;gt; Iterable&amp;lt;T&amp;gt;.filter(
+    predicate: (T) -&amp;gt; Boolean
+): List&amp;lt;T&amp;gt; {
+    // ...
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;타입 파라미터는 컴파일러에 타입과 관련된 정보를 제공해 컴파일러가 타입을 조금이라도 더 정확하게 추측할 수 있게 해준다. filter에서 아규먼트가 컬렉션의 요소와 같은 타입이라는 것을 알 수 있으므로 잘못 처리하는것을 막을 수 있다.&lt;/p&gt;
+&lt;p&gt;컴파일 과정에서 최종적으로 이러한 타입 정보는 사라지지만, 개발 중에는 타입 정보를 이용해 안전하게 사용할 수 있다.&lt;/p&gt;
+&lt;h2 id=&quot;제네릭-제한&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%9C%EB%84%A4%EB%A6%AD-%EC%A0%9C%ED%95%9C&quot; aria-label=&quot;제네릭 제한 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;제네릭 제한&lt;/h2&gt;
+&lt;p&gt;타입 파라미터의 중요한 기능 중 하나는 구체적인 타입의 서브타입만 사용하게 타입을 제한하는 것이다.&lt;/p&gt;
+&lt;p&gt;아래에서는 콜론 뒤에 슈퍼타입을 설정해 타입에 제한을 건다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;fun &amp;lt;T: Comparable&amp;lt;T&amp;gt;&amp;gt; Iterable&amp;lt;T&amp;gt;.sorted(): List&amp;lt;T&amp;gt; {
+    // ...
+}
+
+fun &amp;lt;T, C : MutableCollection&amp;lt;in T&amp;gt;&amp;gt; Iterable&amp;lt;T&amp;gt;.toCollection(destination: C): C {
+    // ...
+}
+
+class ListAdapter&amp;lt;T: ItemAdapter&amp;gt;(/*..*/) { }&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;타입에 제한이 걸리므로, 내부에서 해당 타입이 제공하는 메소드를 사용할 수 있다.&lt;/p&gt;
+&lt;p&gt;예를 들어 T가 Iterable&lt;Int&gt;의 서브타입인 경우 T 타입을 기본으로 반복 처리가 가능하고, 반복 처리때 사용되는 객체가 Int라는 것을 알 수 있다.&lt;/p&gt;
+&lt;p&gt;많이 사용하는 제한 중 Any도 있다. 이는 nullable이 아닌 타입을 나타낸다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;inline fun &amp;lt;T, R : Any&amp;gt; Iterable&amp;lt;T&amp;gt;.mapNotNull(
+    transform: (T) -&amp;gt; R?
+): List&amp;lt;R&amp;gt; {
+    // ..
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;아래와 같이 둘 이상의 제한을 걸수도 있다. 둘 이상의 제약을 걸때는 &lt;code class=&quot;language-text&quot;&gt;where&lt;/code&gt; 키워드를 사용한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;fun &amp;lt;T: Animal&amp;gt; pet(animal: T) where T: GoodTempered {
+    // ..
+}
+
+fun &amp;lt;T&amp;gt; pet(animal: T) where T: Animal, T: GoodTempered {
+    // ..
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;p&gt;타입 파라미터를 이용해 type-saf 제네릭 알고리즘과 제네릭 객체를 구현하기 때문에 코틀린에서 타입 파라미터는 굉장히 중요한 부분이다.&lt;/p&gt;
+&lt;p&gt;타입 파라미터는 구체적인 자료형(concrete type)의 서브타입을 제한할 수 있으며 이렇게 하면 특정 자료형이 제공하는 메소드를 안전하게 사용할 수 있다.&lt;/p&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 21. 일반적인 프로퍼티 패턴은 프로퍼티 위임으로 만들어라]]></title><description><![CDATA[Effective Kotlin Item21. 일반적인 프로퍼티 패턴은 프로퍼티 위임으로 만들어라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-21</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-21</guid><pubDate>Sun, 27 Feb 2022 00:02:00 GMT</pubDate><content:encoded>&lt;p&gt;코틀린은 코드 재사용과 관련해 프로퍼티 위임이라는 새로운 기능을 제공한다.&lt;/p&gt;
+&lt;p&gt;프로퍼티 위임을 사용하면 일반적인 프로퍼티의 행위를 추출해 재사용할 수 있다.&lt;/p&gt;
+&lt;p&gt;lazy를 이용해 지연 프로퍼티를 사용하면 생성과 동시에 값을 초기화 할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val value by lazy { createValue() }
+
+fun createValue(): String = &amp;quot;Test&amp;quot;&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;프로퍼티 위임을 사용해 observable 패턴도 쉽게 만들 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;var items: List&amp;lt;Item&amp;gt; by 
+    Delegates.observable(listOf()) { _, _, _ -&amp;gt;
+        notifyDataSetChanged()
+    }
+
+var key: String? by
+    Delegates.observable(null) { _, old, new -&amp;gt;
+        Log.e(&amp;quot;Key changed from $old to $new&amp;quot;)
+    }&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;간단한 프로퍼티 델리게이트를 살펴보자.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;// AS-IS 델리게이트 적용 전
+var token: String? = null
+    get() {
+        print(&amp;quot;token returned value $field&amp;quot;)
+        return field
+    }
+    set(value) {
+        print(&amp;quot;token changed from $field to $value&amp;quot;)
+        field = value
+    }
+
+var attempts: Int = 0
+    get() {
+        print(&amp;quot;attempts returned value $field&amp;quot;)
+        return field
+    }
+    set(value) {
+        print(&amp;quot;attempts changed from $field to $value&amp;quot;)
+        field = value
+    }&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위 두 token, attempts는 타입은 다르지만 거의 같은 처리를 하며 프로젝트 내에서 자주 반복되어 사용될 만한 패턴이다. 따라서 프로퍼티 위임을 활용해 추출할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;// TO-BE 델리게이트 적용 후
+var token: String? by LoggingProperty(null)
+var attempts: Int by LoggingProperty(0)
+
+private class LoggingProperty&amp;lt;T&amp;gt;(var value: T) {
+    operator fun getValue(
+        thisRef: Any?,
+        prop: KProperty&amp;lt;*&amp;gt;
+    ): T {
+        print(&amp;quot;${prop.name} returned value $value&amp;quot;)
+        return value
+    }
+    
+    operator fun setValue(
+        thisRef: Any?,
+        prop: KProperty&amp;lt;*&amp;gt;,
+        newValue: T
+    ) {
+        val name = prop.name
+        print(&amp;quot;changed from $value to $newValue&amp;quot;)
+        value = newValue
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;프로퍼티 위임이 어떻게 동작하는지 이해하려면 by가 어떻게 컴파일되는지 살펴보자&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;@JvmField
+private val &amp;#39;token$delegate&amp;#39; = LoggingProperty&amp;lt;String?&amp;gt;(null)
+var token: String?
+    get() = &amp;#39;token$delegate&amp;#39;.getValue(this, ::token)
+    set(value) { &amp;#39;token$delegate&amp;#39;.setValue(this, ::token, value) }&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;멤버 함수 뿐만 아니라 확장 함수로도 만들 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val map: Map&amp;lt;String, Any&amp;gt; = mapOf(
+    &amp;quot;name&amp;quot; to &amp;quot;Marcin&amp;quot;,
+    &amp;quot;kotlinProgrammer&amp;quot; to true
+)
+
+val name by map
+
+inline operator fun &amp;lt;V, V1 : V&amp;gt; Map&amp;lt;in String, V&amp;gt;
+    .getvalue(thisRef: Any?, property: KProperty&amp;lt;*&amp;gt;): V1 = 
+    getOrImplicitDefault(property.name) as V1&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;코틀린 stdlib의 아래 프로퍼티 델리게이터를 알아 두면 유용하게 활용할 수 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;lazy&lt;/li&gt;
+&lt;li&gt;Delegates.observable&lt;/li&gt;
+&lt;li&gt;Delegates.vetoable&lt;/li&gt;
+&lt;li&gt;Delegates.notNull&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;p&gt;프로퍼티 델리게이트는 프로퍼티와 관련된 다양한 조작을 할 수 있다. 표준 라이브러리의 lazy와 observable이 대표적인 예이다.&lt;/p&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 20. 일반적인 알고리즘을 반복해서 구현하지 말라]]></title><description><![CDATA[Effective Kotlin Item20. 일반적인 알고리즘을 반복해서 구현하지 말라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-20</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-20</guid><pubDate>Sun, 27 Feb 2022 00:00:01 GMT</pubDate><content:encoded>&lt;p&gt;다음과 같이 숫자를 특정 범위에 맞추는 알고리즘은 stdlib의 coerceIn 확장함수로 이미 구현되어 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val percent = when {
+    numberFromUser &amp;gt; 100 -&amp;gt; 100
+    numberFromUser &amp;lt; 0 -&amp;gt; 0
+    else numberFromUser
+}
+
+// 이미 존재
+val percent = numberFromUser.coerceIn(0, 100)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이미 있는 것을 활용하면 코드가 짧아진다는 것 이외에도 다양한 장점이 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;코드 작성 속도가 빨라진다.&lt;/li&gt;
+&lt;li&gt;구현을 따로 읽지 않아도 함수의 이름 등만 보고도 무엇을 하는지 확실하게 알 수 있다.&lt;/li&gt;
+&lt;li&gt;직접 구현할 때 발생할 수 있는 실수를 줄일 수 있다.&lt;/li&gt;
+&lt;li&gt;제작자들이 한번만 최적화하면, 모든 곳이 최적화의 혜택을 받을 수 있다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;표준-라이브러리-살펴보기&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%ED%91%9C%EC%A4%80-%EB%9D%BC%EC%9D%B4%EB%B8%8C%EB%9F%AC%EB%A6%AC-%EC%82%B4%ED%8E%B4%EB%B3%B4%EA%B8%B0&quot; aria-label=&quot;표준 라이브러리 살펴보기 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;표준 라이브러리 살펴보기&lt;/h2&gt;
+&lt;p&gt;일반적인 알고리즘은 대부분 정의되어 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;override fun saveCallResult(item: SourceResponse) {
+    var sourceList = ArrayList&amp;lt;SourceEntity&amp;gt;()
+
+    item.sources.forEach {
+        var sourceEntity = SourceEntity()
+        sourceEntity.id = it.id
+        sourceEntity.category = it.category
+        sourceEntity.country = it.country
+    }
+    db.insertSources(sourceList)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;어떤 자료형을 다른 자료형으로 매핑하기 위한 map과 같은 함수는 이미 제공되고 있으니, 위의 코드에서도 forEach를 사용하지 말고 map을 사용하는 것이 좋다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;override fun saveCallResult(item: SourceResponse) {
+    val sourceEntries = item.sources.map(::sourceToEntry)
+    db.insertSources(sourceList)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;나만의-유틸리티-구현하기&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EB%82%98%EB%A7%8C%EC%9D%98-%EC%9C%A0%ED%8B%B8%EB%A6%AC%ED%8B%B0-%EA%B5%AC%ED%98%84%ED%95%98%EA%B8%B0&quot; aria-label=&quot;나만의 유틸리티 구현하기 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;나만의 유틸리티 구현하기&lt;/h2&gt;
+&lt;p&gt;상황에 따라 표준 라이브러리에 없는 알고리즘이 필요할 수도 있다.&lt;/p&gt;
+&lt;p&gt;컬렉션에 있는 모든 숫자의 곱을 계산하는 라이브러리가 필요한 경우 범용 유틸리티 함수(universal utility function)로 정의하는것이 좋다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;fun Iterable&amp;lt;Int&amp;gt;.product() = fold(1) { acc, i -&amp;gt; acc * i }&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;필요 없는 함수를 중복해서 만들지 않게 기존에 관련된 함수가 있는지 탐색하는 과정이 필요하다.&lt;/p&gt;
+&lt;p&gt;많이 사용되는 알고리즘을 추출하는 방법으로는 톱레벨 함수, 프로퍼티 위임, 클래스 등이 있다.&lt;/p&gt;
+&lt;p&gt;확장 함수는 앞의 방법과 비교해 다음과 같은 장점을 가지고 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;함수는 상태를 유지하지 않으므로, 행위를 나타내기 좋다.&lt;/li&gt;
+&lt;li&gt;톱레벨 함수와 비교해서, 확장 함수는 구체적인 타입이 있는 객체에만 사용을 제한할 수 있으므로 좋다.&lt;/li&gt;
+&lt;li&gt;수정할 객체를 아규먼트로 전달받아 사용하는 것보다는 확장 리시버로 사용하는 것이 가독성 측면에서 좋다.&lt;/li&gt;
+&lt;li&gt;확장 함수는 객체에 정의한 함수보다 객체를 사용할 때, 자동 완성 기능 등으로 제안이 이루어지므로 쉽게 찾을 수 있다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;일반적인 알고리즘을 반복해서 만들지 말자. 대부분 stdlib에 이미 정의되어 있다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 19. knowledge를 반복하여 사용하지 말라.]]></title><description><![CDATA[Effective Kotlin Item19. knowledge를 반복하여 사용하지 말라.]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-19</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-19</guid><pubDate>Sun, 27 Feb 2022 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;프로그래밍 언어의 핵심 특징이라고 할 수 있는 재사용성(resuability)은 정렬 알고리즘과 같은 부분을 한번 만들어 놓으면, 필요할 때 이를 활용할 수 있다는 것이다.&lt;/p&gt;
+&lt;p&gt;print 함수를 약간만 변경해도 프로그램에 수많은 문제가 발생할 수 있듯, 재사용성은 힘이 있는 만큼 굉장히 위험할 수 있다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;“프로젝트에서 이미 있던 코드를 복사해서 붙여넣고 있다면, 무언가가 잘못된 것이다.”
+이는 단순한 휴리스틱이지만 잘 들어맞는다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&quot;drydont-repeat-yourself&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#drydont-repeat-yourself&quot; aria-label=&quot;drydont repeat yourself permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;DRY(Don’t Repeat Yourself)&lt;/h3&gt;
+&lt;p&gt;실용주의 프로그래머라는 책에서도 반복에 대한 부분을 DRY 규칙이라고 표현하고 있다.&lt;/p&gt;
+&lt;p&gt;추가로 아래와 같은 이름으로도 알려져 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;SSOT(Single Source of Truth)&lt;/li&gt;
+&lt;li&gt;WET(We Enjoy Typing, Write Everything Twice)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;이는 굉장히 많은 개발자가 비슷한 문제를 겪고, 같은 이야기를 하고 있다는 것이다.&lt;/p&gt;
+&lt;h2 id=&quot;knowledge&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#knowledge&quot; aria-label=&quot;knowledge permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;knowledge&lt;/h2&gt;
+&lt;p&gt;프로젝트를 진행할 때 정의한 모든것이 knowledge가 될 수 있다.&lt;/p&gt;
+&lt;p&gt;프로그램에서 중요한 knowledge를 뽑는다면 다음과 같다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;로직(logic): 프로그램이 어떠한 식으로 동작하는지, 프로그램이 어떻게 보이는지&lt;/li&gt;
+&lt;li&gt;공통 알고리즘(common algorithm): 원하는 동작을 하기 위한 알고리즘&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;위 둘의 큰 차이점은 &lt;strong&gt;시간에 따른 변화&lt;/strong&gt;이다.&lt;/p&gt;
+&lt;p&gt;비즈니스 로직은 시간이 지나면서 계속 변하지만, 공통 알고리즘은 크게 변하지 않는다.&lt;/p&gt;
+&lt;h2 id=&quot;모든-것은-변화한다&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EB%AA%A8%EB%93%A0-%EA%B2%83%EC%9D%80-%EB%B3%80%ED%99%94%ED%95%9C%EB%8B%A4&quot; aria-label=&quot;모든 것은 변화한다 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;모든 것은 변화한다.&lt;/h2&gt;
+&lt;p&gt;프로그래밍에서 유일하게 유지되는 것은 &lt;strong&gt;변화한다는 속성&lt;/strong&gt;이라는 말이 있다.&lt;/p&gt;
+&lt;p&gt;우리 프로젝트의 knowledge가 변화하는 이유는 다음과 같다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;회사가 사용자의 요구 또는 습관을 더 많이 알게 되었다.&lt;/li&gt;
+&lt;li&gt;디자인 표준이 변화했다.&lt;/li&gt;
+&lt;li&gt;플랫폼, 라이브러리, 도구 등이 변화해서 이에 대응해야 한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;knowledge의 반복은 확장성을 막고 쉽게 깨지게 만든다. 개발자는 knowledge 반복을 줄일 수 있는 여러 도구나 기능을 활용할 수 있다.(Hibernate와 같은 ORM, 추상화 등)&lt;/p&gt;
+&lt;h2 id=&quot;언제-코드를-반복해도-될까&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%96%B8%EC%A0%9C-%EC%BD%94%EB%93%9C%EB%A5%BC-%EB%B0%98%EB%B3%B5%ED%95%B4%EB%8F%84-%EB%90%A0%EA%B9%8C&quot; aria-label=&quot;언제 코드를 반복해도 될까 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;언제 코드를 반복해도 될까?&lt;/h2&gt;
+&lt;p&gt;반대로 아래와 같이 knowledge 반복을 줄이면 안되는 상황도 있다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;독립적인 2개의 안드로이드 애플리케이션, 빌드 도구 설정이 유사하므로 추출해 knowledge 반복을 줄이는 경우&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;처음에는 설정이 유사하지만 두 애플리케이션은 독립적이며 이후에 구성 변경이 필요할 수 있다. 이처럼 신중하지 못한 추출은 변경을 더 어렵게 만든다.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;함께 변경될 가능성이 높은가? 따로 변경될 가능성이 높은가를 질문&lt;/strong&gt;으로 두 코드가 같은 knowledge를 나타내는지 어느정도 결정할 수 있다.&lt;/p&gt;
+&lt;p&gt;이외에 유용한 휴리스틱으로, 비즈니스 규칙이 다른곳에서 왔는지를 체크한다. 다른 곳에서 왔다면 독립적으로 변경될 가능성이 높다.&lt;/p&gt;
+&lt;h2 id=&quot;단일-책임의-원칙single-responsibility-principle-srp&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EB%8B%A8%EC%9D%BC-%EC%B1%85%EC%9E%84%EC%9D%98-%EC%9B%90%EC%B9%99single-responsibility-principle-srp&quot; aria-label=&quot;단일 책임의 원칙single responsibility principle srp permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;단일 책임의 원칙(Single Responsibility Principle, SRP)&lt;/h2&gt;
+&lt;p&gt;단일 책임의 원칙은 잘못된 코드 추출로부터 우리를 보호할 수 있는 규칙이다.&lt;/p&gt;
+&lt;p&gt;두 액터(actor)가 같은 클래스를 변경하는 일은 없어야 한다.&lt;/p&gt;
+&lt;p&gt;액터란 변화를 만들어 내는 존재이며 서로의 업무와 분야에 대해 잘 모르는 개발자들로 비유된다.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 960px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/5c93454c266ec0675738e047683a68b4/2c5fd/effective-kotlin-item-19.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 37.5%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAICAYAAAD5nd/tAAAACXBIWXMAAAsSAAALEgHS3X78AAABLUlEQVQoz5VSwU6DQBDlzzURK7alIdrUHvRnTGrSxJ7tpbU9lAIHAiywsECfO9MsNcbEOMnLzu6+efMG1oKOuq4ZJk6n06/5X0Fci5IsSxlKNZBS9pdd13EeRQFGowEc5waj4QDTqYfZ7AGTyVCf38G2r7BcvjGXBYuiQFVJbLcbrFbvvVvjLgoDjMcOXNdh4fnTI16e5/C8MSbuPW7taywWrxfBsizZGSFJEt4rpRhSlgwKujsefY0Dr0HgI9TNfP+AUpv6JlgwKGjMpmk0FK9K1dyIXMdxrMcP+fOcOQ03raqKp+wF81xAiAxpmnJORBI4kyU7pobkZrf7ZEd017Ytg/I8zy+CQgh2sd/vsF5/MOHn3yMXVGwmoL0B1Zoayzwb7ti1faER+u+z+QLT91uZurHZqQAAAABJRU5ErkJggg==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/5c93454c266ec0675738e047683a68b4/8ac56/effective-kotlin-item-19.webp 240w,
+/static/5c93454c266ec0675738e047683a68b4/d3be9/effective-kotlin-item-19.webp 480w,
+/static/5c93454c266ec0675738e047683a68b4/e46b2/effective-kotlin-item-19.webp 960w,
+/static/5c93454c266ec0675738e047683a68b4/1e748/effective-kotlin-item-19.webp 1006w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/5c93454c266ec0675738e047683a68b4/8ff5a/effective-kotlin-item-19.png 240w,
+/static/5c93454c266ec0675738e047683a68b4/e85cb/effective-kotlin-item-19.png 480w,
+/static/5c93454c266ec0675738e047683a68b4/d9199/effective-kotlin-item-19.png 960w,
+/static/5c93454c266ec0675738e047683a68b4/2c5fd/effective-kotlin-item-19.png 1006w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/5c93454c266ec0675738e047683a68b4/d9199/effective-kotlin-item-19.png&quot;
+          alt=&quot;effective-kotlin-item-19.png&quot;
+          title=&quot;effective-kotlin-item-19.png&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;위와 같이 Student라는 클래스를 여러 부서에서 활용한다면 각각의 부서의 목적에 따라 수정하면서 오동작을 일으킬 수 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;서로 다른 곳에서 사용하는 knowledge는 독립적으로 변경할 가능성이 많다. 따라서 비슷한 처리를 하더라도 완전히 다른 knowledge로 취급하는 것이 좋다.&lt;/li&gt;
+&lt;li&gt;다른 knowledge는 분리해 두는 것이 좋다. 그렇지 않으면 재사용해서는 안되는 부분을 재사용하려는 유혹이 발생할 수 있다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;모든 것은 변화하므로 공통 knowledge가 있다면 추출해서 이러한 변화에 대비해야 한다.&lt;/li&gt;
+&lt;li&gt;DRY를 엄격하게 지키려고 비슷해 보이는 코드는 모두 추출하려는 경향이 있는데, 극단적인 것은 언제나 좋지 않다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 18. 코딩 컨벤션을 지켜라]]></title><description><![CDATA[Effective Kotlin Item 18. 코딩 컨벤션을 지켜라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-18</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-18</guid><pubDate>Wed, 16 Feb 2022 00:58:00 GMT</pubDate><content:encoded>&lt;p&gt;&lt;a href=&quot;https://kotlinlang.org/docs/coding-conventions.html&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;코틀린 문서의 Coding Convensions&lt;/a&gt;&lt;/p&gt;
 &lt;p&gt;코틀린 커뮤니티에 속한 사람이라면 이러한 컨벤션을 최대한 지켜주는 것이 좋다. 이를 지키면 아래와 같은 장점이 있다.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;어떤 프로젝트를 접해도 쉽게 이해할 수 있다.&lt;/li&gt;
@@ -47,7 +738,7 @@ class Person(
 &lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
-&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 17. 이름 있는 아규먼트를 사용하라]]></title><description><![CDATA[Effective Kotlin Item 17. 이름 있는 아규먼트를 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-17</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-17</guid><pubDate>Wed, 16 Feb 2022 00:56:00 GMT</pubDate><content:encoded>&lt;p&gt;코드에서 아규먼트의 의미가 명확하지 않은 경우가 있다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 17. 이름 있는 아규먼트를 사용하라]]></title><description><![CDATA[Effective Kotlin Item 17. 이름 있는 아규먼트를 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-17</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-17</guid><pubDate>Wed, 16 Feb 2022 00:56:00 GMT</pubDate><content:encoded>&lt;p&gt;코드에서 아규먼트의 의미가 명확하지 않은 경우가 있다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
           &lt;code slot=&quot;code&quot;&gt;val text = (1..10).joinToString(&amp;quot;|&amp;quot;)&lt;/code&gt;
         &lt;/deckgo-highlight-code&gt;
@@ -68,7 +759,7 @@ class Person(
 &lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
-&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 16. 프로퍼티는 동작이 아니라 상태를 나타내야 한다.]]></title><description><![CDATA[Effective Kotlin Item 16. 프로퍼티는 동작이 아니라 상태를 나타내야 한다.]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-16</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-16</guid><pubDate>Wed, 16 Feb 2022 00:55:00 GMT</pubDate><content:encoded>&lt;p&gt;코틀린의 프로퍼티와 자바의 필드는 비슷해 보이지만 완전히 다른 개념이다.
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 16. 프로퍼티는 동작이 아니라 상태를 나타내야 한다.]]></title><description><![CDATA[Effective Kotlin Item 16. 프로퍼티는 동작이 아니라 상태를 나타내야 한다.]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-16</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-16</guid><pubDate>Wed, 16 Feb 2022 00:55:00 GMT</pubDate><content:encoded>&lt;p&gt;코틀린의 프로퍼티와 자바의 필드는 비슷해 보이지만 완전히 다른 개념이다.
 코틀린의 프로퍼티는 아래처럼 &lt;strong&gt;사용자 정의 setter, getter&lt;/strong&gt;를 가질 수 있다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
           &lt;code slot=&quot;code&quot;&gt;var name: String? = null
@@ -150,7 +841,7 @@ fun Tree&amp;lt;Int&amp;gt;.sum(): Int = when (this) {
 &lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
-&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 15. 리시버를 명시적으로 참조하라]]></title><description><![CDATA[Effective Kotlin Item 15. 리시버를 명시적으로 참조하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-15</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-15</guid><pubDate>Wed, 16 Feb 2022 00:15:00 GMT</pubDate><content:encoded>&lt;p&gt;무언가를 자세히 설명하기 위해 명시적으로 더 긴 코드를 사용할 때가 있다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 15. 리시버를 명시적으로 참조하라]]></title><description><![CDATA[Effective Kotlin Item 15. 리시버를 명시적으로 참조하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-15</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-15</guid><pubDate>Wed, 16 Feb 2022 00:15:00 GMT</pubDate><content:encoded>&lt;p&gt;무언가를 자세히 설명하기 위해 명시적으로 더 긴 코드를 사용할 때가 있다.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;클래스의 메소드임을 나타내기 위해 this를 사용하는 경우&lt;/li&gt;
 &lt;/ul&gt;
@@ -279,7 +970,7 @@ table {
 &lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
-&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 14. 변수 타입이 명확하지 않은 경우 확실하게 지정하라]]></title><description><![CDATA[Effective Kotlin Item 14. 변수 타입이 명확하지 않은 경우 확실하게 지정하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-14</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-14</guid><pubDate>Wed, 16 Feb 2022 00:10:00 GMT</pubDate><content:encoded>&lt;p&gt;코틀린은 수준 높은 타입 추론 시스템을 갖추고 있다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 14. 변수 타입이 명확하지 않은 경우 확실하게 지정하라]]></title><description><![CDATA[Effective Kotlin Item 14. 변수 타입이 명확하지 않은 경우 확실하게 지정하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-14</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-14</guid><pubDate>Wed, 16 Feb 2022 00:10:00 GMT</pubDate><content:encoded>&lt;p&gt;코틀린은 수준 높은 타입 추론 시스템을 갖추고 있다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
           &lt;code slot=&quot;code&quot;&gt;val num = 10
 val name = &amp;quot;Mkk&amp;quot;
@@ -296,7 +987,7 @@ val ids = listOf(12, 112, 554, 997)&lt;/code&gt;
 &lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
-&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 12. 연산자 오버로드를 할 때는 의미에 맞게 사용하라]]></title><description><![CDATA[Effective Kotlin Item 12. 연산자 오버로드를 할 때는 의미에 맞게 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-12</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-12</guid><pubDate>Sat, 12 Feb 2022 00:10:00 GMT</pubDate><content:encoded>&lt;p&gt;연산자 오버로딩은 굉장히 강력한 기능이지만 위험할 수 있다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 12. 연산자 오버로드를 할 때는 의미에 맞게 사용하라]]></title><description><![CDATA[Effective Kotlin Item 12. 연산자 오버로드를 할 때는 의미에 맞게 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-12</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-12</guid><pubDate>Sat, 12 Feb 2022 00:10:00 GMT</pubDate><content:encoded>&lt;p&gt;연산자 오버로딩은 굉장히 강력한 기능이지만 위험할 수 있다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
           &lt;code slot=&quot;code&quot;&gt;fun Int.factorial(): Int = (1..this).product()
 // 생략
@@ -391,7 +1082,7 @@ print(10 * !6) // 7200&lt;/code&gt;
 &lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
-&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 11. 가독성을 목표로 설계하라]]></title><description><![CDATA[Effective Kotlin Item 11. 가독성을 목표로 설계하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-11</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-11</guid><pubDate>Sat, 12 Feb 2022 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;코틀린은 간결성이 아니라 가독성(readability)를 좋게 하는데 목표를 두고 설게된 프로그래밍 언어이다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 11. 가독성을 목표로 설계하라]]></title><description><![CDATA[Effective Kotlin Item 11. 가독성을 목표로 설계하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-11</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-11</guid><pubDate>Sat, 12 Feb 2022 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;코틀린은 간결성이 아니라 가독성(readability)를 좋게 하는데 목표를 두고 설게된 프로그래밍 언어이다.&lt;/p&gt;
 &lt;p&gt;개발자는 코드를 작성하는것 보다 읽는 데 많은 시간을 소모한다.&lt;/p&gt;
 &lt;p&gt;따라서 항상 가독성을 생각하면서 코드를 작성해야 한다.&lt;/p&gt;
 &lt;h2 id=&quot;인식-부하-감소&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%9D%B8%EC%8B%9D-%EB%B6%80%ED%95%98-%EA%B0%90%EC%86%8C&quot; aria-label=&quot;인식 부하 감소 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;인식 부하 감소&lt;/h2&gt;
@@ -478,7 +1169,7 @@ infix fun String.and(s: String) = this + s&lt;/code&gt;
 &lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
-&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 08. 적절하게 null을 처리하라]]></title><description><![CDATA[Effective Kotlin Item 08. 적절하게 null을 처리하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-08</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-08</guid><pubDate>Tue, 08 Feb 2022 02:10:00 GMT</pubDate><content:encoded>&lt;p&gt;null은 값이 부족하다는 것을 나타낸다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 08. 적절하게 null을 처리하라]]></title><description><![CDATA[Effective Kotlin Item 08. 적절하게 null을 처리하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-08</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-08</guid><pubDate>Tue, 08 Feb 2022 02:10:00 GMT</pubDate><content:encoded>&lt;p&gt;null은 값이 부족하다는 것을 나타낸다.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;프로퍼티가 null인 경우&lt;/p&gt;
@@ -636,7 +1327,7 @@ fun onCreate() {
 &lt;li&gt;&lt;a href=&quot;http://www.kyobobook.co.kr/product/detailViewKor.laf?mallGb=KOR&amp;#x26;ejkGb=KOR&amp;#x26;barcode=9788966263370&amp;#x26;orderClick=4bb#&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
-&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 07. 결과 부족이 발생할 경우 null과 Failure를 사용하라]]></title><description><![CDATA[Effective Kotlin Item 07. 결과 부족이 발생할 경우 null과 Failure를 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-07</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-07</guid><pubDate>Tue, 08 Feb 2022 01:50:00 GMT</pubDate><content:encoded>&lt;p&gt;아래와 같이 함수가 원하는 결과를 만들어 낼 수 없을 때가 존재한다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 07. 결과 부족이 발생할 경우 null과 Failure를 사용하라]]></title><description><![CDATA[Effective Kotlin Item 07. 결과 부족이 발생할 경우 null과 Failure를 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-07</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-07</guid><pubDate>Tue, 08 Feb 2022 01:50:00 GMT</pubDate><content:encoded>&lt;p&gt;아래와 같이 함수가 원하는 결과를 만들어 낼 수 없을 때가 존재한다.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;서버로부터 데이터를 읽어 들이려고 했는데, 인터넷 연결 문제로 읽어들이지 못한 경우&lt;/li&gt;
 &lt;li&gt;조건에 맞는 첫 번째 요소를 찾으려 했는데, 조건에 맞는 요소가 없는 경우&lt;/li&gt;
@@ -731,7 +1422,7 @@ Failure는 처리할 때 필요한 정보를 가질 수 있다.&lt;/p&gt;
 &lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
-&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 06. 사용자 정의 오류보다는 표준 오류를 사용하라]]></title><description><![CDATA[Effective Kotlin Item 06. 사용자 정의 오류보다는 표준 오류를 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-06</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-06</guid><pubDate>Tue, 08 Feb 2022 01:30:00 GMT</pubDate><content:encoded>&lt;p&gt;require, check, assert 등을 사용하면 대부분 코틀린 오류를 처리할 수 있지만
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 06. 사용자 정의 오류보다는 표준 오류를 사용하라]]></title><description><![CDATA[Effective Kotlin Item 06. 사용자 정의 오류보다는 표준 오류를 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-06</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-06</guid><pubDate>Tue, 08 Feb 2022 01:30:00 GMT</pubDate><content:encoded>&lt;p&gt;require, check, assert 등을 사용하면 대부분 코틀린 오류를 처리할 수 있지만
 이외의 예측하지 못한 상황을 나타내야 하는 경우가 존재한다.&lt;/p&gt;
 &lt;p&gt;JSON 형식을 파싱하는 라이브러리 구현 시 JSON 파일 형식에 문제가 있다면 JSONPArsingException을 발생시키는 것이 좋다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
@@ -778,7 +1469,7 @@ Failure는 처리할 때 필요한 정보를 가질 수 있다.&lt;/p&gt;
 &lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
-&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 05. 예외를 활용해 코드에 제한을 걸어라]]></title><description><![CDATA[Effective Kotlin Item 05. 예외를 활용해 코드에 제한을 걸어라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-05</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-05</guid><pubDate>Tue, 08 Feb 2022 01:00:00 GMT</pubDate><content:encoded>&lt;p&gt;확실하게 어떤 형태로 동작해야 하는 코드가 있다면, 예외를 활용해 제한을 걸어주는 것이 좋다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 05. 예외를 활용해 코드에 제한을 걸어라]]></title><description><![CDATA[Effective Kotlin Item 05. 예외를 활용해 코드에 제한을 걸어라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-05</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-05</guid><pubDate>Tue, 08 Feb 2022 01:00:00 GMT</pubDate><content:encoded>&lt;p&gt;확실하게 어떤 형태로 동작해야 하는 코드가 있다면, 예외를 활용해 제한을 걸어주는 것이 좋다.&lt;/p&gt;
 &lt;p&gt;코틀린에서는 코드의 동작에 제한을 걸때 다음과 같은 방법을 사용할 수 있다.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;require&lt;/li&gt;
@@ -905,7 +1596,7 @@ fun sendEmail(person: Person, text: String) {
 &lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
-&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 04. inferred 타입으로 리턴하지 말라]]></title><description><![CDATA[Effective Kotlin Item 04. inferred 타입으로 리턴하지 말라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-04</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-04</guid><pubDate>Tue, 08 Feb 2022 00:50:00 GMT</pubDate><content:encoded>&lt;p&gt;코틀린의 타입 추론(type inference)을 사용할 때 몇가지 위험한 부분들이 존재한다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 04. inferred 타입으로 리턴하지 말라]]></title><description><![CDATA[Effective Kotlin Item 04. inferred 타입으로 리턴하지 말라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-04</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-04</guid><pubDate>Tue, 08 Feb 2022 00:50:00 GMT</pubDate><content:encoded>&lt;p&gt;코틀린의 타입 추론(type inference)을 사용할 때 몇가지 위험한 부분들이 존재한다.&lt;/p&gt;
 &lt;p&gt;inferred 타입을 사용하면 슈퍼클래스나 인터페이스로 설정되지 않으며, 정확하게 오른쪽에 있는 피연산자에 맞게 설정되는 문제가 존재한다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
           &lt;code slot=&quot;code&quot;&gt;open class Animal
@@ -952,7 +1643,7 @@ val DEFAULT_CAR: Car = Fiat126P()&lt;/code&gt;
 &lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
-&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 03. 최대한 플랫폼 타입을 사용하지 말라]]></title><description><![CDATA[Effective Kotlin Item 03. 최대한 플랫폼 타입을 사용하지 말라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-03</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-03</guid><pubDate>Tue, 08 Feb 2022 00:40:00 GMT</pubDate><content:encoded>&lt;p&gt;자바에서 자주 볼 수 있었던 NPE는 코틀린의 null-safety 메커니즘으로 인해 거의 찾아보기 힘들지만 자바와 코틀린을 연결해서 사용할 때는 이러한 예외가 발생할 수 있다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 03. 최대한 플랫폼 타입을 사용하지 말라]]></title><description><![CDATA[Effective Kotlin Item 03. 최대한 플랫폼 타입을 사용하지 말라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-03</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-03</guid><pubDate>Tue, 08 Feb 2022 00:40:00 GMT</pubDate><content:encoded>&lt;p&gt;자바에서 자주 볼 수 있었던 NPE는 코틀린의 null-safety 메커니즘으로 인해 거의 찾아보기 힘들지만 자바와 코틀린을 연결해서 사용할 때는 이러한 예외가 발생할 수 있다.&lt;/p&gt;
 &lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;@NotNull&lt;/code&gt; 혹은 &lt;code class=&quot;language-text&quot;&gt;@Nullable&lt;/code&gt; 이 붙은 경우라면 String, String?으로 추정 및 변경이 가능하지만 &lt;strong&gt;어노테이션이 없다면 모든 것을 nullable로 가정&lt;/strong&gt;하고 다루어야 한다.&lt;/p&gt;
 &lt;p&gt;nullable과 가장 많은 문제가 되는 부분은 자바의 제네릭 타입이다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
@@ -1089,7 +1780,7 @@ fun main() {
 &lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
-&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 02. 변수의 스코프를 최소화하라]]></title><description><![CDATA[Effective Kotlin Item 02. 변수의 스코프를 최소화하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-02</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-02</guid><pubDate>Tue, 08 Feb 2022 00:10:00 GMT</pubDate><content:encoded>&lt;p&gt;상태 정의 시 변수와 프로퍼티의 스코프를 최소화 하는 것이 좋다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 02. 변수의 스코프를 최소화하라]]></title><description><![CDATA[Effective Kotlin Item 02. 변수의 스코프를 최소화하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-02</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-02</guid><pubDate>Tue, 08 Feb 2022 00:10:00 GMT</pubDate><content:encoded>&lt;p&gt;상태 정의 시 변수와 프로퍼티의 스코프를 최소화 하는 것이 좋다.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;프로퍼티 보다는 지역 변수를 사용한다.&lt;/li&gt;
 &lt;li&gt;최대한 좁은 스코프를 갖게 변수를 사용한다. 예를 들어 반복문 내부에서만 사용되면 변수를 반복문 내부에 작성하는것이 좋다.&lt;/li&gt;
@@ -1153,7 +1844,7 @@ println(primes.take(10).toList())
 &lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
-&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Effective Kotlin Item 01. 가변성을 제한하라]]></title><description><![CDATA[Effective Kotlin Item 01. 가변성을 제한하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-01</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-01</guid><pubDate>Tue, 08 Feb 2022 00:00:00 GMT</pubDate><content:encoded>&lt;h2 id=&quot;코틀린에서-가변성-제한하기&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%BD%94%ED%8B%80%EB%A6%B0%EC%97%90%EC%84%9C-%EA%B0%80%EB%B3%80%EC%84%B1-%EC%A0%9C%ED%95%9C%ED%95%98%EA%B8%B0&quot; aria-label=&quot;코틀린에서 가변성 제한하기 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;코틀린에서 가변성 제한하기&lt;/h2&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 01. 가변성을 제한하라]]></title><description><![CDATA[Effective Kotlin Item 01. 가변성을 제한하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-01</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-01</guid><pubDate>Tue, 08 Feb 2022 00:00:00 GMT</pubDate><content:encoded>&lt;h2 id=&quot;코틀린에서-가변성-제한하기&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%BD%94%ED%8B%80%EB%A6%B0%EC%97%90%EC%84%9C-%EA%B0%80%EB%B3%80%EC%84%B1-%EC%A0%9C%ED%95%9C%ED%95%98%EA%B8%B0&quot; aria-label=&quot;코틀린에서 가변성 제한하기 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;코틀린에서 가변성 제한하기&lt;/h2&gt;
 &lt;p&gt;코틀린에서 가변성을 제한하기 위해 굉장히 많은 방법을 활용할 수 있지만
 많이 사용되고 중요한 방법은 아래와 같다.&lt;/p&gt;
 &lt;ul&gt;
