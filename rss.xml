@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 27 Feb 2022 06:15:45 GMT</lastBuildDate><item><title><![CDATA[이펙티브 코틀린 아이템 24. 제네릭 타입과 variance 한정자를 활용하라]]></title><description><![CDATA[Effective Kotlin Item24. 제네릭 타입과 variance 한정자를 활용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-24</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-24</guid><pubDate>Sun, 27 Feb 2022 00:05:00 GMT</pubDate><content:encoded>&lt;h2 id=&quot;invariant&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#invariant&quot; aria-label=&quot;invariant permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;invariant&lt;/h2&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 27 Feb 2022 06:35:42 GMT</lastBuildDate><item><title><![CDATA[이펙티브 코틀린 아이템 24. 제네릭 타입과 variance 한정자를 활용하라]]></title><description><![CDATA[Effective Kotlin Item24. 제네릭 타입과 variance 한정자를 활용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-24</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-24</guid><pubDate>Sun, 27 Feb 2022 00:05:00 GMT</pubDate><content:encoded>&lt;h2 id=&quot;invariant&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#invariant&quot; aria-label=&quot;invariant permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;invariant&lt;/h2&gt;
 &lt;p&gt;variacne 한정자(out 또는 in)이 없는 경우 invariant(불공변성)는 제네릭 타입으로 만들어지는 타입들이 서로 관련성이 없다는 의미이다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
           &lt;code slot=&quot;code&quot;&gt;class Cup&amp;lt;T&amp;gt;
@@ -3566,7 +3566,52 @@ requestTimeRange = localDate(&amp;quot;2020-12-28&amp;quot;) until localDate(&am
           &lt;code slot=&quot;code&quot;&gt;connector.class: io.confluent.connect.elasticsearch.ElasticsearchSinkConnector
 transforms.TimestampRouter.timestamp.format: Y-&amp;#39;W&amp;#39;ww
 transforms.TimestampRouter.topic.format: index-pattern-v1-${timestamp}&lt;/code&gt;
-        &lt;/deckgo-highlight-code&gt;</content:encoded></item><item><title><![CDATA[Kotlin 프로젝트의 Spring Boot 2.2.x 마이그레이션]]></title><description><![CDATA[Kotlin 프로젝트의 Spring Boot 2.2.x 마이그레이션 과정에서 겪은 이슈 정리]]></description><link>https://kyucumber.github.io/posts/spring/spring-boot-2.2.x-migration</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/spring-boot-2.2.x-migration</guid><pubDate>Sun, 01 Nov 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;운영중인 코틀린 프로젝트에서 Spring Cloud 관련 버전업이 필요한 부분이 있어 겸사겸사 2.1.x -&gt; 2.2.x로 마이그레이션을 진행했습니다.
+        &lt;/deckgo-highlight-code&gt;</content:encoded></item><item><title><![CDATA[axios 에서 Blob 형태 파일 응답 처리하기]]></title><description><![CDATA[axios 에서 Blob 형태 파일 응답을 처리하는 방법을 정리합니다.]]></description><link>https://kyucumber.github.io/posts/frontend/axios-handle-byte-array-response/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/frontend/axios-handle-byte-array-response/</guid><pubDate>Thu, 10 Dec 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;서버에서 ByteArray 형태의 응답을 내려주는 경우에 파일을 처리하는 방법을 정리합니다.&lt;/p&gt;
+&lt;h2 id=&quot;서버-응답-예시&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%84%9C%EB%B2%84-%EC%9D%91%EB%8B%B5-%EC%98%88%EC%8B%9C&quot; aria-label=&quot;서버 응답 예시 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;서버 응답 예시&lt;/h2&gt;
+&lt;p&gt;아래와 같이 ByteArray 형태로 파일을 응답하는 API가 존재한다고 가정합니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;@GetMapping
+fun download(@RequestParam key: String): ResponseEntity&amp;lt;ByteArray&amp;gt; {
+    val file = fileService.download(key)
+
+    return ResponseEntity.ok()
+        .contentType(MediaType.parseMediaType(file.contentType))
+        .contentLength(file.contentLength)
+        .body(file.content)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;프론트에서의-처리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%ED%94%84%EB%A1%A0%ED%8A%B8%EC%97%90%EC%84%9C%EC%9D%98-%EC%B2%98%EB%A6%AC&quot; aria-label=&quot;프론트에서의 처리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;프론트에서의 처리&lt;/h2&gt;
+&lt;p&gt;프론트에서 해당 Byte Array를 받아 처리하려고 하는데 응답을 받아 Blob에 대해 처리하는 부분이 잘 동작하지 않았습니다.&lt;/p&gt;
+&lt;p&gt;조금 찾아보니 axios의 기본 responseType 처리가 json이라 별도의 responseType을 설정해주어야 합니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;responseType: &amp;#39;json&amp;#39;, // default&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;get 요청 시 아래와 같이 responseType을 지정해줍니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;axios.get(this._url, {
+  responseType: &amp;#39;blob&amp;#39;
+})&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;받은 응답값은 아래와 같이 활용해 Blob을 생성할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;Blob을 생성한 뒤 window.URL.createObjectURL을 호출해 url을 반환받아 활용하면 됩니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;typescript&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;export interface FileData {
+  data: Blob;
+  contentType: string;
+}
+
+await res = s3FileStore.fetchS3Download(employee.imageUrl) // return FileData
+
+const blob = new Blob([res.data], { type: res.contentType });
+const url = window.URL.createObjectURL(blob);
+
+setProfileImage(url);&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://axios-http.com/docs/req_config&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Axios Docs, Request Config&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/60454048/how-does-axios-handle-blob-vs-arraybuffer-as-responsetype&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://stackoverflow.com/questions/60454048/how-does-axios-handle-blob-vs-arraybuffer-as-responsetype&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[Kotlin 프로젝트의 Spring Boot 2.2.x 마이그레이션]]></title><description><![CDATA[Kotlin 프로젝트의 Spring Boot 2.2.x 마이그레이션 과정에서 겪은 이슈 정리]]></description><link>https://kyucumber.github.io/posts/spring/spring-boot-2.2.x-migration</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/spring-boot-2.2.x-migration</guid><pubDate>Sun, 01 Nov 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;운영중인 코틀린 프로젝트에서 Spring Cloud 관련 버전업이 필요한 부분이 있어 겸사겸사 2.1.x -&gt; 2.2.x로 마이그레이션을 진행했습니다.
 이후 마이그레이션 하는 경우에 활용하기 위해 마이그레이션 과정에서 겪었던 문제들을 아래에 정리했습니다.&lt;/p&gt;
 &lt;h2 id=&quot;jackson-module-kotlin-is-prefix를-제거하는-버그-픽스&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#jackson-module-kotlin-is-prefix%EB%A5%BC-%EC%A0%9C%EA%B1%B0%ED%95%98%EB%8A%94-%EB%B2%84%EA%B7%B8-%ED%94%BD%EC%8A%A4&quot; aria-label=&quot;jackson module kotlin is prefix를 제거하는 버그 픽스 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Jackson module kotlin &lt;code class=&quot;language-text&quot;&gt;is&lt;/code&gt; prefix를 제거하는 버그 픽스&lt;/h2&gt;
 &lt;p&gt;기존에 존재하던 &lt;code class=&quot;language-text&quot;&gt;is&lt;/code&gt; prefix를 제거하는 버그가 해소되었습니다.
