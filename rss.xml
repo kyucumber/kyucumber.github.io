@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Fri, 11 Mar 2022 13:36:22 GMT</lastBuildDate><item><title><![CDATA[이펙티브 코틀린 아이템 34. 기본 생성자에 있는 이름 있는 옵션 아규먼트를 사용하라]]></title><description><![CDATA[Effective Kotlin Item 34. 기본 생성자에 있는 이름 있는 옵션 아규먼트를 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-34</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-34</guid><pubDate>Sun, 06 Mar 2022 00:10:00 GMT</pubDate><content:encoded>&lt;p&gt;객체를 정의하고 생성하는 방법을 지정할때 사용하는 가장 기본적인 방법은 기본 생성자를 사용하는 것이다.&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 13 Mar 2022 13:27:32 GMT</lastBuildDate><item><title><![CDATA[이펙티브 코틀린 아이템 34. 기본 생성자에 있는 이름 있는 옵션 아규먼트를 사용하라]]></title><description><![CDATA[Effective Kotlin Item 34. 기본 생성자에 있는 이름 있는 옵션 아규먼트를 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-34</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-34</guid><pubDate>Sun, 06 Mar 2022 00:10:00 GMT</pubDate><content:encoded>&lt;p&gt;객체를 정의하고 생성하는 방법을 지정할때 사용하는 가장 기본적인 방법은 기본 생성자를 사용하는 것이다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
           &lt;code slot=&quot;code&quot;&gt;class User(var name: String, var surname: String)
 
@@ -2685,7 +2685,69 @@ list += 1 // 모호성이 발생해 해당 연산자 사용 불가능&lt;/code&g
 &lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
-&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[spring data redis에서 atomic operation 보장을 위해 Lua script 활용하기]]></title><description><![CDATA[spring data redis에서 atomic operation 보장을 위해 Lua script를 사용하는 법을 정리합니다]]></description><link>https://kyucumber.github.io/posts/spring/spring-data-redis-atomic-operations/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/spring-data-redis-atomic-operations/</guid><pubDate>Fri, 10 Dec 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;팀 내에서 서비스 운영을 위해 Redis Clutser를 사용하고 있으며
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Typescript에서 instanceof가 의도대로 동작하지 않는 경우]]></title><description><![CDATA[Typescript에서 instanceof가 의도대로 동작하지 않는 경우에 대해 정리합니다]]></description><link>https://kyucumber.github.io/posts/frontend/typescript-instance-of-issue/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/frontend/typescript-instance-of-issue/</guid><pubDate>Thu, 30 Dec 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;프로젝트 내에서 기본 Error를 상속해 BaseError를 만들어 사용하고 있었습니다.
+코드 내부에는 instanceOf를 통해 BaseError 타입인지 검증하는 코드가 포함되어 있었는데,
+의도한 대로 동작하지 않는 문제가 발생했습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;typescript&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;export interface ErrorData {
+  status: number;
+  errorMessage?: string;
+}
+
+export default class BaseError extends Error {
+  status: number;
+  errorMessage: string;
+
+  constructor(errorData: ErrorData) {
+    super(errorData.errorMessage);
+
+    this.status = errorData.status;
+    this.errorMessage = errorData.errorMessage || &amp;#39;&amp;#39;;
+  }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;아래처럼 실제 BaseError임에도 불구하고 instanceof BaseError의 결과가 false가 떨어지는 문제가 있었습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;typescript&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;// true
+if (res instanceof Error) {
+}
+
+// false
+if (res instanceof BaseError) {
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;해결-방법&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%ED%95%B4%EA%B2%B0-%EB%B0%A9%EB%B2%95&quot; aria-label=&quot;해결 방법 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;해결 방법&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;프로토타입을 수동으로 조정합니다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;typescript&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;export default class BaseError extends Error {
+  status: number;
+  errorMessage: string;
+
+  constructor(errorData: ErrorData) {
+    // ...
+    // 아래 부분 추가
+    Object.setPrototypeOf(this, BaseError.prototype);
+  }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ul&gt;
+&lt;li&gt;tsconfig의 target을 ES2015 이상으로 업그레이드 합니다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;tsconfig.json&lt;/code&gt;&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;json&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;{
+  &amp;quot;compilerOptions&amp;quot;: {
+    &amp;quot;target&amp;quot;: &amp;quot;es2015&amp;quot;,
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/microsoft/TypeScript/issues/13965&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://github.com/microsoft/TypeScript/issues/13965&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/Microsoft/TypeScript/wiki/Breaking-Changes#extending-built-ins-like-error-array-and-map-may-no-longer-work&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://github.com/Microsoft/TypeScript/wiki/Breaking-Changes#extending-built-ins-like-error-array-and-map-may-no-longer-work&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://www.dannyguo.com/blog/how-to-fix-instanceof-not-working-for-custom-errors-in-typescript/&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://www.dannyguo.com/blog/how-to-fix-instanceof-not-working-for-custom-errors-in-typescript/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[spring data redis에서 atomic operation 보장을 위해 Lua script 활용하기]]></title><description><![CDATA[spring data redis에서 atomic operation 보장을 위해 Lua script를 사용하는 법을 정리합니다]]></description><link>https://kyucumber.github.io/posts/spring/spring-data-redis-atomic-operations/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/spring-data-redis-atomic-operations/</guid><pubDate>Fri, 10 Dec 2021 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;팀 내에서 서비스 운영을 위해 Redis Clutser를 사용하고 있으며
 내부 코드에 아래와 같이 PartialUpdate를 사용해 구현된 부분이 존재합니다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
           &lt;code slot=&quot;code&quot;&gt;redisKVTemplate.update(
@@ -4346,7 +4408,75 @@ setProfileImage(url);&lt;/code&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;a href=&quot;https://axios-http.com/docs/req_config&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;Axios Docs, Request Config&lt;/a&gt;&lt;/li&gt;
 &lt;li&gt;&lt;a href=&quot;https://stackoverflow.com/questions/60454048/how-does-axios-handle-blob-vs-arraybuffer-as-responsetype&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://stackoverflow.com/questions/60454048/how-does-axios-handle-blob-vs-arraybuffer-as-responsetype&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[Kotlin 프로젝트의 Spring Boot 2.2.x 마이그레이션]]></title><description><![CDATA[Kotlin 프로젝트의 Spring Boot 2.2.x 마이그레이션 과정에서 겪은 이슈 정리]]></description><link>https://kyucumber.github.io/posts/spring/spring-boot-2.2.x-migration</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/spring-boot-2.2.x-migration</guid><pubDate>Sun, 01 Nov 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;운영중인 코틀린 프로젝트에서 Spring Cloud 관련 버전업이 필요한 부분이 있어 겸사겸사 2.1.x -&gt; 2.2.x로 마이그레이션을 진행했습니다.
+&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[스프링과 Async, ThreadPoolTaskExecutor]]></title><description><![CDATA[스프링과 Async, ThreadPoolTaskExecutor]]></description><link>https://kyucumber.github.io/posts/spring/spring-with-async-and-thread-pool-task-executor/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/spring-with-async-and-thread-pool-task-executor/</guid><pubDate>Sun, 08 Nov 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;스프링에서 Async를 사용하는 경우 &lt;code class=&quot;language-text&quot;&gt;@EnableAsync&lt;/code&gt; 어노테이션의 주석에서 아래와 같은 내용을 확인할 수 있습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;By default, Spring will be searching for an associated thread pool definition: 
+either a unique org.springframework.core.task.TaskExecutor bean in the context,
+or an java.util.concurrent.Executor bean named &amp;quot;taskExecutor&amp;quot; otherwise.
+If neither of the two is resolvable, a org.springframework.core.task.SimpleAsyncTaskExecutor will be used to process async method invocations.
+Besides, annotated methods having a void return type cannot transmit any exception back to the caller.
+By default, such uncaught exceptions are only logged.
+
+To customize all this, implement AsyncConfigurer and provide:&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;TaskExecutor를 구현한 빈을 찾지 못하면 &lt;code class=&quot;language-text&quot;&gt;SimpleAsyncTaskExecutor&lt;/code&gt;를 사용한다고 되어 있습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;java&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;// NOTE: This implementation does not reuse threads! Consider a thread-pooling TaskExecutor implementation instead, in particular for executing a large number of short-lived tasks.
+
+public class SimpleAsyncTaskExecutor extends CustomizableThreadCreator
+		implements AsyncListenableTaskExecutor, Serializable {
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;SimpleAsyncTaskExecutor&lt;/code&gt; 클래스에는 스레드를 재사용하지 않는다고 적혀있어 해당 Executor를
+사용하면 문제가 될 것 같은데 실제로 아무런 설정을 넣지 않아도 &lt;code class=&quot;language-text&quot;&gt;SimpleAsyncTaskExecutor&lt;/code&gt;를 사용하지 않습니다.&lt;/p&gt;
+&lt;p&gt;이는 &lt;code class=&quot;language-text&quot;&gt;TaskExecutionAutoConfiguration&lt;/code&gt;에 의해 &lt;code class=&quot;language-text&quot;&gt;ThreadPoolTaskExecutor&lt;/code&gt;가 생성되기 때문입니다.
+&lt;code class=&quot;language-text&quot;&gt;spring.factories&lt;/code&gt;에 아래와 같은 내용이 등록되어 있습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code   terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;org.springframework.boot.autoconfigure.task.TaskExecutionAutoConfiguration,\&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;deckgo-highlight-code language=&quot;java&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;@ConditionalOnClass(ThreadPoolTaskExecutor.class)
+@Configuration(proxyBeanMethods = false)
+@EnableConfigurationProperties(TaskExecutionProperties.class)
+public class TaskExecutionAutoConfiguration {
+
+	/**
+	 * Bean name of the application {@link TaskExecutor}.
+	 */
+	public static final String APPLICATION_TASK_EXECUTOR_BEAN_NAME = &amp;quot;applicationTaskExecutor&amp;quot;;
+
+	@Bean
+	@ConditionalOnMissingBean
+	public TaskExecutorBuilder taskExecutorBuilder(TaskExecutionProperties properties,
+			ObjectProvider&amp;lt;TaskExecutorCustomizer&amp;gt; taskExecutorCustomizers,
+			ObjectProvider&amp;lt;TaskDecorator&amp;gt; taskDecorator) {
+		TaskExecutionProperties.Pool pool = properties.getPool();
+		TaskExecutorBuilder builder = new TaskExecutorBuilder();
+		builder = builder.queueCapacity(pool.getQueueCapacity());
+		builder = builder.corePoolSize(pool.getCoreSize());
+		builder = builder.maxPoolSize(pool.getMaxSize());
+		builder = builder.allowCoreThreadTimeOut(pool.isAllowCoreThreadTimeout());
+		builder = builder.keepAlive(pool.getKeepAlive());
+		Shutdown shutdown = properties.getShutdown();
+		builder = builder.awaitTermination(shutdown.isAwaitTermination());
+		builder = builder.awaitTerminationPeriod(shutdown.getAwaitTerminationPeriod());
+		builder = builder.threadNamePrefix(properties.getThreadNamePrefix());
+		builder = builder.customizers(taskExecutorCustomizers.orderedStream()::iterator);
+		builder = builder.taskDecorator(taskDecorator.getIfUnique());
+		return builder;
+	}
+
+	@Lazy
+	@Bean(name = { APPLICATION_TASK_EXECUTOR_BEAN_NAME,
+			AsyncAnnotationBeanPostProcessor.DEFAULT_TASK_EXECUTOR_BEAN_NAME })
+	@ConditionalOnMissingBean(Executor.class)
+	public ThreadPoolTaskExecutor applicationTaskExecutor(TaskExecutorBuilder builder) {
+		return builder.build();
+	}
+
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;기본적으로 생성되는 &lt;code class=&quot;language-text&quot;&gt;ThreadPoolTaskExecutor&lt;/code&gt;는 Async 이외에 다른 스케줄링에도 사용되므로 &lt;code class=&quot;language-text&quot;&gt;@Async&lt;/code&gt; 사용 시 &lt;code class=&quot;language-text&quot;&gt;AsyncConfigurerSupport&lt;/code&gt;를 통해 비동기 작업을 위한 스레드풀을 별도로 정의해주는게 좋습니다.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Kotlin 프로젝트의 Spring Boot 2.2.x 마이그레이션]]></title><description><![CDATA[Kotlin 프로젝트의 Spring Boot 2.2.x 마이그레이션 과정에서 겪은 이슈 정리]]></description><link>https://kyucumber.github.io/posts/spring/spring-boot-2.2.x-migration</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/spring-boot-2.2.x-migration</guid><pubDate>Sun, 01 Nov 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;운영중인 코틀린 프로젝트에서 Spring Cloud 관련 버전업이 필요한 부분이 있어 겸사겸사 2.1.x -&gt; 2.2.x로 마이그레이션을 진행했습니다.
 이후 마이그레이션 하는 경우에 활용하기 위해 마이그레이션 과정에서 겪었던 문제들을 아래에 정리했습니다.&lt;/p&gt;
 &lt;h2 id=&quot;jackson-module-kotlin-is-prefix를-제거하는-버그-픽스&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#jackson-module-kotlin-is-prefix%EB%A5%BC-%EC%A0%9C%EA%B1%B0%ED%95%98%EB%8A%94-%EB%B2%84%EA%B7%B8-%ED%94%BD%EC%8A%A4&quot; aria-label=&quot;jackson module kotlin is prefix를 제거하는 버그 픽스 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Jackson module kotlin &lt;code class=&quot;language-text&quot;&gt;is&lt;/code&gt; prefix를 제거하는 버그 픽스&lt;/h2&gt;
 &lt;p&gt;기존에 존재하던 &lt;code class=&quot;language-text&quot;&gt;is&lt;/code&gt; prefix를 제거하는 버그가 해소되었습니다.
