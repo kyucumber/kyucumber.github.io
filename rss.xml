@@ -1,4 +1,502 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 13 Mar 2022 13:27:32 GMT</lastBuildDate><item><title><![CDATA[이펙티브 코틀린 아이템 34. 기본 생성자에 있는 이름 있는 옵션 아규먼트를 사용하라]]></title><description><![CDATA[Effective Kotlin Item 34. 기본 생성자에 있는 이름 있는 옵션 아규먼트를 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-34</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-34</guid><pubDate>Sun, 06 Mar 2022 00:10:00 GMT</pubDate><content:encoded>&lt;p&gt;객체를 정의하고 생성하는 방법을 지정할때 사용하는 가장 기본적인 방법은 기본 생성자를 사용하는 것이다.&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 20 Mar 2022 13:52:11 GMT</lastBuildDate><item><title><![CDATA[이펙티브 코틀린 아이템 38. 연산 또는 액션을 전달할 때는 인터페이스 대신 함수 타입을 사용하라]]></title><description><![CDATA[Effective Kotlin Item 38. 연산 또는 액션을 전달할 때는 인터페이스 대신 함수 타입을 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-38</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-38</guid><pubDate>Sat, 12 Mar 2022 00:15:00 GMT</pubDate><content:encoded>&lt;p&gt;대부분 프로그래밍 언어에는 함수 타입이라는 개념이 없다.&lt;/p&gt;
+&lt;p&gt;그래서 연산 또는 액션을 전달할 때 메소드가 하나만 있는 인터페이스를 활용하며 이를 &lt;strong&gt;SAM(Single-Abstract Method)&lt;/strong&gt;라고 부른다.&lt;/p&gt;
+&lt;p&gt;함수가 SAM을 받는다고 하면 이러한 인터페이스를 구현한 객체를 전달받는다는 의미이다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;fun setOnClickListener(listener: OnClick) {
+    // ...
+}
+
+setOnClickListener(object : OnClick {
+    override fun clicked(view: View) {
+        // ...
+    }
+})&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위와 같은 코드를 함수 타입을 사용하는 코드로 변경하면 더 많은 자유를 얻을 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;fun setOnClickListener(listener: (View) -&amp;gt; Unit) {
+    // ...
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;예를 들어 다음과 같은 방법으로 파라미터를 전달할 수 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;람다 표현식 또는 익명 함수로 전달&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;setOnClickListener { /*...*/ }
+setOnClickListener(fun(view) { /*...*/ })&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;함수 레퍼런스 또는 제한된 함수 레퍼런스로 전달&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;setOnClickListener(::println)
+setOnClickListener(this::showUsers)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;선언된 함수 타입을 구현한 객체로 전달&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class ClickListener: (View) -&amp;gt; Unit {
+    override fun invoke(view: View) {
+        // ..
+    }
+}
+
+setOnClickListener(ClickListener())&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;SAM의 장점이 아규먼트에 이름이 붙어있다고 말하는 경우도 있지만, type alias를 이용해 함수 타입도 이름을 붙여 사용할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;typealias Onclick = (View) -&amp;gt; Unit&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;또 파라미터에 이름을 가질 수 있으며 이는 IDE의 지원을 받을 수 있다는 이점이 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;typealias OnClick = (view: View) -&amp;gt; Unit&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;람다 표현식을 사용할 때는 아규먼트 분해(destructure argument)도 사용할 수 있다.&lt;/p&gt;
+&lt;p&gt;이것도 SAM보다 함수 타입을 사용하는게 훨씬 더 좋은 이유이다.&lt;/p&gt;
+&lt;h2 id=&quot;언제-sam을-사용해야-할까&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%96%B8%EC%A0%9C-sam%EC%9D%84-%EC%82%AC%EC%9A%A9%ED%95%B4%EC%95%BC-%ED%95%A0%EA%B9%8C&quot; aria-label=&quot;언제 sam을 사용해야 할까 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;언제 SAM을 사용해야 할까?&lt;/h2&gt;
+&lt;p&gt;코틀린이 아닌 다른 언어에서 사용할 클래스를 설계하는 경우라면 SAM을 사용하는것이 좋다.&lt;/p&gt;
+&lt;p&gt;함수 타입을 다른 언어에서 사용하는 경우 아래와 같은 단점이 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;함수 타입으로 만들어진 클래스는 자바에서 type alias과 IDE의 지원을 제대로 받을 수 없다.&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;다른 언어(자바 등)에서 코틀린의 함수 타입을 사용하려면 Unit을 명시적으로 리턴하는 함수가 필요하다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;// Kotlin
+class CalendarView() {
+    var onDateclicked: ((date: Date) -&amp;gt; Unit)? = null
+    var onPageChanged: OnDateClicked? = null
+}
+
+// Java
+interface OnDateClicked {
+    fun onClick(date: Date)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위와 같이 정의된 코틀린 클래스를 아래처럼 자바에서 사용하는 경우 Unit을 명시적으로 리턴하는 함수가 필요하다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;java&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;CalendarView c = new CalendarView();
+c.setOnDateClicked(date -&amp;gt; Unit.INSTANCE);
+c.setOnPageChanged(date -&amp;gt; {});&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;자바에서 사용하기 위한 API를 설계한다면 함수 타입보다 SAM을 사용하는 것이 합리적이다. 이외의 경우라면 함수 타입을 사용하는것이 좋다.&lt;/p&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 37. 데이터 집합 표현에 data 한정자를 사용하라]]></title><description><![CDATA[Effective Kotlin Item 37. 데이터 집합 표현에 data 한정자를 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-37</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-37</guid><pubDate>Sat, 12 Mar 2022 00:10:00 GMT</pubDate><content:encoded>&lt;p&gt;데이터를 한꺼번에 전달해야 하는 경우 다음과 같은 클래스를 사용한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;data class Player(
+    val id: Int,
+    val name: String,
+    val points: Int
+)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;data 한정자를 붙이면 아래와 같은 몇가지 함수가 자동으로 생성된다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;toString&lt;/li&gt;
+&lt;li&gt;equals와 hashCode&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;copy &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;copy는 immutable 데이터 클래스를 만들 때 편리하게 활용할 수 있다. copy는 객체를 얕은 복사 한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;componentN &lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;위치를 기반으로 객체를 해제할 수 있다. 위치를 잘못 지정하면 큰 문제가 발생할 수 있으니 주의한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val (id, name, pts) = player&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;튜플-대신-데이터-클래스-사용하기&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%ED%8A%9C%ED%94%8C-%EB%8C%80%EC%8B%A0-%EB%8D%B0%EC%9D%B4%ED%84%B0-%ED%81%B4%EB%9E%98%EC%8A%A4-%EC%82%AC%EC%9A%A9%ED%95%98%EA%B8%B0&quot; aria-label=&quot;튜플 대신 데이터 클래스 사용하기 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;튜플 대신 데이터 클래스 사용하기&lt;/h2&gt;
+&lt;p&gt;데이터 클래스는 튜플보다 많은 것을 제공한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;public data class Pair&amp;lt;out A, out B&amp;gt;(
+    public val first: A,
+    public val second: B
+) : Serializable {
+
+    /**
+     * Returns string representation of the [Pair] including its [first] and [second] values.
+     */
+    public override fun toString(): String = &amp;quot;($first, $second)&amp;quot;
+}
+
+public data class Triple&amp;lt;out A, out B, out C&amp;gt;(
+    public val first: A,
+    public val second: B,
+    public val third: C
+) : Serializable {
+
+    /**
+     * Returns string representation of the [Triple] including its [first], [second] and [third] values.
+     */
+    public override fun toString(): String = &amp;quot;($first, $second, $third)&amp;quot;
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;코틀린에 남아있는 튜플은 Pair와 Triple이 전부이다. 튜플은 좋아 보이지만 데이터 클래스를 사용하는것이 더 좋기 때문에 점차 없어졌다. 이는 몇가지 지역적인 목적으로 남아있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;값에 간단하게 이름을 붙일 때&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val (description, color) = when {
+  degrees &amp;lt; 5 -&amp;gt; &amp;quot;cold&amp;quot; to Color.BLUE
+  degrees &amp;lt; 23 -&amp;gt; &amp;quot;mild&amp;quot; to Color.YELLOW
+  else -&amp;gt; &amp;quot;hot&amp;quot; to COLOR.RED
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;표준 라이브러리에서 볼 수 있는 것 처럼 미리 알 수 없는 aggregate(집합)을 표현할 때&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val (odd, even) = numbers.partition { it % 2 == 1 }
+val map = mapOf(1 to &amp;quot;San Francisco&amp;quot;, 2 to &amp;quot;Amsterdam&amp;quot;)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;위 경우를 제외하면 데이터 클래스를 사용하는게 좋다.&lt;/p&gt;
+&lt;p&gt;예를 들어 fullname과 name을 나타내는 코드를 정의할 때 &lt;code class=&quot;language-text&quot;&gt;Pair&amp;lt;String, String&amp;gt;&lt;/code&gt;을 사용하면 해당 Pair가 전체 이름을 나타내는것을 인지하기 어렵다.&lt;/p&gt;
+&lt;p&gt;이를 데이터 클래스로 만들어도 큰 추가 비용이 들지 않으며 다음과 같은 장점이 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;함수의 리턴 타입이 더 명확해진다.&lt;/li&gt;
+&lt;li&gt;리턴 타입이 더 짧아지며 전달하기 쉬워진다.&lt;/li&gt;
+&lt;li&gt;사용자가 데이터 클래스에 적혀있는 것과 다른 이름을 활용해 변수를 해제하면, 경고를 출력한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 36. 상속보다는 컴포지션을 사용하라]]></title><description><![CDATA[Effective Kotlin Item 36. 상속보다는 컴포지션을 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-36</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-36</guid><pubDate>Sat, 12 Mar 2022 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;상속은 관계가 명확하지 않을 때 사용하면 여러 문제가 발생할 수 있다.
+단순하게 코드 추출 또는 재사용을 위해 상속을 하는건 지양해야 한다.&lt;/p&gt;
+&lt;p&gt;일반적으로 아래와 같은 경우 상속보다는 컴포지션을 사용하는게 좋다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;간단한 행위 재사용&lt;/li&gt;
+&lt;li&gt;모든것을 가져올 수 밖에 없는 상속&lt;/li&gt;
+&lt;li&gt;캡슐화를 깨는 상속&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;간단한-행위-재사용&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EA%B0%84%EB%8B%A8%ED%95%9C-%ED%96%89%EC%9C%84-%EC%9E%AC%EC%82%AC%EC%9A%A9&quot; aria-label=&quot;간단한 행위 재사용 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;간단한 행위 재사용&lt;/h2&gt;
+&lt;p&gt;아래와 같이 프로그레스 바를 어떤 로직 처리 전에 출력하고 처리후에 숨기는
+유사한 동작을 하는 두개의 클래스가 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class ProfileLoader {
+    fun load() {
+        // 프로그레스 바를 보여 줌
+        // 프로파일을 읽어 들임 *
+        // 프로그레스 바를 숨김
+    }
+}
+
+class ImageLoader {
+    fun load() {
+        // 프로그레스 바를 보여 줌
+        // 이미지를 읽어 들임 *
+        // 프로그레스 바를 숨김
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위와 같은 경우 많은 개발자는 상속을 통해 공통되는 행위를 추출한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;abstract class LoaderWithProgress {
+    fun load() {
+        // 프로그레스 바를 보여 줌
+        innerLoad()
+        // 프로그레스 바를 숨김
+    }
+    
+    abstract fun innerLoad()
+}
+
+class ProfileLoader : LoaderWithProgress() {
+    override fun innerLoad() {
+        // 프로파일을 읽어 들임
+    }
+}
+
+class ImageLoader : LoaderWithProgress() {
+    override fun innerLoad() {
+        // 이미지를 읽어 들임
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이는 간단한 경우 문제없이 동작하지만 몇가지 단점이 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;상속을 사용해 행위를 추출하다 보면 굉장히 깊고 복잡한 계층 구조가 만들어진다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;상속은 하나의 클래스만을 대상으로 할 수 있다. 상속을 사용해 행위를 추출하다 보면 거대한 BaseXXX 클래스를 만들게 되고 굉장히 깊고 복잡한 계층 구조가 만들어진다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;인터페이스 분리 원칙(Interface Segregation Principle) 위반&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;상속은 클래스의 모든것을 가져오게 된다. 따라서 불필요한 함수를 갖는 클래스가 만들어질 수 있다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;상속은 이해하기 어렵다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;일반적으로 개발자가 메소드를 읽고 메소드의 장독 방식을 이해하기 위해 슈퍼클래스를 여러번 확인해야 한다면, 문제가 있는 것이다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;이러한 이유 때문에 다른 대안을 사용하는것이 좋다.
+대표적인 대안은 바로 &lt;strong&gt;컴포지션(composition)&lt;/strong&gt;이다.&lt;/p&gt;
+&lt;p&gt;컴포지션을 사용한다는 것은 객체를 프로퍼티로 갖고,
+함수를 호출하는 형태로 재사용하는 것을 의미한다.
+컴포지션을 사용해 문제를 해결하면 아래와 같은 코드를 사용한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class Progress {
+    fun showProgress() {}
+    fun hideProgress() {}
+}
+
+class ProfileLoader {
+    private val progress = Progress()
+    
+    fun load() {
+        progress.showProgress()
+        // 프로파일을 읽어 들임
+        progress.hideProgress()
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;추가 코드를 적절하게 처리하는것이 조금 어려울 수 있어
+컴포지션보다 상속을 선호하는 경우도 있다. &lt;/p&gt;
+&lt;p&gt;컴포지션을 사용하면 다음과 같은 장점이 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;추가 코드로 인해 코드를 읽는 사람들이 코드의 실행을 더 명확하게 예측할 수 있다.&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;하나의 클래스 내부에서 여러 기능을 재사용할 수 있다.&lt;/p&gt;
+&lt;p&gt;이미지를 읽어들이고 나서 경고창을 출력하고 싶다면 아래와 같이 컴포지션을 활용할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class ImageLoader {
+    private val progress = Progress()
+    private val finishedAlert = FinishedAlert()
+
+    fun load() {
+        progress.showProgress()
+        // 이미지를 읽어 들임
+        progress.hideProgress()
+        finishedAlert.show()
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위와 같은 기능을 상속을 통해 구현하려면? 하나 이상의 클래스를 상속할 수 없으므로
+상속으로 이를 구현하려면 두 기능을 하나의 슈퍼클래스에 배치해야 한다.&lt;/p&gt;
+&lt;p&gt;이 때문에 클래스들에 복잡한 계층 구조가 만들어질 수 있다.
+예를 들어 3개의 슈퍼클래스가 프로그레스바와 경고창을 만드는 슈퍼클래스를 상속받는데 1개의 서브클래스에서는 경고창이 필요없을때 아래와 같이 파라미터가 있는 생성자를 사용해야 한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;abstract class InternetLoader(val showAlert: Boolean) {
+    fun load() {
+        // 프로그레스 바를 보여줌
+        innerLoad()
+        // 프로그레스 바를 숨김
+        if (showAlert) {
+            // 경고창 출력
+        }
+    }
+    abstract class innerLoad() {}
+}
+
+class ProfileLoader : InternetLoader(showAlert = true) {
+    override fun innerLoad() {
+        // 프로파일을 읽어 들임
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이것은 굉장히 나쁜 해결 방법이다. 서브클래스가 필요하지도 않은 기능을 갖고 단순하게 이를 차단하고 있다. 기능을 제대로 차단하지 못하면 문제가 발생할 수 있다.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;모든것을-가져올-수-밖에-없는-상속&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EB%AA%A8%EB%93%A0%EA%B2%83%EC%9D%84-%EA%B0%80%EC%A0%B8%EC%98%AC-%EC%88%98-%EB%B0%96%EC%97%90-%EC%97%86%EB%8A%94-%EC%83%81%EC%86%8D&quot; aria-label=&quot;모든것을 가져올 수 밖에 없는 상속 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;모든것을 가져올 수 밖에 없는 상속&lt;/h2&gt;
+&lt;p&gt;상속은 슈퍼클래스의 모든 것을 가져온다. 일부분을 재사용하고 싶다면 컴포지션을 사용하는게 좋다.&lt;/p&gt;
+&lt;p&gt;bark(짖기) sniff(냄새 맡기)라는 함수를 갖는 Dog 클래스가 있을 때&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;abstract class Dog {
+    open fun bark() {}
+    open fun sniff() {}
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;로봇 강아지는 bark(짖기)만 가능하고 sniff(냄새 맡기)는 못하게 하려는 요구사항이 있을 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class RobotDog : Dog() {
+    override fun sniff() {
+        throw Error(&amp;quot;Operation not suppoerted&amp;quot;)
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;RobotDog는 아래와 같이 필요도 없는 메소드를 갖게 되며 아래와 같은 문제를 가진다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;인터페이스 분리 원칙 위반&lt;/li&gt;
+&lt;li&gt;슈퍼클래스의 동작을 서브클래스에서 깨버리므로 리스코프 치환 원칙 위반&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;컴포지션을 사용하면 위와 같은 문제가 발생하지 않는다.&lt;/p&gt;
+&lt;p&gt;무조건 컴포지션을 사용해야 하는 것은 아니며, 타입 계층 구조를 표현해야 한다면 인터페이스를 활용해 다중 상속을 하는 것이 좋을 수도 있다.&lt;/p&gt;
+&lt;h2 id=&quot;캡슐화를-깨는-상속&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%BA%A1%EC%8A%90%ED%99%94%EB%A5%BC-%EA%B9%A8%EB%8A%94-%EC%83%81%EC%86%8D&quot; aria-label=&quot;캡슐화를 깨는 상속 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;캡슐화를 깨는 상속&lt;/h2&gt;
+&lt;p&gt;상속을 활용할 때 내부적인 구현 방법에 의해 클래스의 캡슐화가 깨질 수 있다.&lt;/p&gt;
+&lt;p&gt;아래 HasSet을 상속한 CounterSet 클래스는 문제가 없어 보인다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class CounterSet&amp;lt;T&amp;gt; : HashSet&amp;lt;T&amp;gt;() {
+    var elementsAdded: Int = 0
+    private set
+    
+    override fun add(element: T): Boolean {
+        elementsAdded++
+        return super.add(element)
+    }
+    
+    override fun addAll(elements: Collection&amp;lt;T&amp;gt;): Boolean {
+        elementsAdded += elements.size
+        return super.addAll(elements)
+    }
+}
+
+val counterList = CounterSet&amp;lt;String&amp;gt;()
+counterList.addAll(listOf(&amp;quot;A&amp;quot;, &amp;quot;B&amp;quot;, &amp;quot;C&amp;quot;))
+print(counterList.elementsAdded) // 3이 아닌 6이 출력된다.&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위에서는 의도한 3이 출력되지 않는다. 이는 HashSet의 addAll 내부에서 add를 사용하기 때문이다.&lt;/p&gt;
+&lt;p&gt;여기서는 아래와 같이 addAll을 제거하면 문제가 사라진다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class CounterSet&amp;lt;T&amp;gt; : HashSet&amp;lt;T&amp;gt;() {
+    var elementsAdded: Int = 0
+    private set
+
+    override fun add(element: T): Boolean {
+        elementsAdded++
+        return super.add(element)
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;하지만 이후 자바가 HashSet.addAll을 최적화하고 add를
+호출하지 않는 방식으로 구현된다면 예상하지 못한 형태로 동작할 수 있다.&lt;/p&gt;
+&lt;p&gt;위처럼 라이브러리의 구현이 변경되는 일은 꽤 자주 접할 수 있는 문제이며 상속 대신 컴포지션을 사용해 문제가 발생할 가능성을 막을 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class CounterSet&amp;lt;T&amp;gt; {
+    private val innerSet = HashSet&amp;lt;T&amp;gt;()
+    
+    var elementsAdded: Int = 0
+    private set
+
+    fun add(element: T) {
+        elementsAdded++
+        innerSet.add(element)
+    }
+    
+    fun addAll(elements: Collection&amp;lt;T&amp;gt;) {
+        elementsAdded += elements.size
+        innerSet.addAll(elements)
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이렇게 수정하는 경우 다형성이 사라진다는 문제가 있으며 이는 위임 패턴을 사용해 해결할 수 있다.&lt;/p&gt;
+&lt;p&gt;위임 패턴은 클래스가 인터페이스를 상속받게 하고 포함한 객체의 메소드를 활용해 인터페이스에서 정의한 메소드를 구현하는 패턴이다.&lt;/p&gt;
+&lt;p&gt;이렇게 구현된 메소드를 포워딩 메소드(forwarding method)라고 부르며 코드로 살펴보면 다음과 같다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class CounterSet&amp;lt;T&amp;gt; : MutableSet&amp;lt;T&amp;gt;{
+    private val innerSet = HashSet&amp;lt;T&amp;gt;()
+  
+    var elementsAdded: Int = 0
+        private set
+
+    override fun add(element: T): Boolean {
+        elementsAdded++
+        return innerSet.add(element)
+    }
+    
+    override fun addAll(elements: Collection&amp;lt;T&amp;gt;): Boolean {
+        elementsAdded += elements.size
+        return innerSet.addAll(elements)
+    }
+   
+    override val size: Int
+        get() = innerSet.size
+
+    // 길어서 생략, 대략 6개의 포워딩 메소드를 더 만들어야 한다
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이렇게 만들면 포워딩 메소드가 너무 많아진다. (위 예제에서는 9개를 구현해야 한다.)&lt;/p&gt;
+&lt;p&gt;하지만 코틀린에서는 아래와 같이 위임 패턴을 쉽게 사용할 수 있는 문법을 제공한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;class CounterSet&amp;lt;T&amp;gt;(
+    private val innerSet: MutableSet&amp;lt;T&amp;gt; = mutableSetOf()
+) : MutableSet&amp;lt;T&amp;gt; by innerSet {
+    var elementsAdded: Int = 0
+        private set
+
+    fun add(element: T): Boolean {
+        elementsAdded++
+        return innerSet.add(element)
+    }
+    
+    fun addAll(elements: Collection&amp;lt;T&amp;gt;): Boolean {
+        elementsAdded += elements.size
+        return innerSet.addAll(elements)
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위처럼 다형성이 필요한데 상속된 메소드를 직접 활용하는게 위험할 때는 위와 같이 위임 패턴을 사용하는게 좋다.&lt;/p&gt;
+&lt;h2 id=&quot;오버라이딩-제한&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%98%A4%EB%B2%84%EB%9D%BC%EC%9D%B4%EB%94%A9-%EC%A0%9C%ED%95%9C&quot; aria-label=&quot;오버라이딩 제한 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;오버라이딩 제한&lt;/h2&gt;
+&lt;p&gt;개발자가 상속용으로 설계되지 않은 클래스를 상속하지 못하게 하려면 final을 사용하면 된다.&lt;/p&gt;
+&lt;p&gt;만약 어떤 이유로 상속은 허용하지만 메소드는 오버라이드하지 못하게 하고 싶은 경우가 있을 수 있다.&lt;/p&gt;
+&lt;p&gt;이 경우 클래스에 open 키워드를 사용하면 된다. open 클래스는 open 메소드만 오버라이드 할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;open class Parent {
+    fun a() {}
+    open fun b() {}
+}
+
+class Child: Parent() {
+    override fun a() {} // 오류
+    override fun b() {}
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;p&gt;컴포지션과 상속은 다음과 같은 차이가 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;컴포지션은 안전하다. 다른 클래스의 내부적인 구현에 의존하지 않고, 외부에서 관찰되는 동작에만 의존하므로 안전하다.&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;컴포지션은 더 유연하다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;상속은 한 클래스만을 대상으로 할 수 있지만 컴포지션은 여러 클래스를 대상으로 할 수 있다.&lt;/li&gt;
+&lt;li&gt;상속은 모든 것을 받지만 컴포지션은 필요한 것만 받을 수 있다.&lt;/li&gt;
+&lt;li&gt;슈퍼클래스의 동작을 변경하면 서브클래스의 동작도 큰 영향을 받지만 컴포지션은 이러한 영향이 제한적이다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;컴포지션은 더 명시적이다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;슈퍼클래스의 메소드를 사용할때는 리시버를 지정하지 않아도 된다.&lt;/li&gt;
+&lt;li&gt;컴포지션을 사용하면 리시버를 명시적으로 활용해야 한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;컴포지션은 생각보다 번거롭다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;객체를 명시적으로 사용해야 하므로 대상 클래스에 일부 기능을 추가할 때 이를 포함하는 객체의 코드를 변경해야 한다. 그래서 상속을 사용할 때 보다 코드를 수정해야 하는 경우가 많다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;상속은 다형성을 활용할 수 있다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;일반적으로 OOP에서는 상속보다 컴포지션을 사용하는것이 좋다. 상속은 is-a 관계가 명확할 때 상속을 사용하는 것이 좋다.&lt;/p&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 34. 기본 생성자에 있는 이름 있는 옵션 아규먼트를 사용하라]]></title><description><![CDATA[Effective Kotlin Item 34. 기본 생성자에 있는 이름 있는 옵션 아규먼트를 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-34</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-34</guid><pubDate>Sun, 06 Mar 2022 00:10:00 GMT</pubDate><content:encoded>&lt;p&gt;객체를 정의하고 생성하는 방법을 지정할때 사용하는 가장 기본적인 방법은 기본 생성자를 사용하는 것이다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;dracula&quot; &gt;
           &lt;code slot=&quot;code&quot;&gt;class User(var name: String, var surname: String)
 
