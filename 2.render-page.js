@@ -1,9 +1,9 @@
 exports.ids = [2];
 exports.modules = {
 
-/***/ "./node_modules/@deckdeckgo/highlight-code/dist/esm/a11y-dark-533291b3.js":
+/***/ "./node_modules/@deckdeckgo/highlight-code/dist/esm/a11y-dark-22265427.js":
 /*!********************************************************************************!*\
-  !*** ./node_modules/@deckdeckgo/highlight-code/dist/esm/a11y-dark-533291b3.js ***!
+  !*** ./node_modules/@deckdeckgo/highlight-code/dist/esm/a11y-dark-22265427.js ***!
   \********************************************************************************/
 /*! exports provided: theme */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -16,6 +16,7 @@ const theme = `{
   --deckgo-highlight-code-carbon-color: #f8f8f2;
   --deckgo-highlight-code-token-atrule: #ffa07a;
   --deckgo-highlight-code-token-comment: #d4d0ab;
+  --deckgo-highlight-code-token-comment-rgb: 212, 208, 171;
   --deckgo-highlight-code-token-function: #00e0e0;
   --deckgo-highlight-code-token-property: #abe338;
   --deckgo-highlight-code-token-punctuation: #f8f8f2;

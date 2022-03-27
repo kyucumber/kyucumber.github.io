@@ -1,9 +1,9 @@
 exports.ids = [8];
 exports.modules = {
 
-/***/ "./node_modules/@deckdeckgo/highlight-code/dist/esm/duotone-acd564a2.js":
+/***/ "./node_modules/@deckdeckgo/highlight-code/dist/esm/duotone-32fdb092.js":
 /*!******************************************************************************!*\
-  !*** ./node_modules/@deckdeckgo/highlight-code/dist/esm/duotone-acd564a2.js ***!
+  !*** ./node_modules/@deckdeckgo/highlight-code/dist/esm/duotone-32fdb092.js ***!
   \******************************************************************************/
 /*! exports provided: theme */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -16,6 +16,7 @@ const theme = `{
   --deckgo-highlight-code-carbon-color: #eeebff;
   --deckgo-highlight-code-token-atrule: #ffcc99;
   --deckgo-highlight-code-token-comment: #6c6783;
+  --deckgo-highlight-code-token-comment-rgb: 108, 103, 131;
   --deckgo-highlight-code-token-function: #eeebff;
   --deckgo-highlight-code-token-operator: #ffad5c;
   --deckgo-highlight-code-token-property: #9a86fd;

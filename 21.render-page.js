@@ -1,9 +1,9 @@
 exports.ids = [21];
 exports.modules = {
 
-/***/ "./node_modules/@deckdeckgo/highlight-code/dist/esm/shades-of-purple-649a9b24.js":
+/***/ "./node_modules/@deckdeckgo/highlight-code/dist/esm/shades-of-purple-2be1efc9.js":
 /*!***************************************************************************************!*\
-  !*** ./node_modules/@deckdeckgo/highlight-code/dist/esm/shades-of-purple-649a9b24.js ***!
+  !*** ./node_modules/@deckdeckgo/highlight-code/dist/esm/shades-of-purple-2be1efc9.js ***!
   \***************************************************************************************/
 /*! exports provided: theme */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -16,6 +16,7 @@ const theme = `{
   --deckgo-highlight-code-carbon-color: #fff;
   --deckgo-highlight-code-token-atrule: #ff9d00;
   --deckgo-highlight-code-token-comment: #b362ff;
+  --deckgo-highlight-code-token-comment-rgb: 179, 98, 255;
   --deckgo-highlight-code-token-function: #9effff;
   --deckgo-highlight-code-token-operator: #ff9d00;
   --deckgo-highlight-code-token-property: #fad000;

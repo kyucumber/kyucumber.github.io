@@ -58,9 +58,9 @@
 
         gtag('config', 'UA-112721316-3', {"send_page_view":false});
       }
-      </script><link rel="sitemap" type="application/xml" href="/sitemap.xml"/><link rel="icon" href="/favicon-32x32.png?v=3fb2d4de4502fbae8b21ee45fe945cf4" type="image/png"/><link rel="manifest" href="/manifest.webmanifest" crossorigin="anonymous"/><meta name="theme-color" content="#F7A046"/><link rel="apple-touch-icon" sizes="48x48" href="/icons/icon-48x48.png?v=3fb2d4de4502fbae8b21ee45fe945cf4"/><link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72.png?v=3fb2d4de4502fbae8b21ee45fe945cf4"/><link rel="apple-touch-icon" sizes="96x96" href="/icons/icon-96x96.png?v=3fb2d4de4502fbae8b21ee45fe945cf4"/><link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144.png?v=3fb2d4de4502fbae8b21ee45fe945cf4"/><link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png?v=3fb2d4de4502fbae8b21ee45fe945cf4"/><link rel="apple-touch-icon" sizes="256x256" href="/icons/icon-256x256.png?v=3fb2d4de4502fbae8b21ee45fe945cf4"/><link rel="apple-touch-icon" sizes="384x384" href="/icons/icon-384x384.png?v=3fb2d4de4502fbae8b21ee45fe945cf4"/><link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png?v=3fb2d4de4502fbae8b21ee45fe945cf4"/><title data-react-helmet="true">이펙티브 코틀린 아이템 24. 제네릭 타입과 variance 한정자를 활용하라 - kyucumber</title><meta data-react-helmet="true" name="description" content="Effective Kotlin Item24. 제네릭 타입과 variance 한정자를 활용하라"/><meta data-react-helmet="true" property="og:site_name" content="이펙티브 코틀린 아이템 24. 제네릭 타입과 variance 한정자를 활용하라 - kyucumber"/><meta data-react-helmet="true" property="og:image" content="https://kyucumber.github.io/static/3fb2d4de4502fbae8b21ee45fe945cf4/kyucumber.jpg"/><meta data-react-helmet="true" name="twitter:card" content="summary"/><meta data-react-helmet="true" name="twitter:title" content="이펙티브 코틀린 아이템 24. 제네릭 타입과 variance 한정자를 활용하라 - kyucumber"/><meta data-react-helmet="true" name="twitter:description" content="Effective Kotlin Item24. 제네릭 타입과 variance 한정자를 활용하라"/><meta data-react-helmet="true" name="twitter:image" content="https://kyucumber.github.io/static/3fb2d4de4502fbae8b21ee45fe945cf4/kyucumber.jpg"/><link as="script" rel="preload" href="/webpack-runtime-816189e5aa2f7fa6a55e.js"/><link as="script" rel="preload" href="/framework-712d0c71a05a512b21eb.js"/><link as="script" rel="preload" href="/532a2f07-a2b9837034ae8adfec32.js"/><link as="script" rel="preload" href="/app-1e2c58642a59506bb6ab.js"/><link as="script" rel="preload" href="/styles-407fe62976dc5310c43e.js"/><link as="script" rel="preload" href="/cd95ea5cbd2c605f26db819f07999610c9ff4310-ef9b99d97407ace2a131.js"/><link as="script" rel="preload" href="/component---src-templates-post-template-js-ab1a43de8002a72167ea.js"/><link as="fetch" rel="preload" href="/page-data/posts/book/effective-kotlin/effective-kotlin-item-24/page-data.json" crossorigin="anonymous"/><link as="fetch" rel="preload" href="/page-data/sq/d/2067870509.json" crossorigin="anonymous"/><link as="fetch" rel="preload" href="/page-data/sq/d/251939775.json" crossorigin="anonymous"/><link as="fetch" rel="preload" href="/page-data/sq/d/401334301.json" crossorigin="anonymous"/><link as="fetch" rel="preload" href="/page-data/app-data.json" crossorigin="anonymous"/></head><body><div id="___gatsby"><div style="outline:none" tabindex="-1" id="gatsby-focus-wrapper"><div class="Layout-module--layout--3Pyz6"><header class="Header-module--header--5Mia0" id="gatsby-focus-wrapper"><div><a class="Header-module--header__site-title--3KKSB" href="/"><span>kyucumber</span></a></div></header><div class="Layout-module--content--23chO"><div class="Post-module--post--2ySQi"><a class="Post-module--post__home-button--16Kl0" href="/">전체 글 보기</a><div><div class="Content-module--content--3p512"><h1 class="Content-module--content__title--2BDW9">이펙티브 코틀린 아이템 24. 제네릭 타입과 variance 한정자를 활용하라</h1><div class="Content-module--content__body--2TrQ-"><h2 id="invariant" style="position:relative;"><a href="#invariant" aria-label="invariant permalink" class="anchor-header before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>invariant</h2>
+      </script><link rel="sitemap" type="application/xml" href="/sitemap.xml"/><link rel="icon" href="/favicon-32x32.png?v=3fb2d4de4502fbae8b21ee45fe945cf4" type="image/png"/><link rel="manifest" href="/manifest.webmanifest" crossorigin="anonymous"/><meta name="theme-color" content="#F7A046"/><link rel="apple-touch-icon" sizes="48x48" href="/icons/icon-48x48.png?v=3fb2d4de4502fbae8b21ee45fe945cf4"/><link rel="apple-touch-icon" sizes="72x72" href="/icons/icon-72x72.png?v=3fb2d4de4502fbae8b21ee45fe945cf4"/><link rel="apple-touch-icon" sizes="96x96" href="/icons/icon-96x96.png?v=3fb2d4de4502fbae8b21ee45fe945cf4"/><link rel="apple-touch-icon" sizes="144x144" href="/icons/icon-144x144.png?v=3fb2d4de4502fbae8b21ee45fe945cf4"/><link rel="apple-touch-icon" sizes="192x192" href="/icons/icon-192x192.png?v=3fb2d4de4502fbae8b21ee45fe945cf4"/><link rel="apple-touch-icon" sizes="256x256" href="/icons/icon-256x256.png?v=3fb2d4de4502fbae8b21ee45fe945cf4"/><link rel="apple-touch-icon" sizes="384x384" href="/icons/icon-384x384.png?v=3fb2d4de4502fbae8b21ee45fe945cf4"/><link rel="apple-touch-icon" sizes="512x512" href="/icons/icon-512x512.png?v=3fb2d4de4502fbae8b21ee45fe945cf4"/><title data-react-helmet="true">이펙티브 코틀린 아이템 24. 제네릭 타입과 variance 한정자를 활용하라 - kyucumber</title><meta data-react-helmet="true" name="description" content="Effective Kotlin Item24. 제네릭 타입과 variance 한정자를 활용하라"/><meta data-react-helmet="true" property="og:site_name" content="이펙티브 코틀린 아이템 24. 제네릭 타입과 variance 한정자를 활용하라 - kyucumber"/><meta data-react-helmet="true" property="og:image" content="https://kyucumber.github.io/static/3fb2d4de4502fbae8b21ee45fe945cf4/kyucumber.jpg"/><meta data-react-helmet="true" name="twitter:card" content="summary"/><meta data-react-helmet="true" name="twitter:title" content="이펙티브 코틀린 아이템 24. 제네릭 타입과 variance 한정자를 활용하라 - kyucumber"/><meta data-react-helmet="true" name="twitter:description" content="Effective Kotlin Item24. 제네릭 타입과 variance 한정자를 활용하라"/><meta data-react-helmet="true" name="twitter:image" content="https://kyucumber.github.io/static/3fb2d4de4502fbae8b21ee45fe945cf4/kyucumber.jpg"/><link as="script" rel="preload" href="/webpack-runtime-52d573c1a47f0f80bdfb.js"/><link as="script" rel="preload" href="/framework-712d0c71a05a512b21eb.js"/><link as="script" rel="preload" href="/532a2f07-a2b9837034ae8adfec32.js"/><link as="script" rel="preload" href="/app-1e2c58642a59506bb6ab.js"/><link as="script" rel="preload" href="/styles-407fe62976dc5310c43e.js"/><link as="script" rel="preload" href="/cd95ea5cbd2c605f26db819f07999610c9ff4310-a504b9da6d459a18060a.js"/><link as="script" rel="preload" href="/component---src-templates-post-template-js-ab1a43de8002a72167ea.js"/><link as="fetch" rel="preload" href="/page-data/posts/book/effective-kotlin/effective-kotlin-item-24/page-data.json" crossorigin="anonymous"/><link as="fetch" rel="preload" href="/page-data/sq/d/2067870509.json" crossorigin="anonymous"/><link as="fetch" rel="preload" href="/page-data/sq/d/251939775.json" crossorigin="anonymous"/><link as="fetch" rel="preload" href="/page-data/sq/d/401334301.json" crossorigin="anonymous"/><link as="fetch" rel="preload" href="/page-data/app-data.json" crossorigin="anonymous"/></head><body><div id="___gatsby"><div style="outline:none" tabindex="-1" id="gatsby-focus-wrapper"><div class="Layout-module--layout--3Pyz6"><header class="Header-module--header--5Mia0" id="gatsby-focus-wrapper"><div><a class="Header-module--header__site-title--3KKSB" href="/"><span>kyucumber</span></a></div></header><div class="Layout-module--content--23chO"><div class="Post-module--post--2ySQi"><a class="Post-module--post__home-button--16Kl0" href="/">전체 글 보기</a><div><div class="Content-module--content--3p512"><h1 class="Content-module--content__title--2BDW9">이펙티브 코틀린 아이템 24. 제네릭 타입과 variance 한정자를 활용하라</h1><div class="Content-module--content__body--2TrQ-"><h2 id="invariant" style="position:relative;"><a href="#invariant" aria-label="invariant permalink" class="anchor-header before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>invariant</h2>
 <p>variacne 한정자(out 또는 in)이 없는 경우 invariant(불공변성)는 제네릭 타입으로 만들어지는 타입들이 서로 관련성이 없다는 의미이다.</p>
-<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="dracula" >
+<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="one-light" >
           <code slot="code">class Cup&lt;T&gt;
 
 // 아래 세가지 다 독립적이며 어떠한 관련성도 없다.
@@ -72,7 +72,7 @@ val intCup: Cup&lt;Nothing&gt;</code>
 <p>제네릭 타입 간 관련성을 가지길 원한다면 out 또는 in이라는 variance 한정자를 붙일 수 있다.</p>
 <h3 id="covariant공변성과-out-한정자" style="position:relative;"><a href="#covariant%EA%B3%B5%EB%B3%80%EC%84%B1%EA%B3%BC-out-%ED%95%9C%EC%A0%95%EC%9E%90" aria-label="covariant공변성과 out 한정자 permalink" class="anchor-header before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>covariant(공변성)과 out 한정자</h3>
 <p>out은 타입 파라미터를 covariant(공변성)으로 만든다.</p>
-<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="dracula" >
+<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="one-light" >
           <code slot="code">class Cup&lt;out T&gt;
 
 open class Dog
@@ -84,7 +84,7 @@ val a: Cup&lt;Puppy&gt; = Cup&lt;Dog&gt;() // 오류</code>
 <p>A가 B의 서브타입일 때 <code class="language-text">Cup&lt;A&gt;</code>가 <code class="language-text">Cup&lt;B&gt;</code>의 서브타입이라는 의미, 위에서는 <code class="language-text">Cup&lt;Dog&gt;</code>에 서브타입인 <code class="language-text">Cup&lt;Puppy&gt;</code>가 할당될 수 있다.</p>
 <h3 id="contravariant반변성과-in-한정자" style="position:relative;"><a href="#contravariant%EB%B0%98%EB%B3%80%EC%84%B1%EA%B3%BC-in-%ED%95%9C%EC%A0%95%EC%9E%90" aria-label="contravariant반변성과 in 한정자 permalink" class="anchor-header before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>contravariant(반변성)과 in 한정자</h3>
 <p>in은 out과 반대 의미이다. in 한정자는 타입 파라미터를 contravariant(반변성)으로 만든다.</p>
-<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="dracula" >
+<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="one-light" >
           <code slot="code">class Cup&lt;in T&gt;
 
 open class Dog
@@ -196,7 +196,7 @@ val a: Cup&lt;Puppy&gt; = Cup&lt;Dog&gt;() // OK</code>
 <p>함수 타입을 사용할때는 이처럼 자동으로 variance 한정자가 사용되며, 코틀린에서 자주 사용되는 것으로는 covariant(out 한정자)를 가진 List가 존재한다.</p>
 <h2 id="variance-한정자의-안정성" style="position:relative;"><a href="#variance-%ED%95%9C%EC%A0%95%EC%9E%90%EC%9D%98-%EC%95%88%EC%A0%95%EC%84%B1" aria-label="variance 한정자의 안정성 permalink" class="anchor-header before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>variance 한정자의 안정성</h2>
 <p>자바의 배열은 covariant이며 이로 인해 아래와 같은 문제가 발생할 수 있다.</p>
-<deckgo-highlight-code language="java"  terminal="carbon" theme="dracula" >
+<deckgo-highlight-code language="java"  terminal="carbon" theme="one-light" >
           <code slot="code">Integer[] numbers = {1, 4, 2, 1};
 Object[] objects = numbers;
 objects[2] = &quot;B&quot; // 오류</code>
@@ -205,7 +205,7 @@ objects[2] = &quot;B&quot; // 오류</code>
 <p>코틀린은 이러한 결함을 해결하기 위해 Array를 invariant(IntArray, CharArray, ByteArray 등) 만들었으며, <code class="language-text">Array&lt;Int&gt;</code>를 <code class="language-text">Array&lt;Any&gt;</code> 등으로 바꿀 수 없다.</p>
 <h3 id="covariant-타입-파라미터와-함수-타입의-파라미터" style="position:relative;"><a href="#covariant-%ED%83%80%EC%9E%85-%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0%EC%99%80-%ED%95%A8%EC%88%98-%ED%83%80%EC%9E%85%EC%9D%98-%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0" aria-label="covariant 타입 파라미터와 함수 타입의 파라미터 permalink" class="anchor-header before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>covariant 타입 파라미터와 함수 타입의 파라미터</h3>
 <p>아래 코드는 covariant하지 않다.  <strong>covariant 타입 파라미터(out)가 in 한정자 위치(함수의 타입 파라미터)에 있다면 covariant(out)와 업캐스팅을 연결해서 우리가 원하는 타입을 아무것이나 전달</strong>할 수 있다.</p>
-<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="dracula" >
+<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="one-light" >
           <code slot="code">open class Dog
 class Puppy: Dog()
 class Hound: Dog()
@@ -241,7 +241,7 @@ fun main() {
 <p>주석에도 표시해 뒀지만, 위와 같이 클래스를 정의하면 아래와 같은 에러 메시지가 노출된다.</p>
 <p>Type parameter T is declared as ‘out’ but occurs in ‘in’ position in type T</p>
 </blockquote>
-<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="dracula" >
+<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="one-light" >
           <code slot="code">class Box&lt;out T&gt; {
     private var value: T? = null
 
@@ -254,15 +254,15 @@ fun main() {
         </deckgo-highlight-code>
 <p>private으로 제한하면 오류가 발생하지 않는다. get 메소드의 리턴 타입에 T가 사용되는데 covariant(out 한정자)는 public out 한정자 위치에도 안전하므로 이는 따로 제한되지 않는다.</p>
 <p>위와 같은 covariant는 Producer나 Immutable 데이터 홀더에 많이 사용되며 아래 <code class="language-text">List&lt;T&gt;</code>도 covariant의 형태를 띄고 있다.</p>
-<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="dracula" >
+<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="one-light" >
           <code slot="code">public interface List&lt;out E&gt; : Collection&lt;E&gt; {</code>
         </deckgo-highlight-code>
 <p><code class="language-text">MutableList&lt;T&gt;</code>의 T는 in 한정자 위치(함수의 타입 파라미터)에서 사용되며 안전하지 않으므로 invariant로 제공된다.</p>
-<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="dracula" >
+<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="one-light" >
           <code slot="code">public interface MutableList&lt;E&gt; : List&lt;E&gt;, MutableCollection&lt;E&gt; {</code>
         </deckgo-highlight-code>
 <p>이외에 좋은 예로는 Response가 있다.</p>
-<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="dracula" >
+<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="one-light" >
           <code slot="code">sealed class Response&lt;out R, out E&gt;
 class Failure&lt;out E&gt;(val error: E): Response&lt;Nothing, E&gt;()
 class Success&lt;out R&gt;(val value: R): Response&lt;R, Nothing&gt;()</code>
@@ -270,7 +270,7 @@ class Success&lt;out R&gt;(val value: R): Response&lt;R, Nothing&gt;()</code>
 <p>covariant와 Nothing 타입으로 인해 Failure는 오류 타입을 지정하지 않아도 되고, Success는 잠재적인 값을 지정하지 않아도 된다.</p>
 <h3 id="contravariant-타입-파라미터와-함수-리턴-타입-클래스의-프로퍼티-타입" style="position:relative;"><a href="#contravariant-%ED%83%80%EC%9E%85-%ED%8C%8C%EB%9D%BC%EB%AF%B8%ED%84%B0%EC%99%80-%ED%95%A8%EC%88%98-%EB%A6%AC%ED%84%B4-%ED%83%80%EC%9E%85-%ED%81%B4%EB%9E%98%EC%8A%A4%EC%9D%98-%ED%94%84%EB%A1%9C%ED%8D%BC%ED%8B%B0-%ED%83%80%EC%9E%85" aria-label="contravariant 타입 파라미터와 함수 리턴 타입 클래스의 프로퍼티 타입 permalink" class="anchor-header before"><svg aria-hidden="true" focusable="false" height="16" version="1.1" viewBox="0 0 16 16" width="16"><path fill-rule="evenodd" d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"></path></svg></a>contravariant 타입 파라미터와 함수 리턴 타입, 클래스의 프로퍼티 타입</h3>
 <p>contravariant 타입 파라미터(in)와 public out 위치(함수 리턴 타입 또는 클래스의 프로퍼티 타입)에서도 문제가 발생할 수 있다.</p>
-<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="dracula" >
+<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="one-light" >
           <code slot="code">open class Car
 interface Boat
 class Amphibious: Car(), Boat
@@ -297,13 +297,13 @@ fun main() {
 </blockquote>
 <p>이러한 상황을 막기 위해 코틀린은 <strong>contravariant 타입 파라미터(in)을 public out 한정자 위치(함수 리턴 타입, 클래스의 프로퍼티 타입)위치에 사용하는것을 금지</strong>하고 있다.</p>
 <p>물론 이번에도 아래처럼 private로 지정하면 아무런 문제가 없다.</p>
-<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="dracula" >
+<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="one-light" >
           <code slot="code">class Box&lt;in T&gt;(
     private val value: T
 )</code>
         </deckgo-highlight-code>
 <p>contravariant를 사용하는 예로는 <code class="language-text">kotlin.coroutine.Continuation</code> 이 있다.</p>
-<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="dracula" >
+<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="one-light" >
           <code slot="code">public interface Continuation&lt;in T&gt; {
     /**
      * The context of the coroutine that corresponds to this continuation.
@@ -323,7 +323,7 @@ fun main() {
 <li>
 <p>선언 부분</p>
 <p>일반적으로 이 위치에 사용하며, 클래스와 인터페이스가 사용되는 모든 곳에 영향을 준다.</p>
-<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="dracula" >
+<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="one-light" >
           <code slot="code">// 선언 쪽의 variance 한정자
 class Box&lt;out T&gt;(val value: T)</code>
         </deckgo-highlight-code>
@@ -331,7 +331,7 @@ class Box&lt;out T&gt;(val value: T)</code>
 <li>
 <p>클래스와 인터페이스를 활용하는 위치</p>
 <p>이 위치에  variance를 적용하면 특정 변수에만 variance 한정자가 적용된다. 특정 인스턴스에만 적용해야 하는 경우 사용한다.</p>
-<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="dracula" >
+<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="one-light" >
           <code slot="code">class Box&lt;T&gt;(val value: T)
 
 // 사용하는 쪽의 variance 한정자
@@ -341,7 +341,7 @@ val boxAny: Box&lt;out Any&gt; = boxStr</code>
 </ul>
 <p>MutableList에 in 한정자를 포함하면 요소의 리턴이 불가능하므로 붙이지 않는다.</p>
 <p>하지만 여러 타입을 받아들이게 하기 위해 아래와 같이 단일 파라미터 타입에 in을 붙여 활용할 수 있다.</p>
-<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="dracula" >
+<deckgo-highlight-code language="kotlin"  terminal="carbon" theme="one-light" >
           <code slot="code">interface Dog
 interface Cutie
 
@@ -403,4 +403,4 @@ fun main() {
 <li><a href="/posts/book/effective-kotlin/effective-kotlin-item-24/#variance-%ED%95%9C%EC%A0%95%EC%9E%90%EC%9D%98-%EC%9C%84%EC%B9%98">variance 한정자의 위치</a></li>
 <li><a href="/posts/book/effective-kotlin/effective-kotlin-item-24/#%EC%A0%95%EB%A6%AC">정리</a></li>
 <li><a href="/posts/book/effective-kotlin/effective-kotlin-item-24/#reference">Reference</a></li>
-</ul></div></div><div class="Post-module--post__comments--25y6I"><div><div id="disqus_thread"></div></div></div></div></div><a href="#" class="Layout-module--scrollToTop--mctRP"></a></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/posts/book/effective-kotlin/effective-kotlin-item-24";/*]]>*/</script><script id="gatsby-chunk-mapping">/*<![CDATA[*/window.___chunkMapping={"polyfill":["/polyfill-64a2a5ba1fc84f7adec6.js"],"app":["/app-1e2c58642a59506bb6ab.js"],"component---cache-caches-gatsby-plugin-offline-app-shell-js":["/component---cache-caches-gatsby-plugin-offline-app-shell-js-241020a1cf7d0f317bbe.js"],"component---src-templates-categories-list-template-js":["/component---src-templates-categories-list-template-js-f26614ddc7099cb28e22.js"],"component---src-templates-category-template-js":["/component---src-templates-category-template-js-69c7f30d93df34a9389f.js"],"component---src-templates-index-template-js":["/component---src-templates-index-template-js-96f422e4f1412201cb6b.js"],"component---src-templates-not-found-template-js":["/component---src-templates-not-found-template-js-6ed462a02510b7110382.js"],"component---src-templates-page-template-js":["/component---src-templates-page-template-js-5dbb0aabfccb7be601c0.js"],"component---src-templates-post-template-js":["/component---src-templates-post-template-js-ab1a43de8002a72167ea.js"],"component---src-templates-tag-template-js":["/component---src-templates-tag-template-js-72d6b74ef1428b8799e8.js"],"component---src-templates-tags-list-template-js":["/component---src-templates-tags-list-template-js-1cde3a6f5eeeb36a199a.js"],"polyfills-dom":["/polyfills-dom-8504a8a6e7c7fd41fb1a.js"],"polyfills-core-js":["/polyfills-core-js-4654ad58cfa7a017320f.js"]};/*]]>*/</script><script src="/polyfill-64a2a5ba1fc84f7adec6.js" nomodule=""></script><script src="/component---src-templates-post-template-js-ab1a43de8002a72167ea.js" async=""></script><script src="/cd95ea5cbd2c605f26db819f07999610c9ff4310-ef9b99d97407ace2a131.js" async=""></script><script src="/styles-407fe62976dc5310c43e.js" async=""></script><script src="/app-1e2c58642a59506bb6ab.js" async=""></script><script src="/532a2f07-a2b9837034ae8adfec32.js" async=""></script><script src="/framework-712d0c71a05a512b21eb.js" async=""></script><script src="/webpack-runtime-816189e5aa2f7fa6a55e.js" async=""></script></body></html>
+</ul></div></div><div class="Post-module--post__comments--25y6I"><div><div id="disqus_thread"></div></div></div></div></div><a href="#" class="Layout-module--scrollToTop--mctRP"></a></div></div><div id="gatsby-announcer" style="position:absolute;top:0;width:1px;height:1px;padding:0;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0" aria-live="assertive" aria-atomic="true"></div></div><script id="gatsby-script-loader">/*<![CDATA[*/window.pagePath="/posts/book/effective-kotlin/effective-kotlin-item-24";/*]]>*/</script><script id="gatsby-chunk-mapping">/*<![CDATA[*/window.___chunkMapping={"polyfill":["/polyfill-64a2a5ba1fc84f7adec6.js"],"app":["/app-1e2c58642a59506bb6ab.js"],"component---cache-caches-gatsby-plugin-offline-app-shell-js":["/component---cache-caches-gatsby-plugin-offline-app-shell-js-241020a1cf7d0f317bbe.js"],"component---src-templates-categories-list-template-js":["/component---src-templates-categories-list-template-js-f26614ddc7099cb28e22.js"],"component---src-templates-category-template-js":["/component---src-templates-category-template-js-69c7f30d93df34a9389f.js"],"component---src-templates-index-template-js":["/component---src-templates-index-template-js-96f422e4f1412201cb6b.js"],"component---src-templates-not-found-template-js":["/component---src-templates-not-found-template-js-6ed462a02510b7110382.js"],"component---src-templates-page-template-js":["/component---src-templates-page-template-js-5dbb0aabfccb7be601c0.js"],"component---src-templates-post-template-js":["/component---src-templates-post-template-js-ab1a43de8002a72167ea.js"],"component---src-templates-tag-template-js":["/component---src-templates-tag-template-js-72d6b74ef1428b8799e8.js"],"component---src-templates-tags-list-template-js":["/component---src-templates-tags-list-template-js-1cde3a6f5eeeb36a199a.js"],"polyfills-dom":["/polyfills-dom-8504a8a6e7c7fd41fb1a.js"],"polyfills-core-js":["/polyfills-core-js-4654ad58cfa7a017320f.js"]};/*]]>*/</script><script src="/polyfill-64a2a5ba1fc84f7adec6.js" nomodule=""></script><script src="/component---src-templates-post-template-js-ab1a43de8002a72167ea.js" async=""></script><script src="/cd95ea5cbd2c605f26db819f07999610c9ff4310-a504b9da6d459a18060a.js" async=""></script><script src="/styles-407fe62976dc5310c43e.js" async=""></script><script src="/app-1e2c58642a59506bb6ab.js" async=""></script><script src="/532a2f07-a2b9837034ae8adfec32.js" async=""></script><script src="/framework-712d0c71a05a512b21eb.js" async=""></script><script src="/webpack-runtime-52d573c1a47f0f80bdfb.js" async=""></script></body></html>

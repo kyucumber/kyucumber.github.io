@@ -1,9 +1,9 @@
 exports.ids = [13];
 exports.modules = {
 
-/***/ "./node_modules/@deckdeckgo/highlight-code/dist/esm/night-owl-36dc5565.js":
+/***/ "./node_modules/@deckdeckgo/highlight-code/dist/esm/night-owl-21406bee.js":
 /*!********************************************************************************!*\
-  !*** ./node_modules/@deckdeckgo/highlight-code/dist/esm/night-owl-36dc5565.js ***!
+  !*** ./node_modules/@deckdeckgo/highlight-code/dist/esm/night-owl-21406bee.js ***!
   \********************************************************************************/
 /*! exports provided: theme */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -16,6 +16,7 @@ const theme = `{
   --deckgo-highlight-code-carbon-color: rgb(171, 178, 191);
   --deckgo-highlight-code-token-atrule: #c792ea;
   --deckgo-highlight-code-token-comment: #5c6370;
+  --deckgo-highlight-code-token-comment-rgb: 92, 99, 112;
   --deckgo-highlight-code-token-function: #82aaff;
   --deckgo-highlight-code-token-operator: #c792ea;
   --deckgo-highlight-code-token-property: #ffffff;

@@ -1,9 +1,9 @@
 exports.ids = [18];
 exports.modules = {
 
-/***/ "./node_modules/@deckdeckgo/highlight-code/dist/esm/panda-2e75c11f.js":
+/***/ "./node_modules/@deckdeckgo/highlight-code/dist/esm/panda-8d3100d3.js":
 /*!****************************************************************************!*\
-  !*** ./node_modules/@deckdeckgo/highlight-code/dist/esm/panda-2e75c11f.js ***!
+  !*** ./node_modules/@deckdeckgo/highlight-code/dist/esm/panda-8d3100d3.js ***!
   \****************************************************************************/
 /*! exports provided: theme */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -16,6 +16,7 @@ const theme = `{
   --deckgo-highlight-code-carbon-color: #e6e6e6;
   --deckgo-highlight-code-token-atrule: #ff75b5;
   --deckgo-highlight-code-token-comment: #676b79;
+  --deckgo-highlight-code-token-comment-rgb: 103, 107, 121;
   --deckgo-highlight-code-token-function: #ffb86c;
   --deckgo-highlight-code-token-operator: #f3f3f3;
   --deckgo-highlight-code-token-property: #f3f3f3;

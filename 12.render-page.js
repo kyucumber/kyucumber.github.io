@@ -1,9 +1,9 @@
 exports.ids = [12];
 exports.modules = {
 
-/***/ "./node_modules/@deckdeckgo/highlight-code/dist/esm/monokai-c3bd40c3.js":
+/***/ "./node_modules/@deckdeckgo/highlight-code/dist/esm/monokai-629c48a4.js":
 /*!******************************************************************************!*\
-  !*** ./node_modules/@deckdeckgo/highlight-code/dist/esm/monokai-c3bd40c3.js ***!
+  !*** ./node_modules/@deckdeckgo/highlight-code/dist/esm/monokai-629c48a4.js ***!
   \******************************************************************************/
 /*! exports provided: theme */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -16,6 +16,7 @@ const theme = `{
   --deckgo-highlight-code-carbon-color: #f8f8f2;
   --deckgo-highlight-code-token-atrule: #f92672;
   --deckgo-highlight-code-token-comment: #75715e;
+  --deckgo-highlight-code-token-comment-rgb: 117, 113, 94;
   --deckgo-highlight-code-token-function: #fd971f;
   --deckgo-highlight-code-token-operator: #ffffff;
   --deckgo-highlight-code-token-property: #a6e22e;

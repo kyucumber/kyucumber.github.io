@@ -1,9 +1,9 @@
 exports.ids = [23];
 exports.modules = {
 
-/***/ "./node_modules/@deckdeckgo/highlight-code/dist/esm/solarized-light-429511f1.js":
+/***/ "./node_modules/@deckdeckgo/highlight-code/dist/esm/solarized-light-d6bd38c3.js":
 /*!**************************************************************************************!*\
-  !*** ./node_modules/@deckdeckgo/highlight-code/dist/esm/solarized-light-429511f1.js ***!
+  !*** ./node_modules/@deckdeckgo/highlight-code/dist/esm/solarized-light-d6bd38c3.js ***!
   \**************************************************************************************/
 /*! exports provided: theme */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -16,6 +16,7 @@ const theme = `{
   --deckgo-highlight-code-carbon-color: rgb(101, 123, 131);
   --deckgo-highlight-code-token-atrule: #cb4b16;
   --deckgo-highlight-code-token-comment: #586e75;
+  --deckgo-highlight-code-token-comment-rgb: 88, 110, 117;
   --deckgo-highlight-code-token-function: #2aa198;
   --deckgo-highlight-code-token-operator: #6c7164;
   --deckgo-highlight-code-token-property: #2aa198;

@@ -1,9 +1,9 @@
 exports.ids = [11];
 exports.modules = {
 
-/***/ "./node_modules/@deckdeckgo/highlight-code/dist/esm/material-8e59c55f.js":
+/***/ "./node_modules/@deckdeckgo/highlight-code/dist/esm/material-8754dbee.js":
 /*!*******************************************************************************!*\
-  !*** ./node_modules/@deckdeckgo/highlight-code/dist/esm/material-8e59c55f.js ***!
+  !*** ./node_modules/@deckdeckgo/highlight-code/dist/esm/material-8754dbee.js ***!
   \*******************************************************************************/
 /*! exports provided: theme */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -16,6 +16,7 @@ const theme = `{
   --deckgo-highlight-code-carbon-color: rgb(233, 237, 237);
   --deckgo-highlight-code-token-atrule: rgba(199, 146, 234);
   --deckgo-highlight-code-token-comment: #546e7a;
+  --deckgo-highlight-code-token-comment-rgb: 84, 110, 122;
   --deckgo-highlight-code-token-function: #82b1ff;
   --deckgo-highlight-code-token-operator: rgb(233, 237, 237);
   --deckgo-highlight-code-token-property: #80cbae;

@@ -1,9 +1,9 @@
 exports.ids = [7];
 exports.modules = {
 
-/***/ "./node_modules/@deckdeckgo/highlight-code/dist/esm/dracula-0eb4b4d6.js":
+/***/ "./node_modules/@deckdeckgo/highlight-code/dist/esm/dracula-ab3aab94.js":
 /*!******************************************************************************!*\
-  !*** ./node_modules/@deckdeckgo/highlight-code/dist/esm/dracula-0eb4b4d6.js ***!
+  !*** ./node_modules/@deckdeckgo/highlight-code/dist/esm/dracula-ab3aab94.js ***!
   \******************************************************************************/
 /*! exports provided: theme */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -16,6 +16,7 @@ const theme = `{
   --deckgo-highlight-code-carbon-color: #ffffff;
   --deckgo-highlight-code-token-atrule: #ff79c6; //get from JAVA interface color
   --deckgo-highlight-code-token-comment: #6272a4; // get from JAVA yolo comment
+  --deckgo-highlight-code-token-comment-rgb: 98, 114, 164;
   --deckgo-highlight-code-token-function: #ffb86c; // get from JAVA className color
   --deckgo-highlight-code-token-operator: #ff79c6; // get from JAVA equal color(NumericTest isEven (=) )
   --deckgo-highlight-code-token-property: #bd93f9; // get from CSS propName
