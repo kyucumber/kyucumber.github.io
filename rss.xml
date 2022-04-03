@@ -1,4 +1,707 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 27 Mar 2022 11:23:31 GMT</lastBuildDate><item><title><![CDATA[이펙티브 코틀린 아이템 46. 함수 타입 파라미터를 갖는 함수에 inline 한정자를 붙여라]]></title><description><![CDATA[Effective Kotlin Item 46. 함수 타입 파라미터를 갖는 함수에 inline 한정자를 붙여라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-46</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-46</guid><pubDate>Sat, 26 Mar 2022 00:15:00 GMT</pubDate><content:encoded>&lt;p&gt;코틀린 표준 라이브러리의 고차 함수(high order function)을 살펴보면 대부분 inline 한정자가 붙어있는 것을 확인할 수 있다.&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 03 Apr 2022 10:45:47 GMT</lastBuildDate><item><title><![CDATA[이펙티브 코틀린 아이템 52. mutable 컬렉션 사용을 고려하라]]></title><description><![CDATA[Effective Kotlin Item 52. mutable 컬렉션 사용을 고려하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-52</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-52</guid><pubDate>Fri, 01 Apr 2022 00:25:00 GMT</pubDate><content:encoded>&lt;p&gt;immutable 컬렉션보다 mutable 컬렉션이 성능적인 측면에서 더 빠르다.&lt;/p&gt;
+&lt;p&gt;immutable 컬렉션에 요소를 추가하려면 새로운 컬렉션을 만들면서 여기에 요소를 추가해야 한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;operator fun &amp;lt;T&amp;gt; Iterable&amp;lt;T&amp;gt;.plus(element: T): List&amp;lt;T&amp;gt; {
+    if (this is Collection) return this.plus(element)
+    val result = ArrayList&amp;lt;T&amp;gt;()
+    result.addAll(this)
+    result.add(element)
+    return result
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이처럼 컬렉션을 복제하는 처리는 비용이 굉장히 많이 든다. 따라서 복제 처리가 필요없는 mutable 컬렉션이 성능적 관점에서 좋다.&lt;/p&gt;
+&lt;p&gt;다만 안정성 측면에서 immutable이 좋은데, 일반적인 지역 변수는 동기화나 캡슐화 관점에서 문제가 될 수 있는 경우에 해당되지 않는다. 따라서 &lt;strong&gt;지역 변수로 활용할 때는 mutable 컬렉션을 사용하는 것이 더 합리적&lt;/strong&gt;이다.&lt;/p&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;p&gt;가변 컬렉션은 일반적으로 추가 처리가 빠르다.&lt;/p&gt;
+&lt;p&gt;immutable 컬렉션은 컬렉션 변경 관련 처리를 세부적으로 조정할 수 있다. 하지만 지역 스코프에서는 세부적인 조정이 필요하지 않으므로 가변 컬렉션을 사용하는 것이 좋다.&lt;/p&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 51. 성능이 중요한 부분에는 기본 자료형 배열을 사용하라]]></title><description><![CDATA[Effective Kotlin Item 51. 성능이 중요한 부분에는 기본 자료형 배열을 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-51</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-51</guid><pubDate>Fri, 01 Apr 2022 00:20:00 GMT</pubDate><content:encoded>&lt;p&gt;코틀린은 기본 자료형(primitive)을 선언할 수 없지만 최적화를 위해 내부적으로 사용할 수 있다.&lt;/p&gt;
+&lt;p&gt;기본 자료형은 아래와 같은 특징이 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;가볍다. 일반적인 객체와 다르게 추가적으로 포함되는 것들이 없기 때문이다.&lt;/li&gt;
+&lt;li&gt;빠르다. 값에 접근할 때 추가 비용이 없다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;대규모의 데이터를 처리할 때 기본 자료형을 사용하면 상당히 큰 최적화가 이루어진다.&lt;/p&gt;
+&lt;p&gt;코틀린의 List나 Set 등의 컬렉션은 제네릭 타입이며 &lt;strong&gt;제네릭 타입에는 기본 자료형을 사용할 수 없으므로 래핑된 타입을 사용&lt;/strong&gt;해야 한다. 일반적인 경우라면 이렇게 하는게 처리가 쉬워지므로 적합하다.&lt;/p&gt;
+&lt;p&gt;하지만 성능이 중요한 코드라면 IntArray, LongArray 등의 기본 자료형을 활용하는 배열을 사용하는게 좋다.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 815px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/541342557ee824fb18a1135731a119ce/ef916/item51_01.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 39.583333333333336%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAICAYAAAD5nd/tAAAACXBIWXMAAAsSAAALEgHS3X78AAAA2UlEQVQoz62R6w6CMAyFff+HlJkhIHId4c447tSMIEF/2aRsrN131vayriv+aRd++r5DEFwRhhrGGFBkWZbNaWVZQCmF5zN1cfsR9857AiQk1BpVVaFpGgzD4ER6t/ayn6YJWZYhTR8ubuSf54wzjw/ifgN2XYe6rmCt/VoKhejzPAvsZ8njOIp6kiRygUY172+gkRytb4jj6CO+dwFSsShy5HmGtm1Pgawiiu6ul+X2mrOBCpAQpQKnHG9DOALZEg7NN9+fH6ECtHaRsunHRL+yFRzGXuwM+AK26HPDbXlHNQAAAABJRU5ErkJggg==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/541342557ee824fb18a1135731a119ce/8ac56/item51_01.webp 240w,
+/static/541342557ee824fb18a1135731a119ce/d3be9/item51_01.webp 480w,
+/static/541342557ee824fb18a1135731a119ce/0ea8f/item51_01.webp 815w&quot;
+          sizes=&quot;(max-width: 815px) 100vw, 815px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/541342557ee824fb18a1135731a119ce/8ff5a/item51_01.png 240w,
+/static/541342557ee824fb18a1135731a119ce/e85cb/item51_01.png 480w,
+/static/541342557ee824fb18a1135731a119ce/ef916/item51_01.png 815w&quot;
+          sizes=&quot;(max-width: 815px) 100vw, 815px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/541342557ee824fb18a1135731a119ce/ef916/item51_01.png&quot;
+          alt=&quot;Untitled&quot;
+          title=&quot;Untitled&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;List&amp;lt;Int&amp;gt;&lt;/code&gt;  vs &lt;code class=&quot;language-text&quot;&gt;IntArrray&lt;/code&gt; (1,000,000개의 정수)&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;List&amp;lt;Int&amp;gt;&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;20,000,006,944 바이트&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;IntArray&lt;/code&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;400,000,016 바이트&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;대략 5배 정도의 차이가 발생하므로 메모리 소비가 중요하다면 기본 자료형 배열을 사용하는 것이 좋다.&lt;/p&gt;
+&lt;p&gt;일반적인 경우에는 List를 사용하는게 좋다. List가 훨씬 더 기능이 다양하며, 더 많은 곳에 쉽게 사용될 수 있다.&lt;/p&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;p&gt;일반적으로 Array보다 List와 Set을 사용하는 것이 좋다.&lt;/p&gt;
+&lt;p&gt;기본 자료형의 컬렉션을 굉장히 많이 보유해야 하는 경우 성능을 높이고 메모리 사용량을 줄일 수 있도록 Array를 사용하는게 좋다.&lt;/p&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 50. 컬렉션 처리 단계 수를 제한하라]]></title><description><![CDATA[Effective Kotlin Item 50. 컬렉션 처리 단계 수를 제한하라 ]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-50</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-50</guid><pubDate>Fri, 01 Apr 2022 00:10:00 GMT</pubDate><content:encoded>&lt;p&gt;표준 컬렉션 처리는 내부적으로 계산을 위해 추가적인 컬렉션을 만들어 사용한다.&lt;/p&gt;
+&lt;p&gt;시퀀스 처리 또한 전체를 랩 하는 객체가 만들어지며, 조작을 위해 추가적인 객체를 만들어 낸다.&lt;/p&gt;
+&lt;p&gt;두처리 모두 요소의 수가 많다면 꽤 큰 비용이 들어간다. 따라서 컬렉션 처리 단계 수를 적절하게 제한하는게 좋다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;효율적인 처리를 위한 컬렉션 처리 단계 수 줄이기&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;fun List&amp;lt;Student&amp;gt;.getNames(): List&amp;lt;String&amp;gt; = this
+    .map { it.name }
+    .filter { it != null }
+    .map {it !! }&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;아래와 같은 코드로 처리 단계를 하나 줄일 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;fun List&amp;lt;Student&amp;gt;.getNames(): List&amp;lt;String&amp;gt; = this
+    .map { it.name }
+    .filterNotNull()&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;그리고 아래와 같이 mapNotNull로 한번의 처리 단계 만으로도 사용할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;fun List&amp;lt;Student&amp;gt;.getNames(): List&amp;lt;String&amp;gt; = this
+    .mapNotNull { it.name }&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;효율적인 처리를 위해 어떤 메소드가 있는지 확인해보는 것이 좋다.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 960px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/39a0f14316933d5b47f8b4b7801c6af8/ad997/item50_01.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 87.5%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAASCAYAAABb0P4QAAAACXBIWXMAAAsSAAALEgHS3X78AAACUUlEQVQ4y1WUi3biMAxE+f8/3O5haSAvnIATElLyAK/vOE6h56h2bFmaGUnsXq+Xw+Lf8/lcbdn27/efPp+G345/VWVcUWQuzzM3DIP7+fmRDcNdxj13aXrU2vedu9/vq/Xbvu97tyPy5XLxAXN3Ppeuaayz9urqunKPx8NN06R7Ap1OBEzd7dbqHBvHUTbPk4KuAWs9attGWXDgclkWWTwbx4dHPmh9vVHFB4lgJcpFnrssPa0oEleWhZI01koC9twZUyrp9eoZ+e/zuXDGs4psoC+EaEQQ6GRZqm9odV4rEDVNIyNY13Wy+N22Vit+0hCE0CVIXdcKjIZddxM66JCZBG3b+jWc8/0bFE1Hj9JT5gGXOPGQLPM8KxArjiCSTq/npmvQ7U1Db3SEKKMBbQMyEB6Tb61oRRKQIEdZ5kLEw7tPDAvrfVrfGR9toz7LMlFWYY5HFQoqVI6AJEh926Ax7UURpbc5bxLRn9IQ5+hIryUeIehoFXqNgPEBKzpyhlSR+vJOGYTQxNinPjtZoUFA41GQ5HDYa48MPKYIscr9KsGOhoyjV1XVWj0rNLQCRQnIExkTheaRprUX7UHNWyGkYZnT4GyE4H2seAAKEvEoJJq2atMN2NbYmt21udFG2s3TNq/WT0wYz1roKJZRMayMJLwZmGWKAqXDv73GKcsYwfBDYYxR5ljlcBYCFUWh4HHm+SOoAlJhRKcYX19/tOdRo/7qdU/1g4bhZwxLkoPb7/8qEX4qCgGlxXP5aIEwJYFy1OjX/Nl6vizzpvfiv/8DsV1iTV+kQBoAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/39a0f14316933d5b47f8b4b7801c6af8/8ac56/item50_01.webp 240w,
+/static/39a0f14316933d5b47f8b4b7801c6af8/d3be9/item50_01.webp 480w,
+/static/39a0f14316933d5b47f8b4b7801c6af8/e46b2/item50_01.webp 960w,
+/static/39a0f14316933d5b47f8b4b7801c6af8/2dbb9/item50_01.webp 1012w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/39a0f14316933d5b47f8b4b7801c6af8/8ff5a/item50_01.png 240w,
+/static/39a0f14316933d5b47f8b4b7801c6af8/e85cb/item50_01.png 480w,
+/static/39a0f14316933d5b47f8b4b7801c6af8/d9199/item50_01.png 960w,
+/static/39a0f14316933d5b47f8b4b7801c6af8/ad997/item50_01.png 1012w&quot;
+          sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/39a0f14316933d5b47f8b4b7801c6af8/d9199/item50_01.png&quot;
+          alt=&quot;Untitled&quot;
+          title=&quot;Untitled&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;p&gt;대부분의 컬렉션 처리 단계는 전체 컬렉션에 대한 반복, 중간 컬렉션 생성이라는 비용이 발생하므로 적절한 컬렉션 처리 함수를 활용해 단계를 줄이자.&lt;/p&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 49. 하나 이상의 처리 단계를 가진 경우에는 시퀀스를 사용하라]]></title><description><![CDATA[Effective Kotlin Item 49. 하나 이상의 처리 단계를 가진 경우에는 시퀀스를 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-49</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-49</guid><pubDate>Fri, 01 Apr 2022 00:05:00 GMT</pubDate><content:encoded>&lt;p&gt;Iterable과 Sequence의 코드는 동일하지만 둘은 완전 다른 목적으로 설계되었다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;interface Iterable&amp;lt;out T&amp;gt; {
+    operator fun iterator(): Iterator&amp;lt;T&amp;gt;
+}
+
+interface Sequence&amp;lt;out T&amp;gt; {
+    operator fun iterator(): Iterator&amp;lt;T&amp;gt;
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;Sequence는 지연(lazy)로 처리된다. 따라서 시퀀스 처리 함수들을 사용하면, 데코레이터 패턴으로 꾸며진 새로운 시퀀스가 리턴된다. 최종적인 계산은 toList 또는 count 등의 최종 연산이 이루어질때 수행된다.&lt;/p&gt;
+&lt;p&gt;Iterable은 처리 함수를 사용할 때 마다 연산이 이루어져 List가 만들어진다.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 816px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/6f9c50dea2c9e9b03dfdc5344e87d17c/b4098/item49_01.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 36.66666666666667%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAHCAYAAAAIy204AAAACXBIWXMAAAsSAAALEgHS3X78AAAAuklEQVQoz4VR7Q6DIAzk/V9w2985BZ2IX4io8UabzRhn8BJSoOV6RwW+WNd1i/v9Hr9cbIlYktB1LZRSMMb8NTmrF4hgnmcm7Psezjk+HwmODkRdG6TpC0WRQ8oMbdtwzLIUTV0HkgmT9yjLNx73W1CbwfsR1lpUlea6JHnyG1bIlqSE1mVYOqjpUL4LbjIMFuPoOFKO7oiY1FIdiVFKMiEJurR8NpgjlmVh8s3y1dRi0yXkuWKF9M+ED4tuI0w/kkWMAAAAAElFTkSuQmCC&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/6f9c50dea2c9e9b03dfdc5344e87d17c/8ac56/item49_01.webp 240w,
+/static/6f9c50dea2c9e9b03dfdc5344e87d17c/d3be9/item49_01.webp 480w,
+/static/6f9c50dea2c9e9b03dfdc5344e87d17c/79303/item49_01.webp 816w&quot;
+          sizes=&quot;(max-width: 816px) 100vw, 816px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/6f9c50dea2c9e9b03dfdc5344e87d17c/8ff5a/item49_01.png 240w,
+/static/6f9c50dea2c9e9b03dfdc5344e87d17c/e85cb/item49_01.png 480w,
+/static/6f9c50dea2c9e9b03dfdc5344e87d17c/b4098/item49_01.png 816w&quot;
+          sizes=&quot;(max-width: 816px) 100vw, 816px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/6f9c50dea2c9e9b03dfdc5344e87d17c/b4098/item49_01.png&quot;
+          alt=&quot;Untitled&quot;
+          title=&quot;Untitled&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;이와 같은 시퀀스의 지연 처리는 다음과 같은 장점을 갖는다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;자연스러운 처리 순서를 유지한다.&lt;/li&gt;
+&lt;li&gt;최소한만 연산한다.&lt;/li&gt;
+&lt;li&gt;무한 시퀀스 형태로 사용할 수 있다.&lt;/li&gt;
+&lt;li&gt;각각의 단계에서 컬렉션을 만들어내지 않는다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;순서의-중요성&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%88%9C%EC%84%9C%EC%9D%98-%EC%A4%91%EC%9A%94%EC%84%B1&quot; aria-label=&quot;순서의 중요성 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;순서의 중요성&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;element-by-element order(lazy order)&lt;/p&gt;
+&lt;p&gt;시퀀스 처리는 요소 하나하나에 지정한 연산을 한꺼번에 적용한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;sequenceOf(1, 2, 3)
+    .filter { print(&amp;quot;F$it, &amp;quot;); it % 2 == 1 }
+    .map { print(&amp;quot;M$it, &amp;quot;); it * 2 }
+    .forEach { print(&amp;quot;E$it, &amp;quot;) }
+// F1, M1, E2, F2, F3, M3, E6, &lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;step-by-step order(eager order)&lt;/p&gt;
+&lt;p&gt;반면 이터러블은 요소 전체를 대상으로 연산을 차근차근 적용해 나간다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;listOf(1,2,3)
+        .filter { print(&amp;quot;F$it, &amp;quot;); it % 2 == 1 }
+        .map { print(&amp;quot;M$it, &amp;quot;); it * 2 }
+        .forEach { print(&amp;quot;E$it, &amp;quot;) }
+// F1, F2, F3, M1, M3, E2, E6,&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 915px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/ef952e29f609a29954bdf75491908547/4255a/item49_02.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 44.99999999999999%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAJCAYAAAAywQxIAAAACXBIWXMAAAsSAAALEgHS3X78AAABAUlEQVQoz31S2Q6DQAj0/3+y7VNP67G3uyt1oKhp2pKQRY5hABv6I6UUynla35wzK0S/p2l7ay3UzPO8cyZ+AQB/CIGcs8vryXu/2hDY3juy1lKMkYahZ5wPQGGzAQqItYYLnHMMDAEQ7K57vuODAJaSKaXEQYACSGVjGGgcRwaMMXAOAPcTGDNyPTPUMbEDYSh7QjGYqcBWhsYYVpW2bSnryOgEulDp6jgpLTuFzaxnYYx9oSlsKGK1Vs7DDZpfF0YiViFFtF4W48EPYMRUlAwz/KWyR0+Px50ulzMvH34wVJDT8UC323XNb74x2wMCpO/7RbvlMAOPpzH9XXAQbfICZdfB4cJSTXoAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/ef952e29f609a29954bdf75491908547/8ac56/item49_02.webp 240w,
+/static/ef952e29f609a29954bdf75491908547/d3be9/item49_02.webp 480w,
+/static/ef952e29f609a29954bdf75491908547/632b0/item49_02.webp 915w&quot;
+          sizes=&quot;(max-width: 915px) 100vw, 915px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/ef952e29f609a29954bdf75491908547/8ff5a/item49_02.png 240w,
+/static/ef952e29f609a29954bdf75491908547/e85cb/item49_02.png 480w,
+/static/ef952e29f609a29954bdf75491908547/4255a/item49_02.png 915w&quot;
+          sizes=&quot;(max-width: 915px) 100vw, 915px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/ef952e29f609a29954bdf75491908547/4255a/item49_02.png&quot;
+          alt=&quot;Untitled&quot;
+          title=&quot;Untitled&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;반복문과 조건을 사용해 처리하면 시퀀스 처리인 element-by-element order와 같은 동작을 한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;for (e in listOf(1,2,3)) {
+    print(&amp;quot;F$e, &amp;quot;)
+    if (e % 2 == 1) {
+        print(&amp;quot;M$e, &amp;quot;)
+        val mapped = e * 2
+        print(&amp;quot;E$mapped, &amp;quot;)
+    }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;따라서 시퀀스 처리에 사용되는 element-by-element order가 훨씬 자연스러운 처리라고 할 수 있다.&lt;/p&gt;
+&lt;p&gt;또한 기본 반복문, 조건문을 사용한 코드와 같으므로 조만간 낮은 레벨 컴파일러 최적화를 통해 더 빨라질 수도 있다.&lt;/p&gt;
+&lt;h2 id=&quot;최소-연산&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%B5%9C%EC%86%8C-%EC%97%B0%EC%82%B0&quot; aria-label=&quot;최소 연산 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;최소 연산&lt;/h2&gt;
+&lt;p&gt;컬렉션에 어떤 처리를 적용하고 나서 앞의 요소 10개만 필요한 상황은 굉장히 자주 접할 수 있는 상황이다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Iterable&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;중간 연산이라는 개념이 없어 원하는 처리를 컬렉션 전체에 적용한 뒤 앞의 요소 10개만 사용해야 한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Sequence&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;중간 연산 개념이 있어 앞의 요소 10개에만 원하는 처리를 적용할 수 있다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 865px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/976f094495d8e45f3d0dd683c2aea554/79e48/item49_03.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 60.416666666666664%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAMCAYAAABiDJ37AAAACXBIWXMAAAsSAAALEgHS3X78AAABPElEQVQoz3VT2baDIAz0///wVu1T667UBXHPZWijuOWcHJBMkhmIDtFCy7I5m3125Vc4mGMHYUII48cE3rN1XUdVVZ1wDn/M82wCaZpSFIU/0LxLgDGuaRqKo+jE2BQcx5GSJKY4jnTBhPI8055TEASkVLsmAMdxNMUejj0a7BhCQt/31LatdknDMOgzZRjBEcOKeN93JGVjmiFPKUXTNG0MbclfQLuTCWZZlhoMmAxDr9eajrYyRHfxEVr2JgFrGAY06BgbCn80jmUzid0rMxAS8Gp1Xf3WmsqyNNLtB5FSUq3jYGi//u3YTNNoZNsGBVmWrXeJHNzbcZRWyej6fPpGqhDFesE2M5yhiOv+0fv9oqIorhnyTHnug3zfs2bwDEZBz3vo5l/c7R3yAEMO7uzuD+ECGBuM1tWv9w815aur+yQ3+wAAAABJRU5ErkJggg==&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+        &lt;source
+          srcset=&quot;/static/976f094495d8e45f3d0dd683c2aea554/8ac56/item49_03.webp 240w,
+/static/976f094495d8e45f3d0dd683c2aea554/d3be9/item49_03.webp 480w,
+/static/976f094495d8e45f3d0dd683c2aea554/5d624/item49_03.webp 865w&quot;
+          sizes=&quot;(max-width: 865px) 100vw, 865px&quot;
+          type=&quot;image/webp&quot;
+        /&gt;
+        &lt;source
+          srcset=&quot;/static/976f094495d8e45f3d0dd683c2aea554/8ff5a/item49_03.png 240w,
+/static/976f094495d8e45f3d0dd683c2aea554/e85cb/item49_03.png 480w,
+/static/976f094495d8e45f3d0dd683c2aea554/79e48/item49_03.png 865w&quot;
+          sizes=&quot;(max-width: 865px) 100vw, 865px&quot;
+          type=&quot;image/png&quot;
+        /&gt;
+        &lt;img
+          class=&quot;gatsby-resp-image-image&quot;
+          src=&quot;/static/976f094495d8e45f3d0dd683c2aea554/79e48/item49_03.png&quot;
+          alt=&quot;Untitled&quot;
+          title=&quot;Untitled&quot;
+          loading=&quot;lazy&quot;
+          style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+        /&gt;
+      &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;이러한 이유로 중간 처리 단계를 모든 요소에 적용할 필요가 없는 경우 시퀀스를 사용하는게 좋다.&lt;/p&gt;
+&lt;h2 id=&quot;무한-시퀀스&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EB%AC%B4%ED%95%9C-%EC%8B%9C%ED%80%80%EC%8A%A4&quot; aria-label=&quot;무한 시퀀스 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;무한 시퀀스&lt;/h2&gt;
+&lt;p&gt;시퀀스는 최종 연산이 일어나기 전까지는 어떠한 처리도 하지 않는다. 따라서 무한 시퀀스(infinite sequence)를 만들고 필요한 부분까지만 값을 추출하는 것도 가능하다.&lt;/p&gt;
+&lt;p&gt;무한 시퀀스를 만들기 위해 일반적으로 generateSequence 또는 sequence를 사용할 수 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;generateSequence&lt;/p&gt;
+&lt;p&gt;첫번째 요소와 그 다음 요소를 계산하는 방법을 지정해야 한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;generateSequence(1) { it + 1 }
+        .map { it * 2 }
+        .take(10)
+        .forEach { print(&amp;quot;$it, &amp;quot;) }
+// 2, 4, 6, 8, 10, 12, 14, 16, 18 ,20&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;sequence&lt;/p&gt;
+&lt;p&gt;중단 함수(suspending function, sequential 코루틴)으로 요소들을 지정한다.
+시퀀스 빌더는 중단 함수 내부에서 yield로 값을 하나씩 만들어 낸다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val fibonacci = sequence {
+  yield(1)
+  val current = 1
+  var prev = 1
+  while (true) {
+      yield(current)
+      val temp = prev
+      prev = current
+      current += temp
+  }
+}
+print(fibonacci.take(10).toList())
+// [1, 1, 2, 3, 5, 8, 13, 21, 34, 55]&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;무한 시퀀스 사용 시 값을 몇개 활용할지 지정해야 한다.&lt;/p&gt;
+&lt;p&gt;take를 사용해 활용할 값의 수를 지정하거나 first, find, any, all, none, indexOf와 같은 일부 요소만 선택하는 종결 연산을 활용해야 한다.&lt;/p&gt;
+&lt;p&gt;종결 연산을 잘못 활용하면 아래처럼 무한 반복에 빠지는 경우가 많다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;any에서 true를 리턴하지 못하는 경우&lt;/li&gt;
+&lt;li&gt;all, none에서 false를 리턴하지 못하는 경우&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;무한 시퀀스는 종결 연산으로 take, first 정도만 사용하는 것이 좋다.&lt;/p&gt;
+&lt;h2 id=&quot;각각의-단계에서-컬렉션을-만들어-내지-않음&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EA%B0%81%EA%B0%81%EC%9D%98-%EB%8B%A8%EA%B3%84%EC%97%90%EC%84%9C-%EC%BB%AC%EB%A0%89%EC%85%98%EC%9D%84-%EB%A7%8C%EB%93%A4%EC%96%B4-%EB%82%B4%EC%A7%80-%EC%95%8A%EC%9D%8C&quot; aria-label=&quot;각각의 단계에서 컬렉션을 만들어 내지 않음 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;각각의 단계에서 컬렉션을 만들어 내지 않음&lt;/h2&gt;
+&lt;p&gt;표준 컬렉션 처리 함수는 각각의 단계에서 새로운 컬렉션(대부분 List)을 만들어낸다. 각각의 단계에서 결과가 만들어지면서 &lt;strong&gt;공간을 차지하는 비용이 든다는 것은 큰 단점&lt;/strong&gt;이다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;numbers
+    .filter { it % 10 == 0 } // 여기서 컬렉션 하나
+    .map { it * 2 } // 여기에서 컬렉션 하나
+    .sum()
+
+// 총 2개 컬렉션 생성
+
+numbers
+    .asSequence()
+    .filter { it % 10 == 0 }
+    .map { it * 2 }
+    .sum()
+// 시퀀스를 사용하면 컬렉션이 만들어지지 않음&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;무거운 컬렉션을 처리할때는 위에서 말한 비용은 굉장히 커진다. 극단적인 예이지만 기가바이트 단위의 파일을 읽고 컬렉션 처리를 하면 엄청난 메모리 낭비가 발생한다.&lt;/p&gt;
+&lt;p&gt;따라서 일반적으로 파일을 처리할 때는 시퀀스를 활용한다.&lt;/p&gt;
+&lt;p&gt;아래처럼 1.53GB 정도의 데이터를 처리하는 경우&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;File(&amp;quot;ChicagoCrimes.csv&amp;quot;).readLines()
+    .drop(1)
+    .mapNotNull { it.split(&amp;quot;,&amp;quot;).getOrNull(6) }
+    .filter { &amp;quot;CANNABIS&amp;quot; in it }
+    .count()
+    .let(::println)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;컬렉션을 추가로 만드는 중간 연산이 3번이나 일어나며 대충 어림잡아도 4.59(1..53 x 3)GB의 메모리를 소비한다. 이를 시퀀스로 만드는 경우 이러한 낭비를 줄일 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;File(&amp;quot;ChicagoCrimes.csv&amp;quot;).useLines { lines -&amp;gt;
+    lines.
+        .drop(1)
+        .mapNotNull { it.split(&amp;quot;,&amp;quot;).getOrNull(6) }
+        .filter { &amp;quot;CANNABIS&amp;quot; in it }
+        .count()
+        .let { println(it) }
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;blockquote&gt;
+&lt;p&gt;useLines를 사용하면 Suquence&lt;String&gt; 형태로 파일을 사용할 수 있다.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;큰 컬렉션으로 여러 처리 단계를 거쳐야 한다면 컬렉션 처리보다는 시퀀스 처리를 사용하는 것이 좋다.&lt;/p&gt;
+&lt;p&gt;책에서는 2-3개의 처리 단계를 가지는 함수를 비교하는데 아래와 같은 결과가 나온다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;twoStepListProcessing                  81.095 ns
+twoStepSequenceProcessing              55.68 ns
+
+twoStepListProcessingAndAcumulate      83.307 ns
+twoStepSequenceProcessingAndAcumulate  6.928 ns&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;책에서는 하나 이상의 처리 단계를 포함하는 경우 시퀀스 사용시 컬렉션 처리 대비 20~40%정도의 성능 향상을 보았다고 한다.&lt;/p&gt;
+&lt;h2 id=&quot;시퀀스가-빠르지-않은-경우&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%8B%9C%ED%80%80%EC%8A%A4%EA%B0%80-%EB%B9%A0%EB%A5%B4%EC%A7%80-%EC%95%8A%EC%9D%80-%EA%B2%BD%EC%9A%B0&quot; aria-label=&quot;시퀀스가 빠르지 않은 경우 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;시퀀스가 빠르지 않은 경우&lt;/h2&gt;
+&lt;p&gt;컬렉션 전체를 기반으로 처리해야 하는 연산은 시퀀스를 사용해도 빨라지지 않는다.&lt;/p&gt;
+&lt;p&gt;코틀린 stdlib의 sorted가 그런 예 중 하나이다. sorted는 Sequence를 List로 변환한 다음에 stdlib의 sort를 이용해 처리하며 이런 변환으로 인해 시퀀스가 컬렉션 처리보다 느려진다. (큰 차이는 아니다.)&lt;/p&gt;
+&lt;p&gt;무한 시퀀스처럼 시퀀스의 다음 요소를 lazy하게 구하는 시퀀스에 sorted를 적용하면 무한 반복에 빠진다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;generateSequence(0) { it + 1 }.take(10).sorted().toList()
+// 정상 동작
+generateSequence(0) { it + 1 }.sorted().take(10).toList()
+// 무한 반복&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;sorted는 시퀀스보다 컬렉션이 더 빠른 희귀한 예 중 하나이다. 다른 처리는 모두 시퀀스가 빠르기 때문에 여러 처리가 결합된 경우라면 sorted가 포함되어 있더라도 시퀀스를 사용하는것이 더 빠르다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;// 벤치마크 150.48s ns
+fun productsSortAndProcessingList(): Double {
+    return productsList
+            .sortedBy { it.price }
+            .filter { it.bought }
+            .map { it.price }
+            .average()
+}
+
+// 벤치마크 96.811s ns
+fun productsSortAndProcessingSequence(): Double {
+    return productsList.asSequence()
+            .sortedBy { it.price }
+            .filter { it.bought }
+            .map { it.price }
+            .average()
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;자바-스트림의-경우&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%9E%90%EB%B0%94-%EC%8A%A4%ED%8A%B8%EB%A6%BC%EC%9D%98-%EA%B2%BD%EC%9A%B0&quot; aria-label=&quot;자바 스트림의 경우 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;자바 스트림의 경우&lt;/h2&gt;
+&lt;p&gt;자바 8부터는 컬렉션 처리를 위해 스트림 기능이 추가되었다. 코틀린의 시퀀스와 유사하게 lazy로 동작한다.&lt;/p&gt;
+&lt;p&gt;다만 자바의 스트림과 코틀린의 시퀀스는 아래와 같은 세가지 큰 차이점을 가진다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;코틀린의 시퀀스가 더 많은 처리 함수를 갖고 있다. 그리고 더 사용하기 쉽다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;productsList.stream()
+        .filter { it.bought }
+        .collect(Collectors.toList())
+
+productsList.asSequence()
+        .filter { it.bought }
+        .toList() // toList 하나로 간단하게 활용 가능&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/li&gt;
+&lt;li&gt;자바 스트림은 병렬 함수를 사용해서 병렬 모드로 실행할 수 있다. 이는 멀티 코어 환경에서 큰 성능 향상을 가져온다. (몇가지 결함이 있으니 주의해서 사용해야 한다. 병렬 함수 내부에서 사용하는 &lt;a href=&quot;https://dzone.com/articles/think-twice-using-java-8&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;common join-fork 스레드풀 관련 이슈&lt;/a&gt;가 존재)&lt;/li&gt;
+&lt;li&gt;코틀린의 시퀀스는 코틀린/JVM, 코틀린/JS, 코틀린/네이티브 등의 일반적인 모듈에서 모두 사용할 수 있다. 자바 스트림은 코틀린/JVM 그리고 JVM 8 이상일때만 동작한다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;병렬 모드로 성능적인 이득을 얻을 수 있는 곳이 아니라면 코틀린 시퀀스를 사용하는 것이 좋다.&lt;/p&gt;
+&lt;h2 id=&quot;코틀린-시퀀스-디버깅&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%BD%94%ED%8B%80%EB%A6%B0-%EC%8B%9C%ED%80%80%EC%8A%A4-%EB%94%94%EB%B2%84%EA%B9%85&quot; aria-label=&quot;코틀린 시퀀스 디버깅 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;코틀린 시퀀스 디버깅&lt;/h2&gt;
+&lt;p&gt;코틀린 시퀀스나 자바 스트림은 단계 요소 흐름을 추적할 수 있는 디버깅 기능을 지원한다.&lt;/p&gt;
+&lt;p&gt;아래 플러그인을 이용해 활용할 수 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Java Stream Debugger&lt;/li&gt;
+&lt;li&gt;Kotlin Sequence Debugger&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;p&gt;시퀀스는 lazy하게 처리되므로 아래와 같은 장점이 있다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;자연스러운 처리 순서를 유지한다.&lt;/li&gt;
+&lt;li&gt;최소한만 연산한다.&lt;/li&gt;
+&lt;li&gt;무한 시퀀스 형태로 사용할 수 있다.&lt;/li&gt;
+&lt;li&gt;각각의 단계에서 컬렉션을 만들어내지 않는다.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 47. 인라인 클래스의 사용을 고려하라]]></title><description><![CDATA[Effective Kotlin Item 47. 인라인 클래스의 사용을 고려하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-47</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-47</guid><pubDate>Fri, 01 Apr 2022 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;하나의 값을 보유하는 객체도 inline으로 만들 수 있다. (Kotlin 1.3 부터)&lt;/p&gt;
+&lt;p&gt;기본 생성자 프로퍼티가 하나인 클래스 앞에 inline을 붙이면, 해당 객체를 사용하는 위치가 모두 해당 프로퍼티로 교체된다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;inline class Name(private val value: String) {
+    // ..
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이러한 inline 클래스는 다음과 같이 값을 곧바로 집어 넣는 것도 허용된다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val name: Name = Name(&amp;quot;Marcin&amp;quot;)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위 코드는 컴파일 시 아래와 같은 형태로 변경된다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val name: String = &amp;quot;Marcin&amp;quot;&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;inline 클래스의 메소드는 모두 정적 메소드로 만들어진다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;inline class Name(private val value: String) {
+    fun greet() {
+        print(&amp;quot;Hello, I am $value&amp;quot;)
+    }
+}
+
+val name: Name = Name(&amp;quot;Marcin&amp;quot;)
+name.greet()&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;컴파일 시 아래 형태로 바뀐다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val name: String = &amp;quot;Marcin&amp;quot;
+Name.&amp;#39;greet-impl&amp;#39;(name)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;inline 클래스는 다른 자료형을 래핑해서 새로운 자료형을 만들 때 많이 사용된다.
+이 때 어떠한 오버헤드도 발생하지 않는다.&lt;/p&gt;
+&lt;p&gt;inline 클래스는 아래 상황에 많이 사용된다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;측정 단위를 표현할 때&lt;/li&gt;
+&lt;li&gt;타입 오용으로 발생하는 문제를 막을 때&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&quot;측정-단위를-표현할-때&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%B8%A1%EC%A0%95-%EB%8B%A8%EC%9C%84%EB%A5%BC-%ED%91%9C%ED%98%84%ED%95%A0-%EB%95%8C&quot; aria-label=&quot;측정 단위를 표현할 때 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;측정 단위를 표현할 때&lt;/h2&gt;
+&lt;p&gt;특정 시간 이후 파라미터로 받은 callback을 실행하는 타이머 클래스를 만드는 경우&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;interface Timer {
+    fun callAfter(time: Int, callback: () -&amp;gt; Unit)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;time은 ms, s, min 중 어떤 단위인지 명확하지 않으며 이로 인해 여러 문제가 발생할 수 있다.&lt;/p&gt;
+&lt;p&gt;가장 쉬운 방법은 아래처럼 측정 단위를 붙여주는 것이다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;interface Timer {
+    fun callAfter(timeMillis: Int, callback: () -&amp;gt; Unit)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;하지만 함수를 사용할 때 프로퍼티 이름이 표시되지 않을 수 있어 여전히 실수의 여지는 남아있다.
+그리고 리턴 값의 경우 이름을 붙일 수 없으며 이는 똑같이 큰 문제가 될 수 있는 부분이다.&lt;/p&gt;
+&lt;p&gt;더 좋은 해결 방법은 타입 자체에 제한을 거는 것이며 이 때 코드를 효율적으로 만들기 위해서는 다음과 같이 인라인 클래스를 활용할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;inline class Minutes(val minutes: Int) {
+    fun toMillis(): Millis = Millis(minutes * 60 * 1000)
+    // ..
+}
+
+inline class Millis(val milliseconds: Int) {
+    // ..
+}
+
+interface Timer {
+    fun callAfter(timeMillis: Millis, callback: () -&amp;gt; Unit)
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이렇게 하면 올바른 타입을 사용하는 것이 강제된다.&lt;/p&gt;
+&lt;p&gt;이러한 단위를 제한할 때 활용하면 좋다. 또한 객체 생성을 위해 DSL-like 확장 프로퍼티를 만들어 두어도 좋다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;val Int.min get() = Minutes(this)
+val Int.ms get() = Millis(this)
+
+val timeMin: Minutes = 10.min&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;타입-오용으로-발생하는-문제를-막을-때&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%ED%83%80%EC%9E%85-%EC%98%A4%EC%9A%A9%EC%9C%BC%EB%A1%9C-%EB%B0%9C%EC%83%9D%ED%95%98%EB%8A%94-%EB%AC%B8%EC%A0%9C%EB%A5%BC-%EB%A7%89%EC%9D%84-%EB%95%8C&quot; aria-label=&quot;타입 오용으로 발생하는 문제를 막을 때 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;타입 오용으로 발생하는 문제를 막을 때&lt;/h2&gt;
+&lt;p&gt;SQL 데이터베이스는 일반적으로 ID를 사용해 요소를 식별한다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;@Entity(tableName = &amp;quot;grades&amp;quot;)
+class Grades(
+    @ColumnInfo(name = &amp;quot;studentId&amp;quot;)
+    val studentId: Int,
+
+    // ..
+)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이런 코드는 ID가 Int 자료형이라 실수로 잘못된 값을 넣을 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;inline class StudentId(val studentId: Int)
+
+@Entity(tableName = &amp;quot;grades&amp;quot;)
+class Grades(
+    @ColumnInfo(name = &amp;quot;studentId&amp;quot;)
+    val studentId: StudentId,
+
+    // ..
+)&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이런 경우 ID 사용이 안전해지며 컴파일 시 타입이 Int로 대체되어 코드를 바꾸어도 별도의 문제가 발생하지 않는다.&lt;/p&gt;
+&lt;h2 id=&quot;인라인-클래스와-인터페이스&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%9D%B8%EB%9D%BC%EC%9D%B8-%ED%81%B4%EB%9E%98%EC%8A%A4%EC%99%80-%EC%9D%B8%ED%84%B0%ED%8E%98%EC%9D%B4%EC%8A%A4&quot; aria-label=&quot;인라인 클래스와 인터페이스 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;인라인 클래스와 인터페이스&lt;/h2&gt;
+&lt;p&gt;인라인 클래스도 다른 클래스와 마찬가지로 인터페이스를 구현할 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;interface TimeUnit {
+    val millis: Long
+}
+
+inline class Minutes(val minutes: Int): TimeUnit {
+    override val millis: Long get() = minutes * 60 * 1000
+    // ..
+}
+
+inline class Millis(val milliseconds: Int): TimeUnit {
+    // ..
+}
+
+fun setUpTimer(time: TimeUnit) {
+    val millis = time.millis
+    // ..
+}
+
+setUpTimer(Minuites(123))&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;하지만 실제 클래스는 inline으로 동작하지 않으며 장점이 하나도 없다. 이는 인터페이스를 통해서 타입을 나타내려면 객체를 래핑해서 사용해야 하기 때문이다.&lt;/p&gt;
+&lt;p&gt;따라서 &lt;strong&gt;인터페이스를 구현하는 인라인 클래스는 아무런 의미가 없다.&lt;/strong&gt;&lt;/p&gt;
+&lt;h2 id=&quot;typealias&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#typealias&quot; aria-label=&quot;typealias permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;typealias&lt;/h2&gt;
+&lt;p&gt;typealias를 사용하면 타입에 새로운 이름을 붙여줄 수 있다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;typealias NewName = Int
+val n: NewName = 10&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이는 길고 반복적으로 사용해야 할 때 유용하다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;typealias ClickListener = (view: View, event: Event) -&amp;gt; Unit
+
+class View {
+    fun addClickListener(listener: ClickListener) {}
+    // ..
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;하지만 typealias는 안전하지 않다. 아래에서 Seconds와 Millis 모두 단순하게 Int를 나타내며 실수로 혼용해 잘못 입력하더라도 어떠한 오류도 발생하지 않는다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
+          &lt;code slot=&quot;code&quot;&gt;typealias Second = Int
+typealias Millis = Int
+
+fun getTime(): Millis = 10
+fun setUpTimer(time: Seconds) {}
+
+fun main() {
+    val seconds: Seconds = 10
+    val millis: Millis = seconds // 오류가 발생하지 않음
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;이는 오히려 문제를 찾는것은 어렵게 만든다. 따라서 &lt;strong&gt;이런 형태로 typealias를 사용하면 안된다&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;단위 등을 표현하려면 파라미터 이름 또는 클래스를 사용해야 한다.&lt;/p&gt;
+&lt;p&gt;인라인 클래스를 사용하면 비용과 안전 측면 모두에서 장점이 있다.&lt;/p&gt;
+&lt;h2 id=&quot;정리&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EC%A0%95%EB%A6%AC&quot; aria-label=&quot;정리 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;정리&lt;/h2&gt;
+&lt;p&gt;인라인 클래스를 사용하면 성능적인 오버헤드 없이 타입을 래핑할 수 있다.&lt;/p&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;이펙티브 코틀린 - 프로그래밍 인사이트, 마르친 모스칼라 지음, 윤인성 옮김&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
+&lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 46. 함수 타입 파라미터를 갖는 함수에 inline 한정자를 붙여라]]></title><description><![CDATA[Effective Kotlin Item 46. 함수 타입 파라미터를 갖는 함수에 inline 한정자를 붙여라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-46</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-46</guid><pubDate>Sat, 26 Mar 2022 00:15:00 GMT</pubDate><content:encoded>&lt;p&gt;코틀린 표준 라이브러리의 고차 함수(high order function)을 살펴보면 대부분 inline 한정자가 붙어있는 것을 확인할 수 있다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
           &lt;code slot=&quot;code&quot;&gt;inline fun repeat(times: Int, action: (Int) -&amp;gt; Unit) {
     for (index in 0 until times) {
@@ -3471,7 +4174,7 @@ Failure는 처리할 때 필요한 정보를 가질 수 있다.&lt;/p&gt;
 &lt;p&gt;개인적인 기록을 위해 작성된 글이라 잘못된 내용이 있을 수 있습니다.&lt;/p&gt;
 &lt;p&gt;오류가 있다면 댓글을 남겨주세요.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 06. 사용자 정의 오류보다는 표준 오류를 사용하라]]></title><description><![CDATA[Effective Kotlin Item 06. 사용자 정의 오류보다는 표준 오류를 사용하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-06</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-06</guid><pubDate>Tue, 08 Feb 2022 01:30:00 GMT</pubDate><content:encoded>&lt;p&gt;require, check, assert 등을 사용하면 대부분 코틀린 오류를 처리할 수 있지만
 이외의 예측하지 못한 상황을 나타내야 하는 경우가 존재한다.&lt;/p&gt;
-&lt;p&gt;JSON 형식을 파싱하는 라이브러리 구현 시 JSON 파일 형식에 문제가 있다면 JSONPArsingException을 발생시키는 것이 좋다.&lt;/p&gt;
+&lt;p&gt;JSON 형식을 파싱하는 라이브러리 구현 시 JSON 파일 형식에 문제가 있다면 &lt;code class=&quot;language-text&quot;&gt;JSONParsingException&lt;/code&gt;을 발생시키는 것이 좋다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot;  terminal=&quot;carbon&quot; theme=&quot;one-light&quot; &gt;
           &lt;code slot=&quot;code&quot;&gt;inline fun &amp;lt;reified T&amp;gt; String.readObject(): T {
     //...
