@@ -1,4 +1,380 @@
-<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sun, 03 Apr 2022 11:54:02 GMT</lastBuildDate><item><title><![CDATA[이펙티브 코틀린 아이템 52. mutable 컬렉션 사용을 고려하라]]></title><description><![CDATA[Effective Kotlin Item 52. mutable 컬렉션 사용을 고려하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-52</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-52</guid><pubDate>Fri, 01 Apr 2022 00:25:00 GMT</pubDate><content:encoded>&lt;p&gt;immutable 컬렉션보다 mutable 컬렉션이 성능적인 측면에서 더 빠르다.&lt;/p&gt;
+<?xml version="1.0" encoding="UTF-8"?><rss xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:atom="http://www.w3.org/2005/Atom" version="2.0"><channel><title><![CDATA[kyucumber]]></title><description><![CDATA[없음]]></description><link>https://kyucumber.github.io</link><generator>GatsbyJS</generator><lastBuildDate>Sat, 16 Apr 2022 13:40:13 GMT</lastBuildDate><item><title><![CDATA[Spring Boot 2.4 이후 property 설정과 InvalidConfigDataPropertyException]]></title><description><![CDATA[Spring Boot 2.4 이후 property 설정과 InvalidConfigDataPropertyException 예외]]></description><link>https://kyucumber.github.io/posts/spring/profile-invalid-config-data-property-exception/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/profile-invalid-config-data-property-exception/</guid><pubDate>Sun, 10 Apr 2022 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;기존 프로젝트 구성을 동일하게 옮겨 Spring Boot 2.6으로 구성했는데
+아래와 같이 &lt;code class=&quot;language-text&quot;&gt;InvalidConfigDataPropertyException&lt;/code&gt;라는 처음보는 예외가 발생했습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;org.springframework.boot.context.config.InvalidConfigDataPropertyException: Property &amp;#39;spring.profiles.include[0]&amp;#39; imported from location &amp;#39;class path resource [application-domain.yml]&amp;#39; is invalid in a profile specific resource [origin: class path resource [application-domain.yml] - 4:9]&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;2.4 관련 마이그레이션 문서를 찾아보아도 뭔가 멀티모듈에서 include 하는 방법이나 구조에 대해 딱히 자세하게 설명해둔 문서가 없었습니다.&lt;/p&gt;
+&lt;p&gt;해당 버전 이후에서는 어차피 동일한 방식을 사용할 것 같아 마이그레이션을 진행하는 김에 쓸데없지만 코드 레벨로 원인을 살펴보았습니다.&lt;/p&gt;
+&lt;h2 id=&quot;모듈-구성&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%EB%AA%A8%EB%93%88-%EA%B5%AC%EC%84%B1&quot; aria-label=&quot;모듈 구성 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;모듈 구성&lt;/h2&gt;
+&lt;p&gt;제가 구성한 프로젝트는 멀티모듈로 구성되어 있으며, admin 모듈이 doamin을, doamin이 region-client를 참조하는 아래와 같은 형태로 구성되어 있습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;bash&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;experimentation-platform-admin
+└──experimentation-platform-domain
+    └──experimentation-region-client&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;그리고 각각의 모듈의 하위에는 property.yml이 존재하고 있으며 각각 모듈별로 하위 모듈의 property.yml을 include해 사용합니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;experimentation-platform-admin
+├───application.yml
+└──experimentation-platform-domain
+    ├───application-domain.yml
+    └──experimentation-region-client
+         └───application-region-client.yml&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;2.4 이전에 흔하게 위와 같이 사용했고 property.yml을 로드해 사용하는 형태로 큰 문제 없이 사용했는데 2.6으로 마이그레이션 이후 첫 문단에 기술한 아래 예외가 발생했습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;org.springframework.boot.context.config.InvalidConfigDataPropertyException: Property &amp;#39;spring.profiles.include[0]&amp;#39; imported from location &amp;#39;class path resource [application-domain.yml]&amp;#39; is invalid in a profile specific resource [origin: class path resource [application-domain.yml] - 4:9]&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위에서 발생한 예외인 &lt;a href=&quot;https://github.com/spring-projects/spring-boot/blob/2.6.x/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/context/config/InvalidConfigDataPropertyException.java&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;InvalidConfigDataPropertyException(2.6.x)&lt;/a&gt;는 2.4.x 이후에 추가된 클래스입니다.&lt;/p&gt;
+&lt;p&gt;Spring Boot Github에 들어가 보면 아래처럼 2.3.x 이전 버전에는 아예 클래스가 존재하지 않습니다.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 960px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/b81981cbe2a9da704ae61877f6f9c7bf/61016/profile-01.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 36.25%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAHCAYAAAAIy204AAAACXBIWXMAAAsTAAALEwEAmpwYAAACAElEQVQozy3Oy0/SAQDAcf6QDp1aW6euXdo6dOh56tByrQdrsrlIkaFOMJEtzQezTK2cpJY1kJeP+GETsxJTMeVh8VMeCgjsh4DEdG1tfTPX4XP97iurGlmhfixIrTlIh7BJo0NE69xANRZG44zR4EqjdWdoFNKoHTGqrTFU9hi19igau0jdP7YfaKzraMZCyGpsUcYDOez+HDNi8chUKEezJ4+q18mtqnoq1G3cVKjpmPBh9YlMzn9hcHYVw0yWZnfqiP7DDk1CEpk/8BEpI1IqbJPMJChKm+RzW2wnVmnTKTl78hhnTh3n/OkTDHWqCLk7ic4ZWXE9Rnj/imBwFt/SJNPToywtC8h+Zb0U81my2SR7hSzp9BalUh4OImjuXqb3gRwCE7RX3kB37yomYz39b4fR9z1HsLRSilgpx8eRvpspbNiQlTM+Yju7eNfCLK9HWPCHSe+W+XOQYKhbxcsWJR5TK3eunON+xQVedOlo6+6mtaMd+4ABl6mJqcGHzDuM5COTyPaSC0jFfUKRFGviNn5x6zC4z++fEfyeHhoqr6G4fhG1/BJ9jxS861FheVqN+UkNI8ZaevUKjA23Ge5UIoUPD+OrFqS4l3ziK4Xk4n/LSJtuYj4T1oE6nrXImbMbSAXeEP82TOhzP4tCFzNmPa7XWjyWFkKf+kmsjfIXJCWtqy6mDWEAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+          &lt;source
+              srcset=&quot;/static/b81981cbe2a9da704ae61877f6f9c7bf/8ac56/profile-01.webp 240w,
+/static/b81981cbe2a9da704ae61877f6f9c7bf/d3be9/profile-01.webp 480w,
+/static/b81981cbe2a9da704ae61877f6f9c7bf/e46b2/profile-01.webp 960w,
+/static/b81981cbe2a9da704ae61877f6f9c7bf/f992d/profile-01.webp 1440w,
+/static/b81981cbe2a9da704ae61877f6f9c7bf/7f7a1/profile-01.webp 1770w&quot;
+              sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+              type=&quot;image/webp&quot;
+            /&gt;
+          &lt;source
+            srcset=&quot;/static/b81981cbe2a9da704ae61877f6f9c7bf/8ff5a/profile-01.png 240w,
+/static/b81981cbe2a9da704ae61877f6f9c7bf/e85cb/profile-01.png 480w,
+/static/b81981cbe2a9da704ae61877f6f9c7bf/d9199/profile-01.png 960w,
+/static/b81981cbe2a9da704ae61877f6f9c7bf/07a9c/profile-01.png 1440w,
+/static/b81981cbe2a9da704ae61877f6f9c7bf/61016/profile-01.png 1770w&quot;
+            sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+            type=&quot;image/png&quot;
+          /&gt;
+          &lt;img
+            class=&quot;gatsby-resp-image-image&quot;
+            src=&quot;/static/b81981cbe2a9da704ae61877f6f9c7bf/d9199/profile-01.png&quot;
+            alt=&quot;Untitled&quot;
+            title=&quot;Untitled&quot;
+            loading=&quot;lazy&quot;
+            style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+          /&gt;
+        &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;h2 id=&quot;invalidconfigdatapropertyexception-예외-발생-원인&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#invalidconfigdatapropertyexception-%EC%98%88%EC%99%B8-%EB%B0%9C%EC%83%9D-%EC%9B%90%EC%9D%B8&quot; aria-label=&quot;invalidconfigdatapropertyexception 예외 발생 원인 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;InvalidConfigDataPropertyException 예외 발생 원인&lt;/h2&gt;
+&lt;p&gt;위와 같은 예외가 발생하는 원인을 파악하기 이전에 각각 모듈 별 property를 살펴보겠습니다.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;experimentation-platform-admin/application.yml&lt;/li&gt;
+&lt;/ol&gt;
+&lt;deckgo-highlight-code language=&quot;yaml&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;spring:
+  profiles:
+    active: local
+    include:
+      - domain
+      - cmdb-api-client
+      - hr-info-client
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+---
+spring:
+  config:
+    activate:
+      on-profile: prod&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ol start=&quot;2&quot;&gt;
+&lt;li&gt;experimentation-platform-domain/application-domain.yml&lt;/li&gt;
+&lt;/ol&gt;
+&lt;deckgo-highlight-code language=&quot;yaml&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;spring:
+  profiles:
+    include:
+      - region-client
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+---
+spring:
+  config:
+    activate:
+      on-profile: prod&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ol start=&quot;3&quot;&gt;
+&lt;li&gt;clients/experimentation-platform-region-client/application-region-client.yml&lt;/li&gt;
+&lt;/ol&gt;
+&lt;deckgo-highlight-code language=&quot;yaml&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;feign:
+  client:
+    config:
+      default:
+        connectTimeout: 2000
+        readTimeout: 2000
+        loggerLevel: HEADERS
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+---
+spring:
+  config:
+    activate:
+      on-profile: prod&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;딱히 별 특징이 없어 보입니다. 여기서 문제를 발생시킨건 2번 &lt;code class=&quot;language-text&quot;&gt;application-domain.yml&lt;/code&gt;의 include 부분입니다.
+발생한 예외 코드의 Stack trace를 따라가보겠습니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;InvalidConfigDataPropertyException.java&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;InvalidConfigDataPropertyException 클래스 내부의 throwOrWarn 메소드를 보면 아래와 같은 부분이 있습니다. 아래 코드에서는 isFromProfileSpecificImport가 true인 경우 &lt;code class=&quot;language-text&quot;&gt;PROFILE_SPECIFIC_ERRORS&lt;/code&gt;를 순회하며 해당하는 property가 존재하는 경우 예외를 발생시키고 있습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;java&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;if (contributor.isFromProfileSpecificImport() &amp;amp;&amp;amp; !contributor.hasConfigDataOption(ConfigData.Option.IGNORE_PROFILES)) {
+	PROFILE_SPECIFIC_ERRORS.forEach((name) -&amp;gt; {
+		ConfigurationProperty property = propertySource.getConfigurationProperty(name);
+		if (property != null) {
+			throw new InvalidConfigDataPropertyException(property, true, null, contributor.getResource());
+		}
+	});
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;isFromProfileSpecificImport가 true가 되는 경우가 어떤 경우인지는 아래 코드를 통해 확인할 수 있습니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;ConfigDataLocationResolvers.java&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;java&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;private List&amp;lt;ConfigDataResolutionResult&amp;gt; resolve(ConfigDataLocationResolver&amp;lt;?&amp;gt; resolver, ConfigDataLocationResolverContext context, ConfigDataLocation location, Profiles profiles) {
+	List&amp;lt;ConfigDataResolutionResult&amp;gt; resolved = resolve(location, false, () -&amp;gt; resolver.resolve(context, location));
+	if (profiles == null) {
+		return resolved;
+	}
+	List&amp;lt;ConfigDataResolutionResult&amp;gt; profileSpecific = resolve(location, true,
+			() -&amp;gt; resolver.resolveProfileSpecific(context, location, profiles));
+	return merge(resolved, profileSpecific);
+}&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;실행할 때 잠시 디버깅을 걸어서 데이터를 확인해보면 application-domain.yml의 profileSpecific 값은 true가 된 것을 확인할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;&lt;span
+      class=&quot;gatsby-resp-image-wrapper&quot;
+      style=&quot;position: relative; display: block; margin-left: auto; margin-right: auto; max-width: 960px; &quot;
+    &gt;
+      &lt;a
+    class=&quot;gatsby-resp-image-link&quot;
+    href=&quot;/static/eff225264b3fd9c75ce2f1ab2773dd8f/6e52c/profile-02.png&quot;
+    style=&quot;display: block&quot;
+    target=&quot;_blank&quot;
+    rel=&quot;noopener&quot;
+  &gt;
+    &lt;span
+    class=&quot;gatsby-resp-image-background-image&quot;
+    style=&quot;padding-bottom: 31.666666666666664%; position: relative; bottom: 0; left: 0; background-image: url(&apos;data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAGCAYAAADDl76dAAAACXBIWXMAAAsTAAALEwEAmpwYAAABGUlEQVQY032PSVLDMBBFfSc2xJNsS9asKM5MhekibCgIIRz601Ig7Fi8+r+r50KMA5RxYNJjGBWE1OBJlQEn3/YcVduhbNi/pJqa9SjKdsDkOR6jxtJ4SBqurc9LtCO1jvBwIcLHBeaLJUKcyE+I0wqB4uR/FxdpqrUSh2ixMQGeLtMu5GvZIDJdggv0QuarU+76zU/cdMNl4CgFpA3o7BaDiZA0UCibXx61pQaDsu3prS4zq9mFhv35muVcRXVF3bZYhR4PYcSkNKRW0EZDkVprrt55Bx8cwjwQnrzHPIYcJ88FB+sYipvFG/j+BavnV4SnL4j7E4bDCdXmiNn6iNv1e9ZEuf1As/9EvbvQ3J0pPqPanbKW1PMNWOXfMgKyL2sAAAAASUVORK5CYII=&apos;); background-size: cover; display: block;&quot;
+  &gt;&lt;/span&gt;
+  &lt;picture&gt;
+          &lt;source
+              srcset=&quot;/static/eff225264b3fd9c75ce2f1ab2773dd8f/8ac56/profile-02.webp 240w,
+/static/eff225264b3fd9c75ce2f1ab2773dd8f/d3be9/profile-02.webp 480w,
+/static/eff225264b3fd9c75ce2f1ab2773dd8f/e46b2/profile-02.webp 960w,
+/static/eff225264b3fd9c75ce2f1ab2773dd8f/f992d/profile-02.webp 1440w,
+/static/eff225264b3fd9c75ce2f1ab2773dd8f/882b9/profile-02.webp 1920w,
+/static/eff225264b3fd9c75ce2f1ab2773dd8f/312c9/profile-02.webp 1948w&quot;
+              sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+              type=&quot;image/webp&quot;
+            /&gt;
+          &lt;source
+            srcset=&quot;/static/eff225264b3fd9c75ce2f1ab2773dd8f/8ff5a/profile-02.png 240w,
+/static/eff225264b3fd9c75ce2f1ab2773dd8f/e85cb/profile-02.png 480w,
+/static/eff225264b3fd9c75ce2f1ab2773dd8f/d9199/profile-02.png 960w,
+/static/eff225264b3fd9c75ce2f1ab2773dd8f/07a9c/profile-02.png 1440w,
+/static/eff225264b3fd9c75ce2f1ab2773dd8f/29114/profile-02.png 1920w,
+/static/eff225264b3fd9c75ce2f1ab2773dd8f/6e52c/profile-02.png 1948w&quot;
+            sizes=&quot;(max-width: 960px) 100vw, 960px&quot;
+            type=&quot;image/png&quot;
+          /&gt;
+          &lt;img
+            class=&quot;gatsby-resp-image-image&quot;
+            src=&quot;/static/eff225264b3fd9c75ce2f1ab2773dd8f/d9199/profile-02.png&quot;
+            alt=&quot;Untitled&quot;
+            title=&quot;Untitled&quot;
+            loading=&quot;lazy&quot;
+            style=&quot;width:100%;height:100%;margin:0;vertical-align:middle;position:absolute;top:0;left:0;&quot;
+          /&gt;
+        &lt;/picture&gt;
+  &lt;/a&gt;
+    &lt;/span&gt;&lt;/p&gt;
+&lt;p&gt;include 되는 profile의 경우 profileSpecific 값이 true가 됩니다. 여기서 왜 예외가 발생했는지를 알 수 있습니다.&lt;/p&gt;
+&lt;p&gt;domain은 admin에서 include하는 property이기 때문에 &lt;strong&gt;&lt;code class=&quot;language-text&quot;&gt;fromProfileSpecificImport&lt;/code&gt; 값이 true가 되며
+domain에서 regionc-client를 include하게 되는 경우 &lt;code class=&quot;language-text&quot;&gt;PROFILE_SPECIFIC_ERRORS&lt;/code&gt;에 포함된 아래 조건에 의해 예외가 발생&lt;/strong&gt;합니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;java&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;public static final String INCLUDE_PROFILES_PROPERTY_NAME = &amp;quot;spring.profiles.include&amp;quot;;
+static final ConfigurationPropertyName INCLUDE_PROFILES = ConfigurationPropertyName
+			.of(Profiles.INCLUDE_PROFILES_PROPERTY_NAME);
+
+errors.add(Profiles.INCLUDE_PROFILES);
+errors.add(Profiles.INCLUDE_PROFILES.append(&amp;quot;[0]&amp;quot;));&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;사실 코드를 볼 필요 없이 에러 메시지만 보고 include 관련 부분을 수정했다면 바로 해결되었을 문제입니다. 왜 저런 validation이 추가되었는지 궁금했고, 어느 기준으로 해당 부분이 동작하는지를 이해하기 위해 코드를 살펴보았습니다.&lt;/p&gt;
+&lt;h2 id=&quot;해결-방법&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%ED%95%B4%EA%B2%B0-%EB%B0%A9%EB%B2%95&quot; aria-label=&quot;해결 방법 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;해결 방법&lt;/h2&gt;
+&lt;p&gt;위에도 잠시 적어두었지만 domain에 존재하는 include를 제거하면 심플하게 해결할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;위와 같이 여러 계층 구조를 가진 멀티모듈 구조에서 include를 하는 경우 복잡도가 높아질 수 있어 해당 부분을 막은건지 어떤 의도로 해당 부분이 추가되었는지는
+정확히 파악할 순 없지만 저는 아래와 같이 include 설정을 변경해 해결했습니다.&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;experimentation-platform-admin/application.yml&lt;/li&gt;
+&lt;/ul&gt;
+&lt;deckgo-highlight-code language=&quot;yaml&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;spring:
+  profiles:
+    active: local
+    include:
+      - domain
+      - region-client
+      - cmdb-api-client
+      - hr-info-client&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;최상위 모듈이 최하위 모듈을 직접 include하게 변경했습니다.&lt;/p&gt;
+&lt;p&gt;지금처럼 모듈이 다중으로 중첩된 구조는 그리 좋은 구조가 아니라고 생각합니다.&lt;/p&gt;
+&lt;p&gt;중첩되는 경우 최상위에서 include 하는 것을 잊게되면 여러가지 문제가 발생할 수 있어 이후에는 가급적 아래 같은 2중 중첩 구조는 사용하지 않으려고 생각하고 있습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;bash&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;experimentation-platform-admin
+└──experimentation-platform-domain
+    └──experimentation-region-client&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;그리고 마이그레이션을 진행하면서 문서에서 include를 group으로 대체할 수 있다는 것 처럼 기술해두어서 혼란을 겪었습니다.&lt;/p&gt;
+&lt;p&gt;영어를 잘못 읽어서 마이그레이션 문서를 제대로 파악하지 못한건가 싶은데, 저는 &lt;strong&gt;멀티 모듈 구조에서는 include를 사용하지 않고는 다른 모듈의 property.yml이 참조되지 않았습니다&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;저는 최종적으로 아래와 같은 형태로 멀티모듈에서 include를 하도록 변경하고 마이그레이션을 마무리했습니다.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;experimentation-platform-admin/application.yml&lt;/li&gt;
+&lt;/ol&gt;
+&lt;deckgo-highlight-code language=&quot;yaml&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;spring:
+  profiles.active: local
+  profiles.include:
+    - domain
+    - cmdb-api-client
+    - hr-info-client
+    - region-client
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+---
+spring:
+  config:
+    activate:
+      on-profile: prod&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ol start=&quot;2&quot;&gt;
+&lt;li&gt;experimentation-platform-domain/application-domain.yml&lt;/li&gt;
+&lt;/ol&gt;
+&lt;deckgo-highlight-code language=&quot;yaml&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;spring:
+  flyway:
+    enabled: false
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    hikari:
+      max-lifetime: 56000
+      connection-timeout: 2000
+  sql:
+    init:
+      mode: never
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+        globally_quoted_identifiers_skip_column_definitions: true
+        default_batch_fetch_size: 500
+        query:
+          in_clause_parameter_padding: true
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+---
+spring:
+  config:
+    activate:
+      on-profile: prod&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;ol start=&quot;3&quot;&gt;
+&lt;li&gt;clients/experimentation-platform-region-client/application-region-client.yml&lt;/li&gt;
+&lt;/ol&gt;
+&lt;deckgo-highlight-code language=&quot;yaml&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;feign:
+  client:
+    config:
+      default:
+        connectTimeout: 2000
+        readTimeout: 2000
+        loggerLevel: HEADERS
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+---
+spring:
+  config:
+    activate:
+      on-profile: prod&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위와 같이 설정했을 때 의도한 대로 환경 별 설정을 잘 읽어왔습니다.&lt;/p&gt;
+&lt;p&gt;저도 코드를 간단하게 살펴본거라 잘못 알았거나, 설정이 이상한 부분이 있을 수 있습니다.
+혹시 좋은 방법이 있거나 잘못된 부분이 있다면 댓글로 알려주세요.&lt;/p&gt;
+&lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/spring-projects/spring-boot/wiki/Spring-Boot-Config-Data-Migration-Guide&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;spring-boot-config-data-migraton-guide&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&quot;https://github.com/spring-projects/spring-boot/blob/2.6.x/spring-boot-project/spring-boot/src/main/java/org/springframework/boot/context/config/InvalidConfigDataPropertyException.java&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;spring-boot-project 2.6.x InvalidConfigDataPropertyException.java&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content:encoded></item><item><title><![CDATA[이펙티브 코틀린 아이템 52. mutable 컬렉션 사용을 고려하라]]></title><description><![CDATA[Effective Kotlin Item 52. mutable 컬렉션 사용을 고려하라]]></description><link>https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-52</link><guid isPermaLink="false">https://kyucumber.github.io/posts/book/effective-kotlin/effective-kotlin-item-52</guid><pubDate>Fri, 01 Apr 2022 00:25:00 GMT</pubDate><content:encoded>&lt;p&gt;immutable 컬렉션보다 mutable 컬렉션이 성능적인 측면에서 더 빠르다.&lt;/p&gt;
 &lt;p&gt;immutable 컬렉션에 요소를 추가하려면 새로운 컬렉션을 만들면서 여기에 요소를 추가해야 한다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;kotlin&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
           &lt;code slot=&quot;code&quot;&gt;operator fun &amp;lt;T&amp;gt; Iterable&amp;lt;T&amp;gt;.plus(element: T): List&amp;lt;T&amp;gt; {
@@ -7331,21 +7707,49 @@ Group=ec2-user
 // 이 부분을 추가해주어야 합니다.
 EnvironmentFile=/kyucumber/EnvironmentFile&lt;/code&gt;
         &lt;/deckgo-highlight-code&gt;
-&lt;p&gt;위와 같이 EnvironmentFile을 등록하면 systemd에서 &lt;code class=&quot;language-text&quot;&gt;APP_IMAGE_TAG&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;PROFILE&lt;/code&gt; 등의 환경 변수를 사용할 수 있습니다.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[globally_quoted_identifiers 옵션과 SchemaManagementException]]></title><description><![CDATA[globally_quoted_identifiers 옵션 적용 후 SchemaManagementException가 발생하는 경우]]></description><link>https://kyucumber.github.io/posts/issues/globally-quoted-identifiers-option-error</link><guid isPermaLink="false">https://kyucumber.github.io/posts/issues/globally-quoted-identifiers-option-error</guid><pubDate>Tue, 01 Sep 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;globally_quoted_identifiers&lt;/code&gt;옵션을 true로 지정하면 컬럼이나 테이블의 이름이 예약어와 충돌하는 것을 방지할 수 있습니다.&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;해당 옵션을 추가하면 컬럼, 테이블 이름을 Back Quote(`)로 감싸주게 됩니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;충돌 방지를 위해 해당 옵션을 추가했는데 이후 아래와 같은 예외가 발생하는 경우가 있습니다.&lt;/p&gt;
-&lt;deckgo-highlight-code  terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  highlight-lines=&quot;undefined&quot;&gt;
-          &lt;code slot=&quot;code&quot;&gt;Caused by: org.hibernate.tool.schema.spi.SchemaManagementException: Schema-validation: wrong column type encountered in column&lt;/code&gt;
+&lt;p&gt;위와 같이 EnvironmentFile을 등록하면 systemd에서 &lt;code class=&quot;language-text&quot;&gt;APP_IMAGE_TAG&lt;/code&gt;, &lt;code class=&quot;language-text&quot;&gt;PROFILE&lt;/code&gt; 등의 환경 변수를 사용할 수 있습니다.&lt;/p&gt;</content:encoded></item><item><title><![CDATA[테이블이 존재하는데도 Schema-validation missing table 예외가 발생하는 경우]]></title><description><![CDATA[globally_quoted_identifiers 옵션 적용 후 SchemaManagementException가 발생하는 경우]]></description><link>https://kyucumber.github.io/posts/issues/globally-quoted-identifiers-option-error</link><guid isPermaLink="false">https://kyucumber.github.io/posts/issues/globally-quoted-identifiers-option-error</guid><pubDate>Tue, 01 Sep 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;아래와 같이 &lt;code class=&quot;language-text&quot;&gt;application&lt;/code&gt;이라는 엔티티와 테이블을 만들었습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;sql&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;CREATE TABLE application ();&lt;/code&gt;
         &lt;/deckgo-highlight-code&gt;
-&lt;p&gt;이는 &lt;code class=&quot;language-text&quot;&gt;globally_quoted_identifiers&lt;/code&gt; 옵션 사용 시 columnDefinition에 있는 단어들도 함께 escape 되면서 발생하는 에러입니다.&lt;/p&gt;
-&lt;p&gt;위와 같은 에러를 방지하기 위해 아래와 같은 옵션을 추가로 더 설정해주어야 합니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;kotlin&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;@Entity
+@Table(
+    name = &amp;quot;application&amp;quot;,
+    uniqueConstraints = [UniqueConstraint(columnNames = [&amp;quot;key&amp;quot;])],
+)
+class ApplicationJpaEntity()&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;어플리케이션 구동시 ddl-auto는 validate로 설정해두었습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;yaml&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;spring:
+  jpa:
+    hibernate:
+      ddl-auto: validate&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;위와 같이 설정하고, 테이블을 미리 생성해 테이블이 있는것을 Sequel Pro로 확인했음에도 불구하고
+아래와 같은 에러가 지속적으로 발생했습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code language=&quot;bash&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
+          &lt;code slot=&quot;code&quot;&gt;Schema-validation: missing table [application]&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;h2 id=&quot;해결-방법&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#%ED%95%B4%EA%B2%B0-%EB%B0%A9%EB%B2%95&quot; aria-label=&quot;해결 방법 permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;해결 방법&lt;/h2&gt;
+&lt;p&gt;명확한 원인을 직접 코드 레벨로 파악한 것은 아니지만
+이름이 예약어와 겹치면서 문제가 발생하는 것 같았습니다.
+아래 옵션을 추가해 문제를 해결했습니다.&lt;/p&gt;
 &lt;deckgo-highlight-code language=&quot;yaml&quot; terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  &gt;
           &lt;code slot=&quot;code&quot;&gt;hibernate:
   globally_quoted_identifiers: true
   globally_quoted_identifiers_skip_column_definitions: true&lt;/code&gt;
         &lt;/deckgo-highlight-code&gt;
+&lt;p&gt;&lt;code class=&quot;language-text&quot;&gt;globally_quoted_identifiers&lt;/code&gt;옵션을 true로 지정하면 컬럼이나 테이블의 이름이 예약어와 충돌하는 것을 방지할 수 있습니다.&lt;/p&gt;
+&lt;p&gt;해당 옵션을 추가하면 컬럼, 테이블 이름을 Back Quote(`)로 감싸주게 됩니다.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;충돌 방지를 위해 globally&lt;em&gt;quoted&lt;/em&gt;identifiers 옵션을 추가했는데 이후 아래와 같은 예외가 발생하는 경우가 있습니다.&lt;/p&gt;
+&lt;deckgo-highlight-code  terminal=&quot;carbon&quot; theme=&quot;one-light&quot;  highlight-lines=&quot;undefined&quot;&gt;
+          &lt;code slot=&quot;code&quot;&gt;Caused by: org.hibernate.tool.schema.spi.SchemaManagementException: Schema-validation: wrong column type encountered in column&lt;/code&gt;
+        &lt;/deckgo-highlight-code&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;이는 &lt;code class=&quot;language-text&quot;&gt;globally_quoted_identifiers&lt;/code&gt; 옵션 사용 시 columnDefinition에 있는 단어들도 함께 escape 되면서 발생하는 에러입니다.&lt;/p&gt;
+&lt;p&gt;위와 같은 에러를 방지하기 위해 &lt;code class=&quot;language-text&quot;&gt;globally_quoted_identifiers_skip_column_definitions&lt;/code&gt; 옵션을 추가로 설정해주는 것이 좋습니다.&lt;/p&gt;
 &lt;h2 id=&quot;reference&quot; style=&quot;position:relative;&quot;&gt;&lt;a href=&quot;#reference&quot; aria-label=&quot;reference permalink&quot; class=&quot;anchor-header before&quot;&gt;&lt;svg aria-hidden=&quot;true&quot; focusable=&quot;false&quot; height=&quot;16&quot; version=&quot;1.1&quot; viewBox=&quot;0 0 16 16&quot; width=&quot;16&quot;&gt;&lt;path fill-rule=&quot;evenodd&quot; d=&quot;M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z&quot;&gt;&lt;/path&gt;&lt;/svg&gt;&lt;/a&gt;Reference&lt;/h2&gt;
 &lt;p&gt;&lt;a href=&quot;https://kwonnam.pe.kr/wiki/java/hibernate/configuration&quot; target=&quot;_blank&quot; rel=&quot;nofollow noopener noreferrer&quot;&gt;https://kwonnam.pe.kr/wiki/java/hibernate/configuration&lt;/a&gt;&lt;/p&gt;</content:encoded></item><item><title><![CDATA[Spring Boot Dependency Management Plugin]]></title><description><![CDATA[Spring Boot Dependency Management Plugin의 특정 버전 customizing 등의 내용을 다룹니다.]]></description><link>https://kyucumber.github.io/posts/spring/spring-boot-dependency-management-plugin/</link><guid isPermaLink="false">https://kyucumber.github.io/posts/spring/spring-boot-dependency-management-plugin/</guid><pubDate>Wed, 03 Jun 2020 00:00:00 GMT</pubDate><content:encoded>&lt;p&gt;Spring에서 제공해주는 여러 starter들을 사용하면 별도 의존성 버전을 명시해주지 않아도
 여러 라이브러리들이 각각의 버전으로 추가되는 것을 확인할 수 있습니다.&lt;/p&gt;
